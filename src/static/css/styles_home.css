@@ -1,0 +1,58 @@
+  /* Загальні стилі */
+  .container {
+    width: 90%; /* Встановіть ширину контейнера на 90% */
+    max-width: 1200px; /* Максимальна ширина для великих екранiв */
+    margin: 0 auto; /* Центруйте контейнер */
+  }
+
+  .card {
+    width: 100%; /* Картка заповнює 100% ширини контейнера */
+    max-width: 600px; /* Максимальна ширина картки */
+    margin: 0 auto; /* Центруйте картки */
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-img-top {
+    width: 100%; /* Зображення заповнює всю ширину картки */
+    height: 100px; /* Встановіть фіксовану висоту для зображення */
+    object-fit: cover;
+  }
+
+  .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .card-text {
+    color: #555;
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* Центруйте картки в ряду */
+  }
+
+  .col-12 {
+    display: flex;
+    justify-content: center; /* Центруйте картки у колонці */
+  }

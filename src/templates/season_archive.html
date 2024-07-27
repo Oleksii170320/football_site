@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block style %}
+    <link rel="stylesheet" href="/static/css/styles_matches_season.css">
+{% endblock %}
+
+
+
+{% block aside_left %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+    <div class="fiex justify-center flex-col items-center">
+         <div class="league-statistic__table tab-content" style="width: 100%;">
+           <div id="tab-league-statistic-main" class="tab-pane active">
+             <table class="table table-striped table-hover" style="width: 100%;">
+               <thead>
+                 <tr class="row-group-title">
+                     <td class="col-fullwidth" colspan="9">Історія розіграшів</td>
+                 </tr>
+                 <tr class="row-header">
+                       <th>Сезон</th>
+                       <th></th>
+                       <th>Переможець</th>
+                 </tr>
+               </thead>
+               <tbody>
+               {% for season in seasons_archive %}
+
+                 <tr class="row-default">
+                     <td>
+                         {{ season.name }}
+                     </td>
+                     {% if season.team_winner.name %}
+                     <td class="img-center">
+                           <img src="{{ url_for('static', path='/img/teams/' ~ season.team_winner.logo) }}" alt="{{ season.team_winner.logo }} logo">
+                       </td>
+                       <td>
+                         <a href="/teams/{{  season.team_winner.id }}">
+                            {{ season.team_winner.name }} ({{ season.team_winner.city }})
+                         </a>
+                       </td>
+                     {% endif %}
+               {% endfor %}
+               </tbody>
+             </table>
+           </div>
+         </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+
+
+
+{% block aside_right %}
+
+{% endblock %}

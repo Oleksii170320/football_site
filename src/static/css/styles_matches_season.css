@@ -1,0 +1,217 @@
+/* Загальні стилі для сторінки матчів */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.fiex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+.table th,
+.table td {
+    padding: 0.75em;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: bold;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.row-header {
+    background-color: #e9ecef;
+}
+
+.row-group-title {
+    background-color: #f1f3f5;
+    font-weight: bold;
+    text-align: center;
+}
+
+.row-default img {
+    height: 35px;
+    margin-right: 10px;
+}
+
+.container.mt-5 {
+    margin-top: 2.5em;
+}
+
+.card {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1em;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75em;
+}
+
+.card-text {
+    margin-bottom: 0.5em;
+}
+
+.nav-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.img-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.match-date {
+    white-space: nowrap;
+    min-width: 120px; /* або будь-яке інше значення, що підходить */
+}
+
+/* Стилі для бокового блоку з регіонами */
+.aside-left {
+    background-color: #f8f9fa;
+    padding: 1.5em;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2em;
+}
+
+.aside-left h2 {
+    margin-bottom: 1em;
+    color: #333;
+}
+
+.regions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.regions-table td {
+    padding: 0.5em 1em;
+    vertical-align: middle;
+}
+
+.region-logo {
+    height: 30px; /* Встановіть висоту логотипу */
+    width: auto;
+}
+
+.region-link {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.region-link:hover {
+    color: #0056b3;
+}
+
+.regions-table tr {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.regions-table tr:last-child {
+    border-bottom: none;
+}
+
+.selected-region {
+    background-color: #e0f7fa; /* Колір фону для обраного регіону */
+}
+
+/* Стилі для горизонтального меню */
+.nav-block {
+    background-color: #333; /* Темний колір фону */
+    padding: 1em 0; /* Відступи для блоку */
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1em 0; /* Додайте margin-bottom для відступу від нижніх елементів */
+    justify-content: center; /* Центрування елементів меню */
+}
+
+.nav-links li {
+    margin: 0 1em;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff; /* Білий колір тексту */
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #cccccc; /* Світліший відтінок при наведенні */
+}
+
+/* Стиль для регіональної інформації в nav-block */
+.region-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
+
+.region-info img {
+    margin-right: 0.5em;
+}
+
+.region-info h4 {
+    margin: 0;
+    color: #ffffff; /* Білий колір тексту */
+}
