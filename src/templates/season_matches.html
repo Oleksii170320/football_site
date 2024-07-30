@@ -32,7 +32,11 @@
                     <tbody>
                         {% for match in matches %}
                             <tr class="row-default">
-                                <td><span class="match-date" data-epoch="{{ match.event }}"></span></td>
+                                <td>
+                                    {% if match.event not "" %}
+                                        <span class="match-date" data-epoch="{{ match.event }}"></span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ match.round }}</td>
                                 <td>{{ match.stadium.name }} {{ match.stadium.city }}</td>
                                 <td>

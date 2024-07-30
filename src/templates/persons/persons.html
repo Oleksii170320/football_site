@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block style %}
+  <link rel="stylesheet" href="/static/css/styles_teams.css">
+{% endblock %}
+
+
+
+{% block aside_left %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="container my-5">
+      <div class="row">
+        {% for person in persons %}
+          <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+            <div class="card h-100">
+              {% if person.photo %}
+                 <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}" class="card-img-top" alt="{{ person.lastname }}-{{ person.name }}">
+              {% else %}
+                 <img src="{{ url_for('static', path='img/person/img.png') }}" alt="{{ person.lastname }}-{{ person.name }}">
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title">{{ person.lastname }}</h5>
+                <p class="card-text">{{ person.name }}</p>
+                <p class="card-text">{{ person.surname }}</p>
+                <a href="/persons/{{ person.id }}" class="btn btn-primary">Перейти</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+
+{% block aside_right %}
+
+{% endblock %}

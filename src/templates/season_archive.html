@@ -14,6 +14,7 @@
 
 {% block content %}
 
+    {% include "includes/nav_block.html" %}
 
     <div class="fiex justify-center flex-col items-center">
          <div class="league-statistic__table tab-content" style="width: 100%;">
@@ -34,7 +35,9 @@
 
                  <tr class="row-default">
                      <td>
-                         {{ season.name }}
+                         <a href="/region/{{ season.tournament.organization.region.slug }}/{{ season.id }}/{{ season.slug }}">
+                             {{ season.name }} - {{ season.year }}
+                         </a>
                      </td>
                      {% if season.team_winner.name %}
                      <td class="img-center">

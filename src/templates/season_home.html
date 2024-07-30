@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block style %}
+    <link rel="stylesheet" href="/static/css/styles_region.css">
+    <link rel="stylesheet" href="/static/css/styles_matches_season.css">
+{% endblock %}
+
+
+
+{% block aside_left %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    {% include "includes/nav_block.html" %}
+
+    <div class="card mb-3" style="max-width: 940px; margin: 0 auto;">
+      {% for news in news_list %}
+      <div class="row g-0 my-2">
+        <div class="col-md-4">
+          <img src="{{ news.photo }}" class="img-fluid rounded-start" alt="{{ news.topic }}">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">{{ news.topic }}</h5>
+            <p class="card-text">{{ news.brief }}</p>
+            <p class="card-text"><small class="text-muted">Категорія: <strong>{{ news.tournament.name }}</strong></small></p>
+            <p class="card-text"><small class="text-muted">{{ news.event }}</small></p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+{% endblock %}
+
+
+
+{% block aside_right %}
+<div class="aside-right">
+  <h5>Футбольні асоціації/федерації області:</h5>
+  {% for organization in region.organizations %}
+    <ul>
+      <li>
+        <a href="/organizations/{{ organization.id }}">{{ organization.name }} - {{ organization.full_name }}</a>
+        {% if organization.tournaments %}
+          <ul>
+            {% for tournament in organization.tournaments %}
+              <li>{{ tournament.name }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    </ul>
+  {% endfor %}
+  <p>Команди даного регіону: <a href="/teams"> ---> </a></p>
+  <p>Опис: {{ region.emblem }}</p>
+</div>
+{% endblock %}

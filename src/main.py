@@ -15,6 +15,7 @@ from controllers import (
     stadium,
     match,
     standings,
+    person,
 )
 
 
@@ -22,15 +23,6 @@ app = FastAPI(title="Football")
 
 # Підключення статичних файлів
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# Підключення шаблонів
-
-# templates = Jinja2Templates(directory="footballs/templates")
-# app.mount("/static", StaticFiles(directory="footballs/static"), name="static")
-
-# @app.get("/", tags=["Home"])
-# def home():
-#     return {"message": "Hello World!!!"}
 
 
 @app.get("/", tags=["Home"])
@@ -57,5 +49,6 @@ app.include_router(team.router, prefix="/teams", tags=["Teams"])
 app.include_router(stadium.router, prefix="/stadiums", tags=["Stadiums"])
 app.include_router(match.router, prefix="/matches", tags=["Matches"])
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
+app.include_router(person.router, prefix="/persons", tags=["Persons"])
 
 # app.include_router(person.router, prefix="/persons", tags=["Persons"])
