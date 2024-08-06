@@ -1,0 +1,31 @@
+      <h2>Історія розіграшів</h2>
+        <table class="table table-striped table-hover">
+              <thead>
+            <tr class="row-header">
+              <th scope="col">Назва турніру</th>
+              <th scope="col">Сезон</th>
+              <th scope="col">Асоціація</th>
+              <th scope="col">Федерація</th>
+            </tr>
+          </thead>
+          <tbody>
+             {% for season in history %}
+                 <tr class="row-default">
+                    <td align="left">
+                     <a href="/region/{{ season.tournament.organization.region.slug }}/{{ season.id }}/{{ season.slug }}">
+                       {{ season.name }}
+                     </a>
+                   </td>
+                   <td align="center">
+                     {{ season.year }}
+                   </td>
+                   <td align="center">
+                     {{ season.tournament.organization.association.name }}
+                   </td>
+                   <td align="center">
+                     {{ season.tournament.organization.name }}
+                   </td>
+                 </tr>
+             {% endfor %}
+          </tbody>
+        </table>

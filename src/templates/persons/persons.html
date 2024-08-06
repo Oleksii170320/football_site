@@ -22,7 +22,7 @@
               {% if person.photo %}
                  <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}" class="card-img-top" alt="{{ person.lastname }}-{{ person.name }}">
               {% else %}
-                 <img src="{{ url_for('static', path='img/person/img.png') }}" alt="{{ person.lastname }}-{{ person.name }}">
+                 <img src="{{ url_for('static', path='img/person/tamplate.png') }}" alt="{{ person.lastname }}-{{ person.name }}">
               {% endif %}
               <div class="card-body">
                 <h5 class="card-title">{{ person.lastname }}</h5>

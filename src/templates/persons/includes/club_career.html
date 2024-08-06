@@ -1,0 +1,124 @@
+
+
+     <div class="card text-center">
+       <h2>Клубна кар'єра</h2>
+       <table class="table table-striped table-hover">
+         <thead>
+           <tr class="row-header">
+             <th scope="col">№</th>
+             <th scope="col"></th>
+             <th scope="col">Команда</th>
+             <th scope="col">Посада</th>
+             <th scope="col">Період</th>
+             <th scope="col">Матчі</th>
+             <th scope="col">Голи</th>
+             <th scope="col">ЖК</th>
+             <th scope="col">ЧК</th>
+           </tr>
+         </thead>
+         <tbody>
+           {% for career in club_career %}
+             <tr class="row-default">
+               <th scope="row">
+                 {% if career.player_number %}
+                   {{ career.player_number }}
+                 {% else %}
+                   -
+                 {% endif %}
+               </th>
+               <td>
+                 {% if career.logo %}
+                     <img src="{{ url_for('static', path='/img/teams/' ~ career.logo) }}" alt="{{ career.name }} logo" height="30px">
+                 {% endif %}
+               </td>
+               <td align="left">
+                 <a class="nav-link" href="/teams/{{ career.id }}">
+                   {{ career.name }} ({{ career.city }})
+                 </a>
+               </td>
+               <td align="center">{{ career.position }}</td>
+               <td align="center">
+
+                 {% if career.startdate == career.enddate %}
+                    {{ career.startdate }}
+                 {% else %}
+                    {{ career.startdate }}
+                    {% if career.enddate == career.current_year %}
+                        - н/д
+                    {% else %}
+                        - {{ career.enddate }}
+                    {% endif %}
+                 {% endif %}
+               </td>
+<!--               <td align="center">-->
+<!--                 {% if career.startdate == career.enddate %}-->
+<!--                    <span class="epoch-year" data-epoch="{{ career.startdate }}"></span>-->
+<!--                 {% else %}-->
+<!--                    <span class="epoch-year" data-epoch="{{ career.startdate }}"></span> - -->
+<!--                    <span class="epoch-year" data-epoch="{{ career.enddate }}"></span>-->
+<!--                 {% endif %}-->
+<!--               </td>-->
+               <td align="center">
+                 {% if career.matches %}
+                   {{ career.matches }}
+                 {% else %}
+                   -
+                 {% endif %}
+               </td>
+               <td align="center">
+                 {% if career.goals %}
+                   {{ career.goals }}
+                   {% if career.goals_penalty %}
+                     ({{ career.goals_penalty }})
+                   {% endif %}
+                 {% else %}
+                   -
+                 {% endif %}
+               </td>
+               <td align="center">
+                 {% if career.yellow_cards %}
+                   {{ career.yellow_cards }}
+                 {% else %}
+                   -
+                 {% endif %}
+               </td>
+               <td align="center">
+                 {% if career.red_cards %}
+                   {{ career.red_cards }}
+                 {% else %}
+                   -
+                 {% endif %}
+               </td>
+             </tr>
+           {% endfor %}
+         </tbody>
+       </table>
+     </div>
+
+<!--    <script>-->
+<!--    // Функція для форматування дати в форматі YYYY-->
+<!--        function formatYear(epoch) {-->
+<!--          if (!epoch) return 'н/д'; // Повертає "н/д", якщо epoch не визначено-->
+<!--          const date = new Date(epoch * 1000); // Переводимо Epoch в мілісекунди-->
+<!--          const year = date.getFullYear(); // Рік-->
+<!--          return `${year}`;-->
+<!--        }-->
+
+<!--    // Функція для обробки всіх елементів з класом epoch-year-->
+<!--        function formatYears() {-->
+<!--          document.querySelectorAll('.epoch-year').forEach((element) => {-->
+<!--            const epoch = parseInt(element.dataset.epoch);-->
+<!--            const year = formatYear(epoch);-->
+
+<!--            if (isNaN(epoch) || epoch === null) {-->
+<!--              element.textContent = 'н/д'; // Відображає "н/д", якщо epoch не є числом або є null-->
+<!--            } else {-->
+<!--              element.textContent = year;-->
+<!--            }-->
+<!--          });-->
+<!--        }-->
+
+<!--    // Викликаємо функцію після завантаження DOM-->
+<!--    document.addEventListener("DOMContentLoaded", formatYears);-->
+
+<!--    </script>-->
