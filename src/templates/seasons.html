@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <script>
+  </script>
+{% endblock %}
+
+{% block content %}
+<h3>Список турнірів даного регіону:</h3>
+ <div class="fiex justify-center flex-col items-center">
+
+  <div class="fiex center my-3 gap-5">
+      <br>
+    {% for season in seasons %}
+    <ul>
+        <li><h6>{{ season.name }}</h6></li>
+        <ol>
+        {% for team in season.teams_associations %}
+
+            <li>{{ team.name }}</li>
+
+        {% endfor %}
+        </ol>
+    </ul>
+    {% endfor %}
+  </div>
+
+
+  <div class="">
+
+  </div>
+
+</div>
+{% endblock %}

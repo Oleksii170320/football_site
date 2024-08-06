@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+
+{% block style %}
+<style>
+  h3 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 12px 15px;
+  }
+
+  thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+  tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  img {
+    height: 40px;
+    margin-right: 10px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #009879;
+    font-weight: bold;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+
+
+{% block aside_left %}
+
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="aside-left">
+      <h2>Регіони України</h2>
+      <table class="regions-table">
+        <tbody>
+          {% for region in regions_list %}
+          <tr class="{% if region.id == selected_region_id %}selected-region{% endif %}">
+            <td>
+              <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
+                   alt="{{ region.name }} logo" class="region-logo">
+            </td>
+            <td>
+              <a href="/regions/{{ region.slug }}" class="region-link"
+                 onclick="showSeasons('{{ region.slug }}', this)">{{ region.name }}</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}
+
+
+
+{% block aside_right %}
+
+{% endblock %}

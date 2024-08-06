@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block style %}
+    <link rel="stylesheet" href="/static/css/styles_region.css">
+    <link rel="stylesheet" href="/static/css/styles_matches_season.css">
+{% endblock %}
+
+
+
+{% block aside_left %}
+
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% for news in news_list %}
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm h-100">
+                    <img src="{{ news.photo }}" class="card-img-top" alt="{{ news.topic }}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ news.topic }}</h5>
+                        <p class="card-text">{{ news.brief }}</p>
+                        <p class="card-text mt-auto"><small class="text-muted">Категорія: <strong>{{ news.tournament.name }}</strong></small></p>
+                        <p class="card-text"><small class="text-muted">{{ news.event }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block aside_right %}
+
+{% endblock %}

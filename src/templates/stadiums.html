@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <script>
+  </script>
+{% endblock %}
+
+{% block content %}
+<h3>Список стадіонів, футбольних полів, ігрових площадок:</h3>
+ <div class="fiex justify-center flex-col items-center">
+
+  <div class="fiex center my-3 gap-5">
+      <br>
+    {% for stadium in stadiums %}
+    <ul>
+      <li>{{ stadium.name }}</li>
+    </ul>
+    {% endfor %}
+  </div>
+
+
+  <div class="">
+
+  </div>
+
+</div>
+{% endblock %}
