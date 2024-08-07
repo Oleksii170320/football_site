@@ -16,6 +16,7 @@ class Round(Base):
     id: Mapped[intpk]
     name: Mapped[str] = mapped_column(String(70), nullable=False)
     slug: Mapped[str] = mapped_column(String, nullable=True)
+    stage: Mapped[bool] = mapped_column(nullable=False)
 
     # зв'язки з таблицями
     matches: Mapped["Match"] = relationship(

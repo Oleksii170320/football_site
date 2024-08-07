@@ -7,6 +7,7 @@ from .match import MatchSchemas
 
 class RoundBaseSchemas(BaseModel):
     name: Annotated[str, MinLen(1), MaxLen(50)]
+    stage: bool
     slug: str
 
 
