@@ -14,6 +14,7 @@ from .position_role import PositionRole
 from .team_person_assotiation import TeamPerson
 from .group import Group
 from .stage import Stage
+from .round import Round
 
 
 MODELS = [

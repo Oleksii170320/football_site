@@ -11,7 +11,7 @@ class MatchBaseSchemas(BaseModel):
     season_id: Optional[int | None] = None
     group_id: Optional[int | None] = None
     stage_id: Optional[int | None] = None
-    round: Annotated[str, MaxLen(20)]
+    round_id: Optional[int | None] = None
     stadium_id: Optional[int | None] = None
     team1_id: Optional[int]
     team1_goals: Optional[int | None] = None
