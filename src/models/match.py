@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from models.stadium import Stadium
     from models.season import Season
     from models.group import Group
+    from models.stage import Stage
 
 
 class MatchStatus(str, Enum):
@@ -37,6 +38,9 @@ class Match(Base):
     round: Mapped[str | None] = mapped_column(String(20))
     stadium_id: Mapped[int | None] = mapped_column(
         ForeignKey("stadiums.id", onupdate="SET NULL", ondelete="SET NULL"),
+    )
+    stage_id: Mapped[int | None] = mapped_column(
+        ForeignKey("stages.id", onupdate="SET NULL", ondelete="SET NULL"),
     )
     team1_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", onupdate="SET NULL", ondelete="SET NULL"),
@@ -68,6 +72,9 @@ class Match(Base):
         back_populates="matches",
     )
     group: Mapped["Group"] = relationship(
+        back_populates="matches",
+    )
+    stage: Mapped["Stage"] = relationship(
         back_populates="matches",
     )
     team_1: Mapped["Team"] = relationship(

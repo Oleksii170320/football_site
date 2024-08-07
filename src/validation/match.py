@@ -10,6 +10,7 @@ class MatchBaseSchemas(BaseModel):
     event: Optional[date | None] = None
     season_id: Optional[int | None] = None
     group_id: Optional[int | None] = None
+    stage_id: Optional[int | None] = None
     round: Annotated[str, MaxLen(20)]
     stadium_id: Optional[int | None] = None
     team1_id: Optional[int]

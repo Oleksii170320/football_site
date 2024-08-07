@@ -1,5 +1,7 @@
+from enum import Enum
 from typing import TYPE_CHECKING
-from sqlalchemy import String, ForeignKey
+
+from sqlalchemy import String, ForeignKey, Enum as SQLAlchemyEnum, Column
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.ext.declarative import declared_attr
 from slugify import slugify
