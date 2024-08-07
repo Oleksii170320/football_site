@@ -27,7 +27,6 @@ class Match(Base):
     __tablename__ = "matches"
 
     id: Mapped[intpk]
-    # event: Mapped[str | None] = mapped_column()
     event = Column(BigInteger, nullable=True)
     season_id: Mapped[int | None] = mapped_column(
         ForeignKey("seasons.id", onupdate="SET NULL", ondelete="SET NULL"),

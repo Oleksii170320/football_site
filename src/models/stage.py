@@ -1,13 +1,11 @@
+# src/models/stage.py
 from typing import TYPE_CHECKING
-
 from sqlalchemy import String
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.ext.declarative import declared_attr
 from slugify import slugify
-
 from core.database import Base
 from models.annonated import intpk
-
 
 if TYPE_CHECKING:
     from models.match import Match

@@ -12,12 +12,11 @@
 
     <h5 class="text-center">Турнірна таблиця</h5>
 
-        {% if not groups %}
-            <div class="container mt-5">
-                <h5 class="text-center">{{ standings[0].team_name }}</h5>
-                <table class="table table-striped">
-                  <thead>
-                      <tr class="row-header">
+    {% if not groups %}
+        <div class="container mt-5">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="row-header">
                         <th scope="col">№</th>
                         <th scope="col"></th>
                         <th scope="col">Команда</th>
@@ -28,70 +27,71 @@
                         <th scope="col">ЗМ - ПМ</th>
                         <th scope="col">Р/М</th>
                         <th scope="col">О</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for team in standings %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for team in standings %}
                         <tr class="row-default">
-                          <th scope="row">{{ loop.index }}</th>
-                          <td>
-                            <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" alt="{{ team.team_name }} logo" height="40px">
-                          </td>
-                          <td align="left"><a class="nav-link" href="/teams/{{ team.team_id }}"><strong>{{ team.team_name }} ({{ team.team_city }})</strong></a></td>
-                          <td>{{ team.played }}</td>
-                          <td>{{ team.won }}</td>
-                          <td>{{ team.drawn }}</td>
-                          <td>{{ team.lost }}</td>
-                          <td>{{ team.goals_for }} - {{ team.goals_against }}</td>
-                          <td>{{ team.goal_difference }}</td>
-                          <td>{{ team.points }}</td>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td align="center">
+                                <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" alt="{{ team.team_name }} logo" height="40px">
+                            </td>
+                            <td align="center"><a class="nav-link" href="/teams/{{ team.team_id }}"><strong>{{ team.team_name }}</strong> ({{ team.team_city }})</a></td>
+                            <td align="center">{{ team.played }}</td>
+                            <td align="center">{{ team.won }}</td>
+                            <td align="center">{{ team.drawn }}</td>
+                            <td align="center">{{ team.lost }}</td>
+                            <td align="center">{{ team.goals_for }} - {{ team.goals_against }}</td>
+                            <td align="center">{{ team.goal_difference }}</td>
+                            <td align="center">{{ team.points }}</td>
                         </tr>
-                      {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-        {% else %}
-            {% for group in groups %}
-              <div class="container mt-5">
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+      {% for stage in stages %}
+        {% for group in groups if group.matches.stage_id == stage.id %}
+            <div class="container mt-5">
                 <h5 class="text-center">{{ group.name }}</h5>
                 <table class="table table-striped">
-                  <thead>
-                    <tr class="row-header">
-                      <th scope="col">№</th>
-                      <th scope="col"></th>
-                      <th scope="col">Команда</th>
-                      <th scope="col">І</th>
-                      <th scope="col">В</th>
-                      <th scope="col">Н</th>
-                      <th scope="col">П</th>
-                      <th scope="col">ЗМ - ПМ</th>
-                      <th scope="col">Р/М</th>
-                      <th scope="col">О</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {% for team in standings if team.group_id == group.id %}
-                          <tr class="row-default">
-                            <th scope="row">{{ loop.index }}</th>
-                            <td>
-                              <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" alt="{{ team.team_name }} logo" height="40px">
-                            </td>
-                            <td align="left"><a class="nav-link" href="/teams/{{ team.team_id }}"><strong>{{ team.team_name }} ({{ team.team_city }})</strong></a></td>
-                            <td>{{ team.played }}</td>
-                            <td>{{ team.won }}</td>
-                            <td>{{ team.drawn }}</td>
-                            <td>{{ team.lost }}</td>
-                            <td>{{ team.goals_for }} - {{ team.goals_against }}</td>
-                            <td>{{ team.goal_difference }}</td>
-                            <td>{{ team.points }}</td>
-                          </tr>
-                      {% endfor %}
-                  </tbody>
+                    <thead>
+                        <tr class="row-header">
+                            <th scope="col">№</th>
+                            <th scope="col"></th>
+                            <th scope="col">Команда</th>
+                            <th scope="col">І</th>
+                            <th scope="col">В</th>
+                            <th scope="col">Н</th>
+                            <th scope="col">П</th>
+                            <th scope="col">ЗМ - ПМ</th>
+                            <th scope="col">Р/М</th>
+                            <th scope="col">О</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in standings if team.group_id == group.id %}
+                            <tr class="row-default">
+                                <th scope="row">{{ loop.index }}</th>
+                                <td>
+                                    <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" alt="{{ team.team_name }} logo" height="40px">
+                                </td>
+                                <td align="left"><a class="nav-link" href="/teams/{{ team.team_id }}"><strong>{{ team.team_name }}</strong> ({{ team.team_city }})</a></td>
+                                <td>{{ team.played }}</td>
+                                <td>{{ team.won }}</td>
+                                <td>{{ team.drawn }}</td>
+                                <td>{{ team.lost }}</td>
+                                <td>{{ team.goals_for }} - {{ team.goals_against }}</td>
+                                <td>{{ team.goal_difference }}</td>
+                                <td>{{ team.points }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
-              </div>
-            {% endfor %}
-        {% endif %}
-
+            </div>
+        {% endfor %}
+      {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block aside_right %}

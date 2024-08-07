@@ -18,6 +18,7 @@ from services.season import (
     get_season_by_id_or_slug,
     get_season_tournament,
 )
+from services.stage import get_distinct_stages_with_groups
 from services.standings import get_calculate_standings
 from services.team import get_regions_team_list
 from services.tournament import get_region_tournaments
@@ -190,6 +191,42 @@ def region_season_matches_upcoming(
     )
 
 
+# @router.get(
+#     "/{region_slug}/{season_slug}/{season_id}/standings",
+#     response_model=List[schemas_match.MatchSchemas],
+# )
+# def region_season_standings(
+#     request: Request,
+#     region_slug: str,
+#     season_id: int,
+#     group_id: int = None,  # Новий параметр для фільтрації по групах
+#     db: Session = Depends(get_db),
+# ):
+#     regions_list = get_regions(db)
+#     seasons_region = get_seasons_region(db, region_slug=region_slug)
+#     standings = get_calculate_standings(db, season_id=season_id, group_id=group_id)
+#     region = get_regions(db, region_slug=region_slug)
+#     season = get_season_by_id_or_slug(db, season_id=season_id)
+#     groups = (
+#         db.query(Group).filter(Group.season_id == season_id).all()
+#     )  # Отримання всіх груп сезону
+#     stages = get_stages(db)
+#
+#     return templates.TemplateResponse(
+#         "standings.html",
+#         {
+#             "request": request,
+#             "regions_list": regions_list,
+#             "seasons": seasons_region,
+#             "standings": standings,
+#             "region": region,
+#             "season": season,
+#             "groups": groups,  # Список груп
+#             "stages": stages,  # Список стадій
+#         },
+#     )
+
+
 @router.get(
     "/{region_slug}/{season_slug}/{season_id}/standings",
     response_model=List[schemas_match.MatchSchemas],
@@ -203,12 +240,13 @@ def region_season_standings(
 ):
     regions_list = get_regions(db)
     seasons_region = get_seasons_region(db, region_slug=region_slug)
-    standings = get_calculate_standings(db, season_id=season_id, group_id=group_id)
+    standings = get_calculate_standings(db, season_id=season_id)
     region = get_regions(db, region_slug=region_slug)
     season = get_season_by_id_or_slug(db, season_id=season_id)
     groups = (
         db.query(Group).filter(Group.season_id == season_id).all()
     )  # Отримання всіх груп сезону
+    stages = get_distinct_stages_with_groups(db, season_id=season_id)
 
     return templates.TemplateResponse(
         "standings.html",
@@ -220,7 +258,7 @@ def region_season_standings(
             "region": region,
             "season": season,
             "groups": groups,  # Список груп
-            "selected_group_id": group_id,  # ID обраної групи
+            "stages": stages,  # Список стадій
         },
     )
 
