@@ -9,13 +9,17 @@
           <td>
             <p class="card-text"><small class="text-muted"><span class="match-date" data-epoch="{{ match.event }}"></span></small></p>
           </td>
-          <td>{{ match.round }}</td>
+          <td>{{ match.round.name }}</td>
           <td align="right">
             <a href="/teams/{{ match.team_1.id }}">
               {{ match.team_1.name }} ({{ match.team_1.city }})
             </a>
           </td>
           <td>{{ match.team1_goals }} : {{ match.team2_goals }}</td>
+              <br>
+                {% if match.team1_penalty %}
+                   (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+                {% endif %}
           <td align="left">
             <a href="/teams/{{ match.team_2.id }}">
               {{ match.team_2.name }} ({{ match.team_2.city }})

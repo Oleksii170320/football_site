@@ -56,6 +56,12 @@ class Match(Base):
     team2_id: Mapped[int] = mapped_column(
         ForeignKey("teams.id", onupdate="SET NULL", ondelete="SET NULL"),
     )
+    team1_penalty: Mapped[int | None] = mapped_column(
+        nullable=True
+    )  # Після матчеві перальті - голи оманди 1
+    team2_penalty: Mapped[int | None] = mapped_column(
+        nullable=True
+    )  # Після матчеві перальті - голи оманди 2
     status = Column(
         SQLAlchemyEnum(MatchStatus),
         default=MatchStatus.not_played,

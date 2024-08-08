@@ -35,7 +35,7 @@
             {% for match in matches %}
               <tr class="row-default">
                   <td><span class="match-date" data-epoch="{{ match.event }}"></span></td>
-                  <td>{{ match.round }}</td>
+                  <td>{{ match.round.name }}</td>
                   <td>{{ match.stadium.name }} {{ match.stadium.city }}</td>
                   <td>
                     <a href="/teams/{{ match.team_1.id }}">
@@ -45,7 +45,13 @@
                   <td class="img-center">
                       <img src="{{ url_for('static', path='/img/teams/' ~ match.team_1.logo) }}" alt="{{ match.team_1.name }} logo">
                   </td>
-                  <td align="center">{{ match.team1_goals }} : {{ match.team2_goals }}</td>
+                  <td align="center">
+                      {{ match.team1_goals }} : {{ match.team2_goals }}
+                        <br>
+                          {% if match.team1_penalty %}
+                             (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+                          {% endif %}
+                  </td>
                   <td class="img-center">
                       <img src="{{ url_for('static', path='/img/teams/' ~ match.team_2.logo) }}" alt="{{ match.team_2.name }} logo">
                   </td>

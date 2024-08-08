@@ -70,13 +70,19 @@
           <tr class="row-default">
             <td>{{ match.season.name }}</td>
             <td><p class="card-text"><small class="text-muted"><span class="match-date" data-epoch="{{ match.event }}"></span></small></p></td>
-            <td>{{ match.round }}</td>
+            <td>{{ match.round.name }}</td>
             <td>{{ match.stadium.name }} {{ match.stadium.city }}</td>
             <td align="right">
               <img src="{{ url_for('static', path='/img/teams/' ~ match.team_1.logo) }}" alt="{{ match.team_1.name }} logo">
               {{ match.team_1.name }} ({{ match.team_1.city }})
             </td>
-            <td>{{ match.team1_goals }} : {{ match.team2_goals }}</td>
+            <td>
+              {{ match.team1_goals }} : {{ match.team2_goals }}
+                <br>
+                  {% if match.team1_penalty %}
+                     (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+                  {% endif %}
+            </td>
             <td align="left">
               <img src="{{ url_for('static', path='/img/teams/' ~ match.team_2.logo) }}" alt="{{ match.team_2.name }} logo">
               {{ match.team_2.name }} ({{ match.team_2.city }})

@@ -17,6 +17,8 @@ class MatchBaseSchemas(BaseModel):
     team1_goals: Optional[int | None] = None
     team2_goals: Optional[int | None] = None
     team2_id: Optional[int]
+    team1_penalty: Optional[int | None] = None
+    team2_penalty: Optional[int | None] = None
     status: MatchStatus
     standing: bool = 1
 
