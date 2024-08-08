@@ -15,11 +15,13 @@
               {{ match.team_1.name }} ({{ match.team_1.city }})
             </a>
           </td>
-          <td>{{ match.team1_goals }} : {{ match.team2_goals }}</td>
+          <td>
+            <strong>{{ match.team1_goals }} : {{ match.team2_goals }}</strong>
               <br>
                 {% if match.team1_penalty %}
                    (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
                 {% endif %}
+          </td>
           <td align="left">
             <a href="/teams/{{ match.team_2.id }}">
               {{ match.team_2.name }} ({{ match.team_2.city }})

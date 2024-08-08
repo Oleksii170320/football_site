@@ -48,7 +48,7 @@
                                     <img src="{{ url_for('static', path='/img/teams/' ~ match.team_1.logo) }}" alt="{{ match.team_1.name }} logo">
                                 </td>
                                 <td align="center">
-                                    {{ match.team1_goals }} : {{ match.team2_goals }} - {{ match.team1_penalty }}
+                                    <strong>{{ match.team1_goals }} : {{ match.team2_goals }}</strong>
                                         <br>
                                          {% if match.team1_penalty %}
                                             (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})

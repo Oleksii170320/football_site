@@ -29,20 +29,19 @@ def get_calculate_standings(db: Session, season_id: int, group_id: int = None):
 
         if match.team1_id not in standings[match.stage_id][match.group_id]:
             standings[match.stage_id][match.group_id][match.team1_id] = {
-                "team_name": match.team_1.name,  # Назва команди
-                "team_city": match.team_1.city,  # Місто команди
-                "logo": match.team_1.logo,  # Емблема команди
-                "played": 0,  # зіграні матчі
-                "won": 0,  # кількість перемог
-                "drawn": 0,  # кількість нічиїх
-                "lost": 0,  # кількість поразок
-                "goals_for": 0,  # кількість забитих голів
-                "goals_against": 0,  # кількість пропущених голів
-                "goal_difference": 0,  # різниця між забитими та пропущеними голами
-                "points": 0,  # залікові бали (очки)
+                "team_name": match.team_1.name,
+                "team_city": match.team_1.city,
+                "logo": match.team_1.logo,
+                "played": 0,
+                "won": 0,
+                "drawn": 0,
+                "lost": 0,
+                "goals_for": 0,
+                "goals_against": 0,
+                "goal_difference": 0,
+                "points": 0,
             }
 
-        # Перевіряємо наявність команди 2 ("гість матчу") в standings
         if match.team2_id not in standings[match.stage_id][match.group_id]:
             standings[match.stage_id][match.group_id][match.team2_id] = {
                 "team_name": match.team_2.name,
@@ -84,19 +83,39 @@ def get_calculate_standings(db: Session, season_id: int, group_id: int = None):
             - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
         )
 
-        if match.team1_goals > match.team2_goals:
+        # Якщо матч завершився нічиєю
+        if match.team1_goals == match.team2_goals:
+            standings[match.stage_id][match.group_id][match.team1_id]["drawn"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["drawn"] += 1
+
+            # Перевіряємо наявність післяматчевих пенальті
+            if match.team1_penalty is not None and match.team2_penalty is not None:
+                if match.team1_penalty > match.team2_penalty:
+                    standings[match.stage_id][match.group_id][match.team1_id][
+                        "points"
+                    ] += 2
+                    standings[match.stage_id][match.group_id][match.team2_id][
+                        "points"
+                    ] += 1
+                else:
+                    standings[match.stage_id][match.group_id][match.team1_id][
+                        "points"
+                    ] += 1
+                    standings[match.stage_id][match.group_id][match.team2_id][
+                        "points"
+                    ] += 2
+            else:
+                standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
+                standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
+
+        elif match.team1_goals > match.team2_goals:
             standings[match.stage_id][match.group_id][match.team1_id]["won"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
             standings[match.stage_id][match.group_id][match.team1_id]["points"] += 3
-        elif match.team1_goals < match.team2_goals:
+        else:
             standings[match.stage_id][match.group_id][match.team2_id]["won"] += 1
             standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
-        else:
-            standings[match.stage_id][match.group_id][match.team1_id]["drawn"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["drawn"] += 1
-            standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
 
     standings_list = []
     for stage_id, groups in standings.items():
