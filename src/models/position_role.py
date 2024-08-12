@@ -24,7 +24,7 @@ class TypeRole(str, Enum):
     half_back = "Півзахисник"
     forward = "Нападник"
     universal = "Універсал"
-    not_specified = "---"
+    not_specified = "-"
 
 
 class StrongLeg(str, Enum):
@@ -33,7 +33,7 @@ class StrongLeg(str, Enum):
     only_left = "Тільки ліва"
     left = "Зліва"
     both = "Обидві"
-    not_specified = "---"
+    not_specified = "-"
 
 
 class PositionRole(Base):
@@ -72,7 +72,7 @@ class PositionRole(Base):
         ),
         nullable=False,
     )
-
+    # зв'язки з таблицями
     team_person: Mapped["TeamPerson"] = relationship(
         back_populates="positions_role",
     )

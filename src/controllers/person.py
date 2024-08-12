@@ -4,7 +4,9 @@ from typing import List
 
 from core.templating import templates
 from core.database import get_db
+from models import Person
 from services import person as crud
+from services.position_role import get_persons_position_team
 from services.region import get_regions_list
 from validation import person as schemas
 
@@ -35,7 +37,7 @@ def read_team(request: Request, person_id: int, db: Session = Depends(get_db)):
 
     regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = crud.get_person_team(db, person_id=person_id)
+    positions_role = get_persons_position_team(db, person_id=person_id)
 
     if person is None:
         raise HTTPException(status_code=404, detail="Team not found")

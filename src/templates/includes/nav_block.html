@@ -3,7 +3,7 @@
         <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}" alt="logo {{ region.name }}" width="50">
         <h4>{{ region.name }}</h4>
         <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament.logo ) }}" alt="logo {{ season.name }}" width="50">
-        <h4>{{ season.name }}</h4>
+        <h4>{{ season.name }} {{ season.year }}</h4>
     </div>
 
     <ul class="nav-links">

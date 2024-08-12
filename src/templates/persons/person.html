@@ -34,38 +34,46 @@
                   <table class="table table-hover">
                     <tbody>
                       <tr>
-                        <td>Дата народження:</td>
+                        <td><strong>Дата народження:</strong></td>
                           <td>
                             <span class="epoch-date" data-epoch="{{ person.birthday }}"></span>
                             (<span class="age" id="age"></span>)
                           </td>
                       </tr>
                       <tr>
-                        <td>Регіон:</td>
+                        <td><strong>Регіон:></strong></td>
                         <td><a href="/region/{{ person.region.slug }}">{{ person.region.name }}</a></td>
                       </tr>
                       <!-- Відображення унікальних команд -->
                       <tr>
-                        <td>Клуб:</td>
-                        <td>
-                          {% for team in positions_role %}
-                            <a href="/teams/{{ team.team_id }}">
-                              {{ team.team_name }} ({{ team.team_city }})
-                            </a>
-                          {% endfor %}
-                        </td>
-                      </tr>
-                      <!-- Відображення всіх позицій -->
-                      <tr>
-                        <td>Амплуа:</td>
-                        <td>
-                          {% for team in positions_role %}
-                              {{ team.position }}
-                                {% if  team.type_role %}
-                                  ({{ team.type_role.value }})
-                                {% endif %}
-                          {% endfor %}
-                        </td>
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">Клуб</th>
+                                <th scope="col">Амплуа</th>
+                                <th scope="col">Позиція</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for team in positions_role %}
+                                <tr class="row-default">
+                                  <td align="left">
+                                     <a href="/teams/{{ team.team_id }}">
+                                       {{ team.team_name }} ({{ team.team_city }})
+                                     </a>
+                                  </td>
+                                  <td align="left"> {{ team.position }}</td>
+                                  <td align="left">
+                                      {% if  team.type_role %}
+                                        {{ team.type_role.value }}
+                                      {% else %}
+                                         -
+                                      {% endif %}
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
                       </tr>
                     </tbody>
                   </table>
