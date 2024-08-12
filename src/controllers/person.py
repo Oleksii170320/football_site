@@ -57,7 +57,7 @@ def read_team_career(request: Request, person_id: int, db: Session = Depends(get
 
     regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = crud.get_person_team(db, person_id=person_id)
+    positions_role = get_persons_position_team(db, person_id=person_id)
     playing_career = crud.get_person_team_career(db, person_id=person_id)
 
     if person is None:
@@ -81,7 +81,7 @@ def read_team_applications(
 
     regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = crud.get_person_team(db, person_id=person_id)
+    positions_role = get_persons_position_team(db, person_id=person_id)
     tournaments = crud.get_person_teams_tournaments(db, person_id=person_id)
 
     if person is None:
