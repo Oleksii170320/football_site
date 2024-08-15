@@ -1,0 +1,34 @@
+    <a href="/persons/{{ staff.id }}" style="text-decoration: none">
+
+        <div class="card mb-3 w-100">
+            <div class="row g-0 h-100">
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    {% if staff.photo %}
+                        <img src="{{ url_for('static', path='/img/person/' ~ staff.photo) }}"
+                             class="img-fluid rounded-circle"
+                             alt="{{ staff.photo }}"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+                             class="img-fluid rounded-circle"
+                             alt="{{ staff.photo }}"
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body h-100 d-flex flex-column justify-content-between">
+                        <h4 class="card-title">{{ staff.position }}</h4>
+                        <h5 class="card-title">{{ staff.lastname }} {{ staff.name }} {{ staff.surname }}</h5>
+                        <h6 class="card-title">
+                            {% if staff.birthday %}
+                              <strong>Дата народження:</strong> {{ staff.birthday }}  ({{ staff.age }} років)
+                            {% endif %}
+                        </h6>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </a>
+

@@ -87,8 +87,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="/teams/{{ team.id }}/application">
                 <button type="button" class="btn btn-outline-dark">Склад команди</button>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/teams/{{ team.id }}/leadership">
+                <button type="button" class="btn btn-outline-dark">Керівництво</button>
               </a>
             </li>
             <li class="nav-item">
@@ -111,6 +116,15 @@
 
       {% if matches %}
         {% include "team/includes/matches.html" %}
+      {% endif %}
+
+
+      {% if application %}
+        {% include "team/includes/players_list.html" %}
+      {% endif %}
+
+      {% if leadership %}
+        {% include "team/includes/team_staff.html" %}
       {% endif %}
 
       {% if staff %}

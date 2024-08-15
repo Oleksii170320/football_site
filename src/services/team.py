@@ -1,6 +1,7 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from models import team as models, Region
+from models import team as models, Region, TeamPerson, Person, PositionRole, Position
 from validation import team as schemas
 
 
@@ -20,6 +21,45 @@ def get_regions_team_list(db: Session, region_slug: str):
         .all()
     )
     return team_list
+
+
+def get_team_staff(db: Session, team_id: int):
+    """Персонал команди"""
+
+    result = (
+        db.query(
+            Person.id,
+            Person.photo,
+            Person.name,
+            Person.surname,
+            Person.lastname,
+            func.strftime(
+                "%d-%m-%Y", func.datetime(Person.birthday, "unixepoch")
+            ).label("birthday"),
+            func.floor(
+                (
+                    func.strftime("%Y", "now")
+                    - func.strftime("%Y", func.datetime(Person.birthday, "unixepoch"))
+                )
+                - (
+                    func.strftime("%m-%d", "now")
+                    < func.strftime(
+                        "%m-%d", func.datetime(Person.birthday, "unixepoch")
+                    )
+                )
+            ).label("age"),
+            Position.position,
+            PositionRole.position_id.label("position_id"),
+            PositionRole.type_role,
+            PositionRole.player_number,
+        )
+        .join(TeamPerson, TeamPerson.person_id == Person.id)
+        .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
+        .join(Position, Position.id == PositionRole.position_id)
+        .filter(TeamPerson.team_id == team_id, PositionRole.active.is_(True))
+        .all()
+    )
+    return result
 
 
 def get_teams(db: Session):

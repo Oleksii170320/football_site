@@ -32,7 +32,7 @@ class Person(RegionRelationMixin, Base):
 
     id: Mapped[intpk]
     name: Mapped[str] = mapped_column(String(30), nullable=False)
-    surname: Mapped[str] = mapped_column(String(30), nullable=False)
+    surname: Mapped[str] = mapped_column(String(30), nullable=True)
     lastname: Mapped[str] = mapped_column(String(40), nullable=False)
     birthday = Column(BigInteger, nullable=True)
     photo: Mapped[str | None] = mapped_column(String(256))

@@ -13,6 +13,7 @@ from services.season import (
     get_seasons_winner,
     get_seasons_teams_history,
 )
+from services.team import get_team_staff
 from validation import team as schemas
 
 router = APIRouter()
@@ -48,7 +49,7 @@ def read_teams_test(skip: int = 0, limit: int = 10, db: Session = Depends(get_db
 
 
 @router.get("/{team_id}", response_model=schemas.TeamSchemas)
-def read_team(
+def read_team_all(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
 
@@ -64,13 +65,13 @@ def read_team(
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,
+            "team": team,  # Загальна інформація команди
         },
     )
 
 
 @router.get("/{team_id}/matches", response_model=schemas.TeamSchemas)
-def read_team(
+def read_team_matches(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
 
@@ -87,14 +88,62 @@ def read_team(
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,
+            "team": team,  # Загальна інформація команди
             "matches": matches,
         },
     )
 
 
+@router.get("/{team_id}/application", response_model=schemas.TeamSchemas)
+def read_team_application(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+
+    regions_list = get_regions_list(db)
+    seasons_region = get_seasons_region(db, region_slug=region_slug)
+    team = crud.get_team(db, team_id=team_id)
+    application = get_team_staff(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "seasons": seasons_region,  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "application": application,
+        },
+    )
+
+
+@router.get("/{team_id}/leadership", response_model=schemas.TeamSchemas)
+def read_team_leadership(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+
+    regions_list = get_regions_list(db)
+    seasons_region = get_seasons_region(db, region_slug=region_slug)
+    team = crud.get_team(db, team_id=team_id)
+    leadership = get_team_staff(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "seasons": seasons_region,  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "leadership": leadership,
+        },
+    )
+
+
 @router.get("/{team_id}/achievement", response_model=schemas.TeamSchemas)
-def read_team(
+def read_team_achievement(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
 
@@ -111,14 +160,14 @@ def read_team(
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,
+            "team": team,  # Загальна інформація команди
             "achievement": achievement,
         },
     )
 
 
 @router.get("/{team_id}/history", response_model=schemas.TeamSchemas)
-def read_team(
+def read_team_history(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
 
@@ -136,7 +185,7 @@ def read_team(
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # інформація про команду
+            "team": team,  # Загальна інформація команди
             "history": history,  # Історія турнірів
         },
     )
