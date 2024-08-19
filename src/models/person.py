@@ -15,6 +15,7 @@ from models.mixins import RegionRelationMixin
 
 if TYPE_CHECKING:
     from models.team import Team
+    from models.match_properties import MatchProperties
 
 
 metadata = MetaData()
@@ -49,6 +50,11 @@ class Person(RegionRelationMixin, Base):
         foreign_keys="[Team.coach_id]",
         back_populates="coach",
     )
+
+    # # зв'язки з таблицями
+    # match_properties: Mapped["MatchProperties"] = relationship(
+    #     back_populates="person",
+    # )
 
     # many-to-many relationship to Team, bypassing the TeamPerson class
     teams_associations: Mapped[list["Team"]] = relationship(

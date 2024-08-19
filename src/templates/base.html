@@ -66,11 +66,11 @@
 
                                 {% if region.slug  %}
                                   {% for season in seasons %}
-                                    {% if region.slug == season.tournament.organization.region.slug %}
+                                    {% if region.slug == season.region_slug %}
                                       <li>
 <!--                                        <a href="/matches/tournament/{{ season.id }}">-->
-                                          <a href="/region/{{ region.slug }}/{{ season.id }}/{{ season.slug }}">
-                                          {{ season.name }}
+                                          <a href="/region/{{ season.region_slug }}/{{ season.season_id }}/{{ season.season_slug }}">
+                                          {{ season.season_name }}
                                         </a>
                                       </li>
                                     {% endif %}

@@ -1,7 +1,7 @@
 from datetime import date
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, Annotated
-from annotated_types import MinLen, MaxLen
+from typing import Optional
+
 
 from models.match import MatchStatus
 
@@ -36,3 +36,4 @@ class MatchSchemas(MatchBaseSchemas):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    # players: list["PersonSchemas"] = []

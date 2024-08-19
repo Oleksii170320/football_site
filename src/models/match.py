@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from models.group import Group
     from models.stage import Stage
     from models.round import Round
+    from models.match_properties import MatchProperties
 
 
 class MatchStatus(str, Enum):
@@ -93,6 +94,10 @@ class Match(Base):
         foreign_keys=[team1_id],
         back_populates="matches_1",
     )
+    match_properties: Mapped[list["MatchProperties"]] = relationship(
+        back_populates="matches",
+    )
+    # many-to-many relationship to Team, bypassing the MatchTeam class
     team_2: Mapped["Team"] = relationship(
         "Team",
         foreign_keys=[team2_id],

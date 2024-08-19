@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block style %}
+   <link rel="stylesheet" href="/static/css/styles_matches_season.css">
+<style>
+#main {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid grey;
+
+}
+
+.teams-container {
+    display: flex;
+    justify-content: space-between; /* Розміщує елементи на однаковій відстані по горизонталі */
+}
+
+.team {
+    flex: 1; /* Це забезпечує рівномірний розподіл простору між командами */
+    margin: 0 10px; /* Відстань між командами */
+     border: 1px solid grey;
+}
+.region-info {
+    color: white;
+}
+</style>
+
+{% endblock %}
+
+
+
+{% block aside_left %}
+{% endblock %}
+
+{% block content %}
+    <div class="nav-block">
+        <div class="region-info">
+           <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}" alt="{{ match.tournament_name }} logo" height="90px">
+
+            <h2>{{ match.season_name }} {{ match.season_year }}
+                {% if match.stage_name %}
+                    - {{ match.stage_name }}
+                {% endif %}
+                {% if match.round_name %}
+                    - {{ match.round_name }}
+                {% endif %}
+            </h2>
+        </div>
+    </div>
+
+<table class="table table-striped">
+   <tbody>
+      <tr>
+         <td>
+            <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}" alt="{{ match.team1_name }} logo" height="120px">
+         </td>
+         <td align="right">
+             <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
+         </td>
+         <td align="center" style="text-align: center; vertical-align: middle;">
+            <h5>Дата - {{ match.event }}<br>
+                Стадіон - {{ match.stadium_name }} {{ match.stadium_city }}</h5><br>
+            <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
+            {% if match.team1_penalty and match.team2_penalty %}
+                (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
+            {% endif %}<br>
+         </td>
+         <td align="left">
+             <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
+         </td>
+         <td>
+            <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}" alt="{{ match.team2_name }} logo" height="120px">
+         </td>
+      </tr>
+   </tbody>
+</table>
+
+
+
+    <div id="main">
+        <h2>Стартові склади</h2>
+        <div class="teams-container">
+            <div id="1" class="team">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="row-header">
+                            <th scope="col">№</th>
+                            <th scope="col">Гравець</th>
+                            <th scope="col">Осн</th>
+                            <th scope="col">Зам</th>
+                            <th scope="col">Хв</th>
+                            <th scope="col">Г(П)</th>
+                            <th scope="col">Авт</th>
+                            <th scope="col">ЖК</th>
+                            <th scope="col">ЧК</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in match_info if info.team_id == match.team1_id and info.starting %}
+                            {% include "matches/includes/players_in_match.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="2" class="team">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="row-header">
+                            <th scope="col">№</th>
+                            <th scope="col">Гравець</th>
+                            <th scope="col">Осн</th>
+                            <th scope="col">Зам</th>
+                            <th scope="col">Хв</th>
+                            <th scope="col">Г(П)</th>
+                            <th scope="col">Авт</th>
+                            <th scope="col">ЖК</th>
+                            <th scope="col">ЧК</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in match_info if info.team_id == match.team2_id and info.starting %}
+                            {% include "matches/includes/players_in_match.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <h2>Заміна</h2>
+        <div class="teams-container">
+            <div class="team">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="row-header">
+                            <th scope="col">№</th>
+                            <th scope="col">Гравець</th>
+                            <th scope="col">Осн</th>
+                            <th scope="col">Зам</th>
+                            <th scope="col">Хв</th>
+                            <th scope="col">Г(П)</th>
+                            <th scope="col">Авт</th>
+                            <th scope="col">ЖК</th>
+                            <th scope="col">ЧК</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in match_info if info.team_id == match.team1_id and info.protocol and not info.starting %}
+                            {% include "matches/includes/players_in_match.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="team">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="row-header">
+                            <th scope="col">№</th>
+                            <th scope="col">Гравець</th>
+                            <th scope="col">Осн</th>
+                            <th scope="col">Зам</th>
+                            <th scope="col">Хв</th>
+                            <th scope="col">Г(П)</th>
+                            <th scope="col">Авт</th>
+                            <th scope="col">ЖК</th>
+                            <th scope="col">ЧК</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in match_info if info.team_id == match.team2_id and info.protocol and not info.starting %}
+                            {% include "matches/includes/players_in_match.html" %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+
+{% block aside_right %}
+
+{% endblock %}

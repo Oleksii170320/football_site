@@ -26,3 +26,6 @@ class TeamPerson(Base):
     positions_role: Mapped[list["PositionRole"]] = relationship(
         back_populates="team_person",
     )
+    match_properties: Mapped["MatchProperties"] = relationship(
+        back_populates="player",
+    )

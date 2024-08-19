@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
 
@@ -91,15 +91,58 @@ def get_season_tournament(db: Session, tournament_id: int):
     return season
 
 
+# def get_seasons_region(db: Session, region_slug: str):
+#     current_year = datetime.now().year
+#     seasons = (
+#         db.query(
+#             Region.slug.label("region_slug"),
+#             Season.id,
+#             Season.slug,
+#             Season.name,
+#             func.strftime(
+#                 "%Y", func.date(func.datetime(Season.start_date, "unixepoch"))
+#             ).label("start_date"),
+#             func.strftime(
+#                 "%Y", func.date(func.datetime(Season.end_date, "unixepoch"))
+#             ).label("end_date"),
+#         )
+#         .join(Tournament, Tournament.id == Season.tournament_id)
+#         .join(Organization, Organization.id == Tournament.organization_id)
+#         .join(Region, Region.id == Organization.region_id)
+#         # .filter(Region.slug == region_slug, Season.year == "2024")
+#         .filter(Region.slug == region_slug, Season.year == str(current_year))
+#         .all()
+#     )
+#     return seasons
+
+
 def get_seasons_region(db: Session, region_slug: str):
     current_year = datetime.now().year
     seasons = (
-        db.query(Season)
-        .join(Season.tournament)
-        .join(Tournament.organization)
-        .join(Organization.region)
-        # .filter(Region.slug == region_slug, Season.year == "2024")
-        .filter(Region.slug == region_slug, Season.year == str(current_year))
+        db.query(
+            Region.slug.label("region_slug"),
+            Season.id.label("season_id"),
+            Season.slug.label("season_slug"),
+            Season.name.label("season_name"),
+            func.strftime(
+                "%Y", func.date(func.datetime(Season.start_date, "unixepoch"))
+            ).label("start_date"),
+            func.strftime(
+                "%Y", func.date(func.datetime(Season.end_date, "unixepoch"))
+            ).label("end_date"),
+        )
+        .join(Tournament, Tournament.id == Season.tournament_id)
+        .join(Organization, Organization.id == Tournament.organization_id)
+        .join(Region, Region.id == Organization.region_id)
+        .filter(
+            Region.slug == region_slug,
+            func.strftime(
+                "%Y", func.date(func.datetime(Season.start_date, "unixepoch"))
+            )
+            <= str(current_year),
+            func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch")))
+            >= str(current_year),
+        )
         .all()
     )
     return seasons

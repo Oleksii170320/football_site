@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from datetime import datetime
 from enum import Enum
 from sqlalchemy import (
@@ -14,6 +16,11 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from core.database import Base
 from models.annonated import intpk
+
+
+if TYPE_CHECKING:
+    from models.match_properties import MatchProperties
+
 
 metadata = MetaData()
 
@@ -79,6 +86,9 @@ class PositionRole(Base):
     position: Mapped["Position"] = relationship(
         back_populates="positions_role",
     )
+    # match_properties: Mapped["MatchProperties"] = relationship(
+    #     back_populates="player",
+    # )
 
 
 # Функція для оновлення поля enddate, якщо active = 1

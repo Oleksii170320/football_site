@@ -4,6 +4,8 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
 
+from validation.match_properties import MatchPropertiesSchemas
+
 
 class PersonBaseSchemas(BaseModel):
     name: Annotated[str, MinLen(1), MaxLen(30)]
@@ -30,3 +32,4 @@ class PersonSchemas(PersonBaseSchemas):
     teams: list["TeamSchemas"] = []
     team_president: list["TeamSchemas"] = []
     team_coach: list["TeamSchemas"] = []
+    # match_properties: list["MatchPropertiesSchemas"] = []

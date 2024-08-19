@@ -46,11 +46,13 @@
                       <img src="{{ url_for('static', path='/img/teams/' ~ match.team_1.logo) }}" alt="{{ match.team_1.name }} logo">
                   </td>
                   <td align="center">
-                     <strong>{{ match.team1_goals }} : {{ match.team2_goals }}</strong>
-                        <br>
-                          {% if match.team1_penalty %}
-                             (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
-                          {% endif %}
+                     <a href="/matches/{{ match.id }}" target="_blank">
+                        <strong>{{ match.team1_goals }} : {{ match.team2_goals }}</strong>
+                           <br>
+                             {% if match.team1_penalty %}
+                                (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+                             {% endif %}
+                     </a>
                   </td>
                   <td class="img-center">
                       <img src="{{ url_for('static', path='/img/teams/' ~ match.team_2.logo) }}" alt="{{ match.team_2.name }} logo">

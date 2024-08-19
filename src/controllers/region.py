@@ -113,7 +113,7 @@ def region_season(
     season = get_season_by_id_or_slug(db, season_id=season_id)
 
     return templates.TemplateResponse(
-        "region_matches.html",
+        "matches/region_matches.html",
         {
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
@@ -146,7 +146,7 @@ def region_season_matches_results(
     matches_results = get_matches_results_season(db, season_id=season_id)
 
     return templates.TemplateResponse(
-        "region_matches.html",
+        "matches/region_matches.html",
         {
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
@@ -178,7 +178,7 @@ def region_season_matches_upcoming(
     matches_upcoming = get_matches_upcoming_season(db, season_id=season_id)
 
     return templates.TemplateResponse(
-        "region_matches.html",
+        "matches/region_matches.html",
         {
             "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)

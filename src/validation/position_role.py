@@ -32,3 +32,4 @@ class PositionRoleSchemas(PositionRoleBaseSchemas):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    # match_properties: list["MatchPropertiesSchemas"] = []

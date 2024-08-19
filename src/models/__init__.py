@@ -15,6 +15,7 @@ from .team_person_assotiation import TeamPerson
 from .group import Group
 from .stage import Stage
 from .round import Round
+from .match_properties import MatchProperties
 
 
 MODELS = [
@@ -35,4 +36,5 @@ MODELS = [
     Group,
     Stage,
     Round,
+    MatchProperties,
 ]

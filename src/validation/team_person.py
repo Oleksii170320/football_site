@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from typing import Annotated
 
 from validation.position_role import PositionRoleSchemas
+from validation.match_properties import MatchPropertiesSchemas
 
 
 class TeamPersonSchemas(BaseModel):
@@ -22,3 +23,4 @@ class TeamPersonSchemas(TeamPersonSchemas):
 
     id: int
     positions_role: list["PositionRoleSchemas"] = []
+    match_properties: list["MatchPropertiesSchemas"] = []

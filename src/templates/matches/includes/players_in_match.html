@@ -1,0 +1,50 @@
+<tr>
+  <td>
+     {% if info.player_number  %}
+         {{ info.player_number }}
+     {% else %}
+          -
+     {% endif %}
+  </td>
+  <td>
+     {{ info.lastname }} {{ info.name }}
+  </td>
+  <td>
+     {% if info.starting %}
+         <img src="{{ url_for('static', path='img/techical_image/green_square.png') }}" alt="-" height="15px">
+     {% endif %}
+  </td>
+  <td>
+      {% if info.replacement %}
+         <img src="{{ url_for('static', path='img/techical_image/arrow_green-res.png') }}" alt="-" height="25px">
+      {% endif %}
+  </td>
+  <td>
+     {{ info.minutes }}
+  </td>
+  <td>
+     {{ info.goals + info.goals_penalty }}
+     {% if info.goals_penalty %}
+         ({{ info.goals_penalty }})
+     {% endif %}
+  </td>
+  <td>
+     {{ info.own_goal }}
+  </td>
+  <td>
+     {% if info.yellow_card %}
+        <img src="{{ url_for('static', path='img/techical_image/card_yellow.png') }}" alt="-" height="30px">
+     {% else %}
+         -
+     {% endif %}
+  </td>
+  <td>
+     {% if info.red_card %}
+         <img src="{{ url_for('static', path='img/techical_image/card_red.png') }}" alt="-" height="30px">
+     {% elif info.second_yellow_card %}
+         <img src="{{ url_for('static', path='img/techical_image/card_second_yellow.png') }}" alt="-" height="30px">
+     {% else %}
+         -
+     {% endif %}
+  </td>
+</tr>
