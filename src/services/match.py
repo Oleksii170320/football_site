@@ -12,53 +12,11 @@ from models import (
     Team,
     Round,
     Stage,
+    PlayerRole,
+    MatchEvent,
+    RefEvent,
 )
 from validation import match as schemas
-
-
-# def get_match(db: Session, match_id: int):
-#     # Створюємо аліаси для таблиці Team
-#     team1_alias = aliased(Team)
-#     team2_alias = aliased(Team)
-#
-#     result = (
-#         db.query(
-#             Match.id.label("match_id"),
-#             Tournament.logo.label("tournament_logo"),
-#             Season.name.label("season_name"),
-#             Season.year.label("season_year"),
-#             Stage.name.label("stage_name"),
-#             Round.name.label("round_name"),
-#             func.strftime("%d-%m-%Y", func.datetime(Match.event, "unixepoch")).label(
-#                 "event"
-#             ),
-#             Stadium.name.label("stadium_name"),
-#             Stadium.city.label("stadium_city"),
-#             Match.team1_id.label("team1_id"),
-#             team1_alias.logo.label("team1_logo"),
-#             team1_alias.name.label("team1_name"),
-#             team1_alias.city.label("team1_city"),
-#             Match.team1_goals,
-#             Match.team2_goals,
-#             Match.team1_penalty,
-#             Match.team2_penalty,
-#             Match.team2_id.label("team2_id"),
-#             team2_alias.name.label("team2_name"),
-#             team2_alias.city.label("team2_city"),
-#             team2_alias.logo.label("team2_logo"),
-#         )
-#         .join(Season, Season.id == Match.season_id)
-#         .join(Tournament, Tournament.id == Season.tournament_id)
-#         .join(Stadium, Stadium.id == Match.stadium_id)
-#         .join(team1_alias, team1_alias.id == Match.team1_id)
-#         .join(team2_alias, team2_alias.id == Match.team2_id)
-#         .join(Round, Round.id == Match.round_id)
-#         .join(Stage, Stage.id == Match.stage_id)
-#         .filter(Match.id == match_id)
-#         .first()
-#     )
-#
-#     return result
 
 
 def get_match(db: Session, match_id: int):
@@ -81,6 +39,7 @@ def get_match(db: Session, match_id: int):
             Tournament.name.label("tournament_name"),
             Stadium.name.label("stadium_name"),
             Stadium.city.label("stadium_city"),
+            team1_alias.id.label("team1_id"),
             team1_alias.logo.label("team1_logo"),
             team1_alias.name.label("team1_name"),
             team1_alias.city.label("team1_city"),
@@ -91,6 +50,7 @@ def get_match(db: Session, match_id: int):
             team2_alias.name.label("team2_name"),
             team2_alias.city.label("team2_city"),
             team2_alias.logo.label("team2_logo"),
+            team2_alias.id.label("team2_id"),
         )
         .join(Season, Season.id == Match.season_id)
         .join(Tournament, Tournament.id == Season.tournament_id)
@@ -108,27 +68,24 @@ def get_match_info(db: Session, match_id: int):
     match_info = (
         db.query(
             PositionRole.player_number,
-            PositionRole.type_role,
-            Person.id,
+            PositionRole.player_role_id,
+            PlayerRole.name.label("role_name"),
+            Person.id.label("playaer_id"),
             Person.name,
             Person.surname,
             Person.lastname,
+            TeamPerson.team_id,
             MatchProperties.protocol,
             MatchProperties.starting,
-            MatchProperties.replacement,
-            MatchProperties.minutes,
-            MatchProperties.goals,
-            MatchProperties.goals_penalty,
-            MatchProperties.own_goal,
-            MatchProperties.yellow_card,
-            MatchProperties.second_yellow_card,
-            MatchProperties.red_card,
-            TeamPerson.team_id,
-            MatchProperties.match_id,
+            MatchProperties.start_min,
+            MatchProperties.end_min,
         )
         .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
         .join(Person, Person.id == TeamPerson.person_id)
         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
+        .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
+        # .outerjoin(MatchEvent, MatchEvent.match_id == PositionRole.id)
+        # .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
         .filter(
             MatchProperties.match_id == match_id,
             PositionRole.position_id.in_([9, 10]),
@@ -136,6 +93,58 @@ def get_match_info(db: Session, match_id: int):
         )
         .all()
     )
+    return match_info
+
+
+def get_match_event(db: Session, match_id: int):
+    match_info = (
+        db.query(
+            Person.id.label("person_id"),
+            Person.name.label("person_name"),
+            Person.lastname.label("person_lastname"),
+            RefEvent.name.label("event_name"),
+            RefEvent.image.label("event_image"),
+            MatchEvent.minute.label("minute"),
+            MatchEvent.player_replacement_id.label("player_replacement"),
+            TeamPerson.team_id.label("team_id"),
+        )
+        .join(TeamPerson, TeamPerson.person_id == Person.id)
+        .join(MatchProperties, MatchProperties.player_id == TeamPerson.id)
+        .join(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
+        .join(RefEvent, RefEvent.id == MatchEvent.event_id)
+        .filter(MatchProperties.match_id == match_id)
+        .all()
+    )
+    return match_info
+
+
+def get_match_replacement(db: Session, match_id: int):
+    # Гравці, якіх замінили
+    subquery = (
+        db.query(MatchEvent.player_replacement_id)
+        .join(MatchProperties, MatchProperties.id == MatchEvent.player_match_id)
+        .filter(
+            MatchProperties.match_id == match_id,
+            MatchEvent.player_replacement_id.isnot(None),
+        )
+        .subquery()
+    )
+
+    # Основний запит, що використовує підзапит
+    match_info = (
+        db.query(
+            Person.id.label("person_id"),
+            Person.name.label("person_name"),
+            Person.lastname.label("person_lastname"),
+            MatchProperties.player_id.label("player_id"),
+            MatchProperties.id.label("player_match_id"),
+        )
+        .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
+        .join(Person, Person.id == TeamPerson.person_id)
+        .filter(MatchProperties.id.in_(subquery))
+        .all()
+    )
+
     return match_info
 
 

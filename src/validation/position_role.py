@@ -4,23 +4,22 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
 
-from models.position_role import TypeRole, StrongLeg
+from models.position_role import StrongLeg
 
 
 class PositionRoleBaseSchemas(BaseModel):
     team_person_id: Annotated[int]
     position_id: Annotated[Optional[int]]
-    type_role: TypeRole
     strong_leg: StrongLeg
     player_number: Optional[int | None]
     startdate: Optional[date | None] = None
     enddate: Optional[date | None] = None
     standing: bool = 1
+    player_role_id: Annotated[int] = 1
 
 
 class PositionRoleCreateSchemas(PositionRoleBaseSchemas):
-    type_role: TypeRole = TypeRole.not_specified
-    strong_leg: TypeRole = StrongLeg.not_specified
+    strong_leg: StrongLeg = StrongLeg.not_specified
     # pass
 
 

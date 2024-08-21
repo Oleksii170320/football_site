@@ -16,6 +16,7 @@ from models import (
     Organization,
     Association,
     Region,
+    PlayerRole,
 )
 from validation import person as schemas
 
@@ -37,7 +38,8 @@ def get_person_team(db: Session, person_id: int):
             Team.name.label("team_name"),
             Team.city.label("team_city"),
             Position.position,
-            PositionRole.type_role,
+            PositionRole.player_role_id,
+            PlayerRole.full_name,
             PositionRole.strong_leg,
         )
         .join(Region, Region.id == Person.region_id)
@@ -45,6 +47,7 @@ def get_person_team(db: Session, person_id: int):
         .join(Team, Team.id == TeamPerson.team_id)
         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
         .join(Position, Position.id == PositionRole.position_id)
+        .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
         .filter(Person.id == person_id, PositionRole.enddate.is_(None))
         .all()
     )

@@ -10,6 +10,8 @@ from services.match import (
     get_matches_results_season,
     get_matches_upcoming_season,
     get_match_info,
+    get_match_event,
+    get_match_replacement,
 )
 from services.news_list import get_news_list
 from services.region import get_regions_list
@@ -37,34 +39,14 @@ def read_matches(request: Request, db: Session = Depends(get_db)):
     )
 
 
-# @router.get("/{match_id}", response_model=schemas.MatchSchemas)
-# def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
-#
-#     news_list = get_news_list(db)
-#     regions_list = get_regions_list(db)
-#     # match = crud.get_match(db, match_id=match_id)
-#     # match_info = get_match_info(db, match_id=match_id)
-#
-#     # if match is None:
-#     #     raise HTTPException(status_code=404, detail="Match not found")
-#     return templates.TemplateResponse(
-#         "matches/match.html",
-#         {
-#             "request": request,
-#             "news_list": news_list,  # Стрічка новин (всі регіони)
-#             "regions_list": regions_list,  # Список регіонів (бокове меню)
-#             # "match": match,
-#             # "match_info": match_info,
-#         },
-#     )
-
-
 @router.get("/{match_id}", response_model=schemas.MatchSchemas)
 def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
 
     regions_list = get_regions_list(db)
     match = crud.get_match(db, match_id=match_id)
     match_info = get_match_info(db, match_id=match_id)
+    events = get_match_event(db, match_id=match_id)
+    replacement = get_match_replacement(db, match_id=match_id)
 
     if match is None:
         raise HTTPException(status_code=404, detail="Match not found")
@@ -75,6 +57,8 @@ def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "match": match,
             "match_info": match_info,
+            "events": events,
+            "replacement": replacement,
         },
     )
 

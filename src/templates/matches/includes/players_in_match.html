@@ -7,44 +7,53 @@
      {% endif %}
   </td>
   <td>
-     {{ info.lastname }} {{ info.name }}
+    {{ info.role_name }}
   </td>
   <td>
-     {% if info.starting %}
-         <img src="{{ url_for('static', path='img/techical_image/green_square.png') }}" alt="-" height="15px">
-     {% endif %}
+      <a href="/persons/{{ info.playaer_id }}">
+         {{ info.lastname }} {{ info.name }}
+      </a>
   </td>
   <td>
-      {% if info.replacement %}
-         <img src="{{ url_for('static', path='img/techical_image/arrow_green-res.png') }}" alt="-" height="25px">
+      {% for event in events if event.person_id == info.playaer_id %}
+          {% if event.event_name == "Заміна - вихід на поле" %}
+              <img src="{{ url_for('static', path='img/techical_image/arrow_green-res.png') }}" alt="-" height="30px">
+          {% elif event.event_name == "Заміна - вихід з поле" %}
+              <img src="{{ url_for('static', path='img/techical_image/arrow_res-green.png') }}" alt="-" height="30px">
+          {% endif %}
+      {% endfor %}
+  </td>
+<!--  <td>-->
+<!--     {{ info.start_min }} - {{ info.end_min }}-->
+<!--  </td>-->
+  <td>
+    {% for event in events if event.person_id == info.playaer_id %}
+      {% if event.event_name == "Гол" %}
+         <img src="{{ url_for('static', path='img/techical_image/goal.png') }}" alt="-" height="30px">
+      {% elif event.event_name == "Гол з пенальті" %}
+         <img src="{{ url_for('static', path='img/techical_image/goal.png') }}" alt="-" height="30px">
+      {% elif event.event_name == "Незабитий пенальті" %}
+         <img src="{{ url_for('static', path='img/techical_image/unscored_penalty.png') }}" alt="-" height="30px">
       {% endif %}
+    {% endfor %}
   </td>
   <td>
-     {{ info.minutes }}
+    {% for event in events if event.person_id == info.playaer_id and event.event_name == "Автогол" %}
+      <img src="{{ url_for('static', path='img/techical_image/own_goal.png') }}" alt="-" height="30px">
+    {% endfor %}
   </td>
   <td>
-     {{ info.goals + info.goals_penalty }}
-     {% if info.goals_penalty %}
-         ({{ info.goals_penalty }})
-     {% endif %}
+    {% for event in events if event.person_id == info.playaer_id and event.event_name == "Жовта картка" %}
+      <img src="{{ url_for('static', path='img/techical_image/card_yellow.png') }}" alt="-" height="30px">
+    {% endfor %}
   </td>
   <td>
-     {{ info.own_goal }}
-  </td>
-  <td>
-     {% if info.yellow_card %}
-        <img src="{{ url_for('static', path='img/techical_image/card_yellow.png') }}" alt="-" height="30px">
-     {% else %}
-         -
-     {% endif %}
-  </td>
-  <td>
-     {% if info.red_card %}
-         <img src="{{ url_for('static', path='img/techical_image/card_red.png') }}" alt="-" height="30px">
-     {% elif info.second_yellow_card %}
-         <img src="{{ url_for('static', path='img/techical_image/card_second_yellow.png') }}" alt="-" height="30px">
-     {% else %}
-         -
-     {% endif %}
+    {% for event in events if event.person_id == info.playaer_id %}
+      {% if event.event_name == "Друга жовта картка" %}
+          <img src="{{ url_for('static', path='img/techical_image/card_second_yellow.png') }}" alt="-" height="30px">
+      {% elif event.event_name == "Червона картка" %}
+          <img src="{{ url_for('static', path='img/techical_image/card_red.png') }}" alt="-" height="30px">
+      {% endif %}
+    {% endfor %}
   </td>
 </tr>

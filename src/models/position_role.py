@@ -57,17 +57,17 @@ class PositionRole(Base):
     startdate = Column(BigInteger, nullable=True)
     enddate = Column(BigInteger, nullable=True)
     active: Mapped[bool] = mapped_column(default=1, server_default="1", nullable=False)
-    type_role = Column(
-        SQLAlchemyEnum(TypeRole),
-        default=TypeRole.not_specified,
-        server_default=TypeRole.not_specified.value,
-        nullable=True,
-    )
     strong_leg = Column(
         SQLAlchemyEnum(StrongLeg),
         default=StrongLeg.not_specified,
         server_default=StrongLeg.not_specified.value,
         nullable=True,
+    )
+    player_role_id: Mapped[int] = mapped_column(
+        ForeignKey("player_roles.id", onupdate="SET NULL", ondelete="SET NULL"),
+        nullable=True,
+        default=1,  # Значення за замовчуванням на рівні Python-коду
+        server_default="1",  # Значення за замовчуванням на рівні бази даних
     )
     position_id: Mapped[int] = mapped_column(
         ForeignKey("positions.id", onupdate="CASCADE", ondelete="CASCADE"),
@@ -80,6 +80,9 @@ class PositionRole(Base):
         nullable=False,
     )
     # зв'язки з таблицями
+    player_role: Mapped["PlayerRole"] = relationship(
+        back_populates="positions_role",
+    )
     team_person: Mapped["TeamPerson"] = relationship(
         back_populates="positions_role",
     )

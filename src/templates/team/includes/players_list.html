@@ -14,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-        {% for staff in application | sort(attribute='type_role.value') %}
+        {% for staff in application | sort(attribute='player_role_id') %}
             {% if staff.position_id in (9, 10) %}
                 <tr class="row-default">
                     <td align="center">
@@ -47,7 +47,7 @@
                         -
                       {% endif%}
                     </td>
-                    <td align="center">{{ staff.type_role.value }}</td>
+                    <td align="center">{{ staff.full_name }}</td>
                     <td align="center">-</td>
                     <td align="center">-</td>
                     <td align="center">-</td>

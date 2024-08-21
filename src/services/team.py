@@ -1,7 +1,15 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from models import team as models, Region, TeamPerson, Person, PositionRole, Position
+from models import (
+    team as models,
+    Region,
+    TeamPerson,
+    Person,
+    PositionRole,
+    Position,
+    PlayerRole,
+)
 from validation import team as schemas
 
 
@@ -50,12 +58,14 @@ def get_team_staff(db: Session, team_id: int):
             ).label("age"),
             Position.position,
             PositionRole.position_id.label("position_id"),
-            PositionRole.type_role,
+            PositionRole.player_role_id,
             PositionRole.player_number,
+            PlayerRole.full_name,
         )
         .join(TeamPerson, TeamPerson.person_id == Person.id)
         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
         .join(Position, Position.id == PositionRole.position_id)
+        .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
         .filter(TeamPerson.team_id == team_id, PositionRole.active.is_(True))
         .all()
     )

@@ -64,8 +64,8 @@
                                   </td>
                                   <td align="left"> {{ team.position }}</td>
                                   <td align="left">
-                                      {% if  team.type_role %}
-                                        {{ team.type_role.value }}
+                                      {% if  team.player_role_id %}
+                                        {{ team.full_name }}
                                       {% else %}
                                          -
                                       {% endif %}

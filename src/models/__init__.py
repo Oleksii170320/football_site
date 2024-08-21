@@ -1,3 +1,4 @@
+from .ref_event import RefEvent
 from .region import Region
 from .association import Association
 from .organization import Organization
@@ -16,6 +17,8 @@ from .group import Group
 from .stage import Stage
 from .round import Round
 from .match_properties import MatchProperties
+from .match_event import MatchEvent
+from .player_role import PlayerRole
 
 
 MODELS = [
@@ -37,4 +40,7 @@ MODELS = [
     Stage,
     Round,
     MatchProperties,
+    PlayerRole,
+    RefEvent,
+    MatchEvent,
 ]
