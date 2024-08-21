@@ -1,4 +1,4 @@
-from sqlalchemy import desc, or_, func
+from sqlalchemy import desc, or_, func, case
 from sqlalchemy.orm import Session, aliased
 from models import (
     Match,
@@ -64,32 +64,85 @@ def get_match(db: Session, match_id: int):
     return result
 
 
+# def get_match_info(db: Session, match_id: int):
+#     match_info = (
+#         db.query(
+#             PositionRole.player_number,
+#             PositionRole.player_role_id,
+#             PlayerRole.name.label("role_name"),
+#             Person.id.label("playaer_id"),
+#             Person.name,
+#             Person.surname,
+#             Person.lastname,
+#             TeamPerson.team_id,
+#             MatchProperties.protocol,
+#             MatchProperties.starting,
+#             MatchProperties.start_min,
+#             MatchProperties.end_min,
+#         )
+#         .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
+#         .join(Person, Person.id == TeamPerson.person_id)
+#         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
+#         .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
+#         # .outerjoin(MatchEvent, MatchEvent.match_id == PositionRole.id)
+#         # .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
+#         .filter(
+#             MatchProperties.match_id == match_id,
+#             PositionRole.position_id.in_([9, 10]),
+#             PositionRole.active == True,  # Використовуємо True для булевих значень
+#         )
+#         .all()
+#     )
+#     return match_info
+
+
 def get_match_info(db: Session, match_id: int):
     match_info = (
         db.query(
             PositionRole.player_number,
             PositionRole.player_role_id,
             PlayerRole.name.label("role_name"),
-            Person.id.label("playaer_id"),
-            Person.name,
-            Person.surname,
-            Person.lastname,
+            Person.id.label("player_id"),
+            Person.lastname.label("player_lastname"),
+            Person.name.label("player_name"),
+            MatchProperties.protocol,
+            MatchProperties.starting,
+            MatchProperties.start_min.label("from_what_minute"),
+            MatchProperties.end_min.label("how_many_minutes"),
+            MatchProperties.id.label("id_player_in_match"),
             TeamPerson.team_id,
+            MatchEvent.player_replacement_id,
+            # Для 'replacement'
+            func.max(case((RefEvent.id == 10, 1), else_=0)).label("replacement"),
+            # Для 'all_goals' (рахуємо всі забиті голи)
+            func.sum(case((RefEvent.id.in_([1, 2]), 1), else_=0)).label("all_goals"),
+            # Для 'count_penalty' (рахуємо голи з пенальті)
+            func.sum(case((RefEvent.id == 2, 1), else_=0)).label("penalty"),
+            # Для 'count_own_goal' (рахуємо автоголи)
+            func.sum(case((RefEvent.id == 4, 1), else_=0)).label("own_goal"),
+            # Для 'yellow_card'
+            func.max(case((RefEvent.id == 5, 1), else_=0)).label("yellow_card"),
+            # Для 'second_yellow_card'
+            func.max(case((RefEvent.id == 6, 1), else_=0)).label("second_yellow_card"),
+            # Для 'red_card'
+            func.max(case((RefEvent.id == 7, 1), else_=0)).label("red_card"),
+        )
+        .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
+        .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
+        .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
+        .join(Person, Person.id == TeamPerson.person_id)
+        .outerjoin(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
+        .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
+        .filter(MatchProperties.match_id == match_id)
+        .group_by(
+            Person.id,
+            Person.lastname,
+            Person.name,
             MatchProperties.protocol,
             MatchProperties.starting,
             MatchProperties.start_min,
             MatchProperties.end_min,
-        )
-        .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
-        .join(Person, Person.id == TeamPerson.person_id)
-        .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
-        .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
-        # .outerjoin(MatchEvent, MatchEvent.match_id == PositionRole.id)
-        # .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
-        .filter(
-            MatchProperties.match_id == match_id,
-            PositionRole.position_id.in_([9, 10]),
-            PositionRole.active == True,  # Використовуємо True для булевих значень
+            MatchProperties.id,
         )
         .all()
     )
@@ -105,7 +158,8 @@ def get_match_event(db: Session, match_id: int):
             RefEvent.name.label("event_name"),
             RefEvent.image.label("event_image"),
             MatchEvent.minute.label("minute"),
-            MatchEvent.player_replacement_id.label("player_replacement"),
+            MatchEvent.event_id.label("event_id"),
+            MatchEvent.player_replacement_id,
             TeamPerson.team_id.label("team_id"),
         )
         .join(TeamPerson, TeamPerson.person_id == Person.id)
