@@ -1,0 +1,72 @@
+<hr style="border: 2px solid;">
+
+<div id="main">
+    <h2>Статистика</h2>
+    <div class="teams-container">
+        <div class="team">
+            <table class="table table-striped">
+                <thead>
+                <tr class="row-header">
+                    <th scope="col"></th>
+                    <th scope="col" style="text-align: left;">{{ match.team1_name }}</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col" style="text-align: right;">{{ match.team2_name }}</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for event in events %}
+                {% if match.team1_id == event.team_id %}
+                <tr>
+                    <td style="text-align: center;">
+                        <strong>{{ event.minute }}'</strong>
+                    </td>
+                    <td style="text-align: center;">
+                        <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}" alt="-"
+                             height="25px">
+                    </td>
+                    <td style="text-align: left;">
+                        <a href="/persons/{{ event.person_id }}">
+                            <strong>{{ event.person_lastname }} {{ event.person_name }}</strong>
+                        </a>
+                        {% for player in replacement if event.player_replacement_id == player.player_match_id %}
+                        <a href="/persons/{{ player.person_id }}">
+                            ({{ player.person_lastname }} {{ player.person_name }})
+                        </a>
+                        {% endfor %}
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% elif match.team2_id == event.team_id %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">
+                        <a href="/persons/{{ event.person_id }}">
+                            <strong>{{ event.person_lastname }} {{ event.person_name }}</strong>
+                        </a>
+                        {% for player in replacement if event.player_replacement_id == player.player_match_id %}
+                        <a href="/persons/{{ player.person_id }}">
+                            ({{ player.person_lastname }} {{ player.person_name }})
+                        </a>
+                        {% endfor %}
+                    </td>
+                    <td style="text-align: center;">
+                        <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}" alt="-"
+                             height="25px">
+                    </td>
+                    <td style="text-align: center;">
+                        <strong>{{ event.minute }}'</strong>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

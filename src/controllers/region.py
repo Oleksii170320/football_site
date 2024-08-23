@@ -10,6 +10,7 @@ from services.match import (
     get_matches_season,
     get_matches_results_season,
     get_matches_upcoming_season,
+    get_matches_round,
 )
 from services.news_list import get_news_list_region
 from services.region import get_regions
@@ -106,8 +107,8 @@ def region_season(
 
     regions_list = get_regions(db)
     seasons_region = get_seasons_region(db, region_slug=region_slug)
-
     matches = get_matches_season(db, season_id=season_id)
+    rounds = get_matches_round(db, season_id=season_id)
     standings = get_calculate_standings(db=db, season_id=season_id)
     region = get_regions(db, region_slug=region_slug)
     season = get_season_by_id_or_slug(db, season_id=season_id)
@@ -119,6 +120,7 @@ def region_season(
             "regions_list": regions_list,  # Список регіонів (бокове меню)
             "seasons": seasons_region,  # Список цьогорічних турнірів
             "matches": matches,
+            "rounds": rounds,
             "standings": standings,
             "region": region,  # Виводить всю необхідну інформацію по даному регіону
             "season": season,

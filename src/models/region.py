@@ -11,7 +11,8 @@ if TYPE_CHECKING:
     from models.organization import Organization
     from models.team import Team
     from models.stadium import Stadium
-    from models.stadium import Person
+    from models.person import Person
+    from models.news import News
 
 
 class Region(Base):

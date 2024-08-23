@@ -17,90 +17,87 @@
 </head>
 
 
-
-
-
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <a class="navbar-brand" href="/"><img src="/static/img/regions/gerb_country_UA.png" alt="logo" width="30"></a>
-            </div>
-            <ul class="nav-links">
-                <li class="nav-item"><a class="nav-link" href="/">Головна</a></li>
-                <li class="nav-item"><a class="nav-link" href="/matches">Матчі</a></li>
-                <li class="nav-item"><a class="nav-link" href="/teams">Команди</a></li>
-                <li class="nav-item"><a class="nav-link" href="/tournaments">Турніри</a></li>
-            </ul>
-            <div class="burger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
-        </nav>
-    </header>
+<header>
+    <nav>
+        <div class="logo">
+            <a class="navbar-brand" href="/"><img src="/static/img/regions/gerb_country_UA.png" alt="logo"
+                                                  width="30"></a>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item"><a class="nav-link" href="/">Головна</a></li>
+            <li class="nav-item"><a class="nav-link" href="/matches">Матчі</a></li>
+            <li class="nav-item"><a class="nav-link" href="/teams">Команди</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tournaments">Турніри</a></li>
+        </ul>
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
+</header>
 
-    <div class="container">
-        <aside class="left">
+<div class="container">
+    <aside class="left">
 
-            {% block aside_left %}
+        {% block aside_left %}
 
-            {% endblock %}
+        {% endblock %}
 
-            <div class="aside-left">
-                <h2>Регіони України</h2>
-                <table class="regions-table">
-                    <tbody id="regions-list">
-                        {% for region in regions_list %}
-                        <tr class="{% if region.id == selected_region_id %}selected-region{% endif %}" data-region-id="{{ region.id }}">
+        <div class="aside-left">
+            <h2>Регіони України</h2>
+            <table class="regions-table">
+                <tbody id="regions-list">
+                {% for region in regions_list %}
+                <tr class="{% if region.id == selected_region_id %}selected-region{% endif %}"
+                    data-region-id="{{ region.id }}">
 
-                            <td style="padding: 1px">
-                                <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
-                                    alt="{{ region.name }} logo" class="region-logo">
-                            </td>
-                            <td style="padding: 1px">
-
-                              <a href="/region/{{ region.slug }}" class="region-link" data-region-slug="{{ region.slug }}" >
-                                  {{ region.name }}
-                              </a>
-
-                                {% if region.slug  %}
-                                  {% for season in seasons %}
-                                    {% if region.slug == season.region_slug %}
-                                      <li>
-<!--                                        <a href="/matches/tournament/{{ season.id }}">-->
-                                          <a href="/region/{{ season.region_slug }}/{{ season.season_id }}/{{ season.season_slug }}">
-                                          {{ season.season_name }}
-                                        </a>
-                                      </li>
-                                    {% endif %}
-                                  {% endfor %}
-                                {% endif %}
-
-                            </td>
-                        </tr>
+                    <td style="padding: 1px">
+                        <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
+                             alt="{{ region.name }} logo" class="region-logo">
+                    </td>
+                    <td style="padding: 1px">
+                        <a href="/region/{{ region.slug }}" class="region-link"
+                           data-region-slug="{{ region.slug }}">
+                            {{ region.name }}
+                        </a>
+                        {% if region.slug %}
+                        {% for season in seasons %}
+                        {% if region.slug == season.region_slug %}
+                        <li>
+                            <!--                                          <a href="/matches/tournament/{{ season.id }}">-->
+                            <a href="/region/{{ season.region_slug }}/{{ season.season_id }}/{{ season.season_slug }}">
+                                {{ season.season_name }}
+                            </a>
+                        </li>
+                        {% endif %}
                         {% endfor %}
-                    </tbody>
-                </table>
-                <div id="seasons-container"></div> <!-- Контейнер для списку сезонів -->
-            </div>
-        </aside>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div id="seasons-container"></div> <!-- Контейнер для списку сезонів -->
+        </div>
+    </aside>
 
-        <main>
-            {% block content %}
-            {% endblock %}
-        </main>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-        <aside class="right">
-            {% block aside_right %}
-            {% endblock %}
-        </aside>
-    </div>
+    <aside class="right">
+        {% block aside_right %}
+        {% endblock %}
+    </aside>
+</div>
 
-    <footer>
-        <p>© 2024 Футбольний Сайт</p>
-    </footer>
+<footer>
+    <p>© 2024 Футбольний Сайт</p>
+</footer>
 
-    <script src="/static/js/base.js"></script>
+<script src="/static/js/base.js"></script>
 </body>
 </html>

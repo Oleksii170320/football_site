@@ -10,7 +10,6 @@ from models import (
     Tournament,
     Organization,
     Region,
-    TeamSeason,
 )
 from validation import season as schemas
 
@@ -21,13 +20,18 @@ def get_season(db: Session, season_id: int):
 
 def get_seasons(db: Session, skip: int = 0, limit: int = 10):
     seasons = (
-        db.query(Season)
-        # .filter(models.Season.year == date.today().year)
-        .order_by(desc(Season.year))
-        .offset(skip)
-        .limit(limit)
-        .all()
+        db.query(Season).order_by(desc(Season.year)).offset(skip).limit(limit).all()
     )
+    return seasons
+
+
+def get_seasons_years(db: Session):
+    """Ця функцыя повертаэ всі діючи на даний момент розіграші"""
+
+    # Отримуємо поточну дату у форматі епохи
+    current_epoch = int(datetime.utcnow().timestamp())
+
+    seasons = db.query(Season).filter(Season.end_date >= current_epoch).all()
     return seasons
 
 

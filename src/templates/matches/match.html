@@ -3,7 +3,9 @@
 {% block style %}
    <link rel="stylesheet" href="/static/css/styles_matches_season.css">
 <style>
-#main, #main1 {
+
+
+    #main, #main_1, #main_2 {
     display: flex;
     flex-direction: column;
     border: 1px solid grey;
@@ -33,217 +35,98 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="nav-block">
         <div class="region-info">
-           <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}" alt="{{ match.tournament_name }} logo" height="90px">
-
+            <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
+                 alt="{{ match.tournament_name }} logo" height="90px">
             <h2>
                 {{ match.season_name }} {{ match.season_year }}
-                    {% if match.stage_name %}
-                        - {{ match.stage_name }}
+                {% if match.stage_name %}
+                - {{ match.stage_name }}
                 {% endif %}
-                    {% if match.round_name %}
-                        - {{ match.round_name }}
+                {% if match.round_name %}
+                - {{ match.round_name }}
                 {% endif %}
-
             </h2>
         </div>
     </div>
 
-
-    <table class="table table-striped">
-       <tbody>
-          <tr>
-             <td>
-                <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}" alt="{{ match.team1_name }} logo" height="120px">
-             </td>
-             <td align="right">
-                 <a href="/teams/{{ match.team1_id }}">
-                     <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
-                 </a>
-             </td>
-             <td align="center" style="text-align: center; vertical-align: middle;">
-                <h5>Дата - {{ match.event }}<br>
-                    Стадіон - {{ match.stadium_name }} {{ match.stadium_city }}</h5><br>
-                <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
-                {% if match.team1_penalty and match.team2_penalty %}
-                    (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
-                {% endif %}<br>
-             </td>
-             <td align="left">
-                 <a href="/teams/{{ match.team2_id }}">
-                     <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
-                 </a>
-             </td>
-             <td>
-                <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}" alt="{{ match.team2_name }} logo" height="120px">
-             </td>
-          </tr>
-       </tbody>
-    </table>
+<table class="table table-striped">
+    <tbody>
+    <tr>
+        <td>
+            <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}" alt="{{ match.team1_name }} logo"
+                 height="120px">
+        </td>
+        <td align="right">
+            <a href="/teams/{{ match.team1_id }}">
+                <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
+            </a>
+        </td>
+        <td align="center" style="text-align: center; vertical-align: middle;">
+            <h5>Дата - {{ match.event }}<br>
+                Стадіон - {{ match.stadium_name }} {{ match.stadium_city }}</h5><br>
+            <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
+            {% if match.team1_penalty and match.team2_penalty %}
+            (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
+            {% endif %}<br>
+        </td>
+        <td align="left">
+            <a href="/teams/{{ match.team2_id }}">
+                <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
+            </a>
+        </td>
+        <td>
+            <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}" alt="{{ match.team2_name }} logo"
+                 height="120px">
+        </td>
+    </tr>
+    </tbody>
+</table>
 
    <hr style="border: 2px solid;">
 
-    <div class="card text-center">
-      <div class="card-header">
+<div class="card text-center">
+    <div class="card-header">
         <ul class="nav justify-content-center">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">
-              <button type="button" class="btn btn-outline-dark">Огляд</button>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <button type="button" class="btn btn-outline-dark">Склади команд</button>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <button type="button" class="btn btn-outline-dark">Статистика</button>
-            </a>
-          </li>
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/matches/{{ match.match_id }}/review">
+                    <button type="button" class="btn btn-outline-dark">Огляд</button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/matches/{{ match.match_id }}/lineups">
+                    <button type="button" class="btn btn-outline-dark">Склади команд</button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/matches/{{ match.match_id }}/statistics">
+                    <button type="button" class="btn btn-outline-dark">Статистика</button>
+                </a>
+            </li>
         </ul>
-      </div>
-    </div>
-
-   <hr style="border: 2px solid;">
-
-<div id="main1">
-    <h2>Статистика</h2>
-    <div class="teams-container">
-        <div class="team">
-            <table class="table table-striped">
-                <thead>
-                    <tr class="row-header">
-                        <th scope="col"></th>
-                        <th scope="col" style="text-align: left;">{{ match.team1_name }}</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col" style="text-align: right;">{{ match.team2_name }}</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for event in events %}
-                      {% if match.team1_id == event.team_id %}
-                        <tr>
-                            <td style="text-align: center;">
-                                <strong>{{ event.minute }}'</strong>
-                            </td>
-                            <td style="text-align: center;">
-                                <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}" alt="-" height="25px">
-                            </td>
-                            <td style="text-align: left;">
-                                <strong>{{ event.person_lastname }} {{ event.person_name }}</strong>
-                                    {% for player in replacement if event.player_replacement == player.player_match_id %}
-                                        ({{ player.person_lastname }} {{ player.person_name }})
-                                    {% endfor %}
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                      {% elif match.team2_id == event.team_id %}
-                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td style="text-align: right;">
-                                <strong>{{ event.person_lastname }} {{ event.person_name }}</strong>
-                                    {% for player in replacement if event.player_replacement == player.player_match_id %}
-                                        ({{ player.person_lastname }} {{ player.person_name }})
-                                    {% endfor %}
-                            </td>
-                            <td style="text-align: center;">
-                                <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}" alt="-" height="25px">
-                            </td>
-                            <td style="text-align: center;">
-                                <strong>{{ event.minute }}'</strong>
-                            </td>
-                        </tr>
-                      {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
     </div>
 </div>
 
+{% if events %}
+{% include "matches/includes/match_review.html" %}
+{% endif %}
+
+{% if lineups %}
+{% include "matches/includes/match_lineups.html" %}
+{% endif %}
+
+{% if statistics %}
+{% include "matches/includes/match_statistics.html" %}
+{% endif %}
+
+<div id="main_2">
 
 
-
-
-   <hr style="border: 2px solid;">
-
-    <div id="main">
-        <h2>Стартові склади</h2>
-        <div class="teams-container">
-            <div id="1" class="team">
-                <table class="table table-striped">
-                    <thead>
-                        <tr class="row-header">
-                            {% include "matches/includes/heder_players_in_match.html" %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for info in match_info | sort(attribute='player_role_id') if info.team_id == match.team1_id and info.starting  %}
-                            {% include "matches/includes/players_in_match.html" %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="2" class="team">
-                <table class="table table-striped">
-                    <thead>
-                        <tr class="row-header">
-                            {% include "matches/includes/heder_players_in_match.html" %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for info in match_info | sort(attribute='player_role_id') if info.team_id == match.team2_id and info.starting %}
-                            {% include "matches/includes/players_in_match.html" %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <h2>Заміна</h2>
-        <div class="teams-container">
-            <div class="team">
-                <table class="table table-striped">
-                    <thead>
-                        <tr class="row-header">
-                            {% include "matches/includes/heder_players_in_match.html" %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for info in match_info | sort(attribute='player_role_id') if info.team_id == match.team1_id and info.protocol and not info.starting %}
-                            {% include "matches/includes/players_in_match.html" %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="team">
-                <table class="table table-striped">
-                    <thead>
-                        <tr class="row-header">
-                            {% include "matches/includes/heder_players_in_match.html" %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for info in match_info | sort(attribute='player_role_id') if info.team_id == match.team2_id and info.protocol and not info.starting %}
-                            {% include "matches/includes/players_in_match.html" %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-
-
+</div>
+</div>
+</div>
 {% endblock %}
 
 

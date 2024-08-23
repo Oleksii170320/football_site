@@ -18,7 +18,6 @@ class News(Base):
     brief: Mapped[str | None]
     description: Mapped[str | None]
     photo: Mapped[str | None]
-    # created_at = Mapped[int] = mapped_column(BigInteger, default=lambda: int(time.time()))
     category_id: Mapped[int] = mapped_column(
         ForeignKey("tournaments.id", onupdate="SET NULL", ondelete="SET NULL"),
     )

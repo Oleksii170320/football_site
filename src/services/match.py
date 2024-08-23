@@ -64,40 +64,8 @@ def get_match(db: Session, match_id: int):
     return result
 
 
-# def get_match_info(db: Session, match_id: int):
-#     match_info = (
-#         db.query(
-#             PositionRole.player_number,
-#             PositionRole.player_role_id,
-#             PlayerRole.name.label("role_name"),
-#             Person.id.label("playaer_id"),
-#             Person.name,
-#             Person.surname,
-#             Person.lastname,
-#             TeamPerson.team_id,
-#             MatchProperties.protocol,
-#             MatchProperties.starting,
-#             MatchProperties.start_min,
-#             MatchProperties.end_min,
-#         )
-#         .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
-#         .join(Person, Person.id == TeamPerson.person_id)
-#         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
-#         .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
-#         # .outerjoin(MatchEvent, MatchEvent.match_id == PositionRole.id)
-#         # .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
-#         .filter(
-#             MatchProperties.match_id == match_id,
-#             PositionRole.position_id.in_([9, 10]),
-#             PositionRole.active == True,  # Використовуємо True для булевих значень
-#         )
-#         .all()
-#     )
-#     return match_info
-
-
-def get_match_info(db: Session, match_id: int):
-    match_info = (
+def get_match_statistics(db: Session, match_id: int):
+    lineups = (
         db.query(
             PositionRole.player_number,
             PositionRole.player_role_id,
@@ -146,11 +114,11 @@ def get_match_info(db: Session, match_id: int):
         )
         .all()
     )
-    return match_info
+    return lineups
 
 
 def get_match_event(db: Session, match_id: int):
-    match_info = (
+    lineups = (
         db.query(
             Person.id.label("person_id"),
             Person.name.label("person_name"),
@@ -169,7 +137,7 @@ def get_match_event(db: Session, match_id: int):
         .filter(MatchProperties.match_id == match_id)
         .all()
     )
-    return match_info
+    return lineups
 
 
 def get_match_replacement(db: Session, match_id: int):
@@ -185,7 +153,7 @@ def get_match_replacement(db: Session, match_id: int):
     )
 
     # Основний запит, що використовує підзапит
-    match_info = (
+    lineups = (
         db.query(
             Person.id.label("person_id"),
             Person.name.label("person_name"),
@@ -199,7 +167,20 @@ def get_match_replacement(db: Session, match_id: int):
         .all()
     )
 
-    return match_info
+    return lineups
+
+
+def get_replacement(db: Session, match_id: int):
+    result = (
+        db.query(MatchEvent.player_replacement_id)
+        .join(MatchProperties, MatchProperties.id == MatchEvent.player_match_id)
+        .filter(
+            MatchProperties.match_id == match_id,
+            MatchEvent.player_replacement_id.isnot(None),
+        )
+        .all()
+    )
+    return result
 
 
 def get_matches(db: Session):
@@ -222,6 +203,17 @@ def season_matches(db: Session, season_id: int):
 
 def get_matches_season(db: Session, season_id: int):
     db_match = db.query(Match).filter(Match.season_id == season_id).all()
+    return db_match
+
+
+def get_matches_round(db: Session, season_id: int):
+    db_match = (
+        db.query(Round.id, Round.name)
+        .join(Round, Round.id == Match.round_id)
+        .filter(Match.season_id == season_id)
+        .group_by(Round.id)  # Використовуємо distinct без аргументів
+        .all()
+    )
     return db_match
 
 
