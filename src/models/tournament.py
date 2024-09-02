@@ -28,6 +28,11 @@ class Tournament(Base):
     )
     football_type: Mapped[str | None] = mapped_column(String(25))
     website: Mapped[str | None] = mapped_column(String)
+    level_int: Mapped[int | None]
+    level: Mapped[str | None]
+    level_up: Mapped[str | None]
+    level_down: Mapped[str | None]
+    create_year: Mapped[str | None]
 
     # зовнішні ключі
     organization_id: Mapped[int | None] = mapped_column(
@@ -41,9 +46,10 @@ class Tournament(Base):
     seasons: Mapped[list["Season"]] = relationship(
         back_populates="tournament",
     )
-    newstables: Mapped[list["News"]] = relationship(
-        back_populates="tournament",
-    )
+
+    # newstables: Mapped[list["News"]] = relationship(
+    #     back_populates="tournament",
+    # )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

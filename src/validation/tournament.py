@@ -13,6 +13,11 @@ class TournamentBaseSchemas(BaseModel):
     description: str = None
     football_type: Annotated[Optional[str], MaxLen(25)] = None
     website: Optional[str] = None
+    level_int: Optional[int | None] = None
+    level: Optional[str | None] = None
+    level_up: Optional[str | None] = None
+    level_down: Optional[str | None] = None
+    create_year: Optional[str | None] = None
     organization_id: int
 
 
@@ -30,4 +35,4 @@ class TournamentSchemas(TournamentBaseSchemas):
     id: int
     slug: str
     seasons: Optional[list[SeasonSchemas]] = []
-    newstables: Optional[list[NewsTableSchemas]] = []
+    # newstables: Optional[list[NewsTableSchemas]] = []

@@ -1,0 +1,78 @@
+<article style="padding: 1px">
+
+    <h3 style="text-align: center;">Інформація про турнір</h3>
+    <hr style="border: 2px solid;">
+    <div class="container" style="border: 1px solid #d6d2d2; width: 100%;">
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <div>
+                        <div class="team-logo" style="padding: 20px; border: #cccccc;">
+                            {% if tournaments.logo %}
+                            <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ tournaments.logo) }}"
+                                 alt="{{ tournaments.name }} logo" width="300px">
+                            {% else %}
+                            <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+                                 alt="{{ tournaments.name }} logo" width="200px">
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="team-details" style="padding: 20px;">
+                        <h3>
+                            {{ tournaments.full_name }}
+                        </h3>
+                        <hr style="border: 1px solid;">
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <td><strong>Проводиться з:</strong></td>
+                                {% if tournaments.create_year %}
+                                <td>{{ tournaments.create_year }}</td>
+                                {% else %}
+                                <td>-</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td><strong>Рівень в ієрархії:</strong></td>
+                                <td>{{ tournaments.level_int }} - {{ tournaments.organization.tournament_level.value
+                                    }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Підвищення в класі:</strong></td>
+                                {% if tournaments.level_up %}
+                                <td>{{ tournaments.level_up }}</td>
+                                {% else %}
+                                <td>-</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td><strong>Пониження в класі:</strong></td>
+                                {% if tournaments.level_down %}
+                                <td>{{ tournaments.level_down }}</td>
+                                {% else %}
+                                <td>-</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td><strong>Сайт:</strong></td>
+                                <td>
+                                    <a href="{{ tournaments.website }}" target="_blank">
+                                        {{ tournaments.website }}
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr style="border: 2px solid;">
+
+</article>

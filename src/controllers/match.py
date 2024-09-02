@@ -14,7 +14,6 @@ from services.match import (
 )
 from services.news_list import get_news_list
 from services.region import get_regions_list
-from services.season import get_seasons_years
 from validation import match as schemas
 
 
@@ -22,30 +21,25 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[schemas.MatchSchemas])
-def read_matches(request: Request, db: Session = Depends(get_db)):
-
-    news_list = get_news_list(db)
-    regions_list = get_regions_list(db)
-    matches = crud.get_matches(db)
+def all_matches_list(request: Request, db: Session = Depends(get_db)):
+    """Виводить всі матчі"""
 
     return templates.TemplateResponse(
         "matches/matches.html",
         {
             "request": request,
-            "news_list": news_list,  # Стрічка новин (всі регіони)
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "matches": matches,
+            "news_list": get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "matches": crud.get_matches(db),
         },
     )
 
 
 @router.get("/{match_id}", response_model=schemas.MatchSchemas)
 def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
+    """Виводить матч по ІД"""
 
-    regions_list = get_regions_list(db)
     match = crud.get_match(db, match_id=match_id)
-    # lineups = get_match_info(db, match_id=match_id)
-    # replacement = get_match_replacement(db, match_id=match_id)
 
     if match is None:
         raise HTTPException(status_code=404, detail="Match not found")
@@ -53,10 +47,8 @@ def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
         "matches/match.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "match": match,
-            # "lineups": lineups,
-            # "replacement": replacement,
         },
     )
 
@@ -65,21 +57,19 @@ def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
 def match_summary_review(
         request: Request, match_id: int, db: Session = Depends(get_db)
 ):
-    regions_list = get_regions_list(db)
-    match = crud.get_match(db, match_id=match_id)
-    events = get_match_event(db, match_id=match_id)
-    replacement = get_match_replacement(db, match_id=match_id)
+    """Виводить дані для огляду подій в матчі"""
 
+    match = crud.get_match(db, match_id=match_id)
     if match is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "match": match,  # Головна інформація про матч
-            "events": events,
-            "replacement": replacement,
+            "events": get_match_event(db, match_id=match_id),
+            "replacement": get_match_replacement(db, match_id=match_id),
         },
     )
 
@@ -88,21 +78,19 @@ def match_summary_review(
 def match_summary_lineups(
         request: Request, match_id: int, db: Session = Depends(get_db)
 ):
-    regions_list = get_regions_list(db)
-    match = crud.get_match(db, match_id=match_id)
-    lineups = get_match_statistics(db, match_id=match_id)
-    replacements = get_replacement(db, match_id=match_id)
+    """Виводить склад команд в матчі"""
 
+    match = crud.get_match(db, match_id=match_id)
     if match is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "match": match,  # Головна інформація про матч
-            "lineups": lineups,
-            "replacements": replacements,
+            "lineups": get_match_statistics(db, match_id=match_id),
+            "replacements": get_replacement(db, match_id=match_id),
         },
     )
 
@@ -111,16 +99,16 @@ def match_summary_lineups(
 def match_summary_statistics(
         request: Request, match_id: int, db: Session = Depends(get_db)
 ):
-    regions_list = get_regions_list(db)
-    match = crud.get_match(db, match_id=match_id)
+    """Виводить дані для статистики матчу"""
 
+    match = crud.get_match(db, match_id=match_id)
     if match is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "match": match,
             "statistics": [],
         },

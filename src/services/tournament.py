@@ -1,5 +1,6 @@
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
-from models import tournament as models, Region, Organization
+from models import tournament as models, Region, Organization, Season
 from validation import tournament as schemas
 
 
@@ -16,6 +17,27 @@ def get_tournament_slug(db: Session, tournament_slug: str):
         db.query(models.Tournament)
         .filter(models.Tournament.slug == tournament_slug)
         .first()
+    )
+    return tournaments
+
+
+def get_tournament_for_season(db: Session, season_id: str):
+    tournaments = (
+        db.query(models.Tournament)
+        .join(Season, Season.tournament_id == models.Tournament.id)
+        .filter(Season.id == season_id)
+        .first()
+    )
+    return tournaments
+
+
+def get_tournament_archive(db: Session, tournament_slug: str):
+    tournaments = (
+        db.query(Season)
+        .join(models.Tournament, models.Tournament.id == Season.tournament_id)
+        .filter(models.Tournament.slug == tournament_slug)
+        .order_by(desc(Season.year))
+        .all()
     )
     return tournaments
 

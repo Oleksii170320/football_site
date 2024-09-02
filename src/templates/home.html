@@ -12,30 +12,9 @@
 
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        {% for news in news_list %}
-        <div class="row g-0 my-2">
-            <div class="col-md-4">
-                <img src="{{ news.photo }}" class="img-fluid rounded-start" alt="{{ news.topic }}">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                        <h5 class="card-title">{{ news.topic }}</h5>
-                        <p class="card-text">{{ news.brief }}</p>
-                    <p class="card-text">
-                        <small class="text-muted">
-                            Категорія: <strong>{{ news.tournament_name }}</strong>
-                        </small>
-                    </p>
-                    <p class="card-text"><small class="text-muted">{{ news.date }}</small></p>
-                    </p>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-</div>
+
+{% include "news/news_list.html" %}
+
 {% endblock %}
 
 

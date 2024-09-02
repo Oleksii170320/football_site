@@ -10,7 +10,7 @@ class NewsTableBaseSchemas(BaseModel):
     brief: str
     description: Optional[str] = None
     photo: Optional[str] = None
-    category_id: int
+    region_id: int
 
 
 class NewsTableCreateSchemas(NewsTableBaseSchemas):

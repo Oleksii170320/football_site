@@ -1,0 +1,42 @@
+<style>
+    .person-photo {
+        width: 100%; /* Зображення заповнює ширину батьківського контейнера */
+        height: 200px; /* Висота зображення */
+        object-fit: cover; /* Обрізає частини зображення, якщо потрібно */
+
+        display: block; /* Забезпечує, що зображення не буде мати пустих місць навколо */
+        margin: 0 auto; /* Вирівнює зображення по центру */
+    }
+
+</style>
+
+
+<h2 class="header_page">Гравці та дійові особи</h2>
+
+<div class="container" style="width: 100%;">
+    <div class="container my-5">
+        <div class="row">
+            {% for person in persons %}
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+                <div class="card h-100">
+                    {% if person.photo %}
+                    <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}"
+                         class="card-img-top person-photo"
+                         alt="{{ person.lastname }}-{{ person.name }}">
+                    {% else %}
+                    <img src="{{ url_for('static', path='img/person/tamplate.png') }}" class="person-photo"
+                         alt="{{ person.lastname }}-{{ person.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ person.lastname }}</h5>
+                        <p class="card-text">{{ person.name }}</p>
+                        <p class="card-text">{{ person.surname }}</p>
+                        <a href="/persons/{{ person.id }}" class="btn btn-primary">Перейти</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+

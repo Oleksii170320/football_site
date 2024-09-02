@@ -19,6 +19,7 @@ from .round import Round
 from .match_properties import MatchProperties
 from .match_event import MatchEvent
 from .player_role import PlayerRole
+from .contacts import Contact
 
 
 MODELS = [
@@ -43,4 +44,5 @@ MODELS = [
     PlayerRole,
     RefEvent,
     MatchEvent,
+    Contact,
 ]

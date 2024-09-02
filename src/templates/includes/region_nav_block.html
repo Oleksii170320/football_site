@@ -1,0 +1,82 @@
+<style>
+    .nav-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .region-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        gap: 15px;
+    }
+
+    .nav-links li {
+        position: relative;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        padding: 10px;
+        color: #fff;
+    }
+
+    .dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        z-index: 1000;
+    }
+
+    .dropdown li {
+        display: inline-block;
+        white-space: nowrap; /* Це забезпечує, що елементи не будуть переноситися на новий рядок */
+    }
+
+    .dropdown li a {
+        display: inline-block;
+        padding: 10px;
+        color: #000;
+        text-decoration: none;
+        width: auto; /* Забезпечує автоматичну ширину відповідно до вмісту */
+    }
+
+    .nav-links li:hover .dropdown {
+        display: block;
+    }
+</style>
+
+
+<div class="nav-block">
+
+
+    <div class="region-info">
+        <a href="/region/{{ region.slug }}">
+            <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}" alt="logo {{ region.name }}"
+                 width="50"></a>
+        <a href="/region/{{ region.slug }}"><h4>{{ region.name }}</h4>
+        </a>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="/region/{{ region.slug }}">Новини</a></li>
+        <li><a href="/region/{{ region.slug }}/tournaments">Турніри</a></li>
+        <li><a href="/region/{{ region.slug }}/teams">Команди</a></li>
+        <li><a href="/region/{{ region.slug }}/persons">Дійові особи</a></li>
+        <li><a href="/region/{{ region.slug }}/contacts">Контакти</a></li>
+    </ul>
+</div>

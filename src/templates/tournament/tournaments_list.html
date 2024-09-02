@@ -1,0 +1,33 @@
+<style>
+    .card {
+
+    }
+</style>
+
+
+<h2 class="header_page">Футбольні та футзальні турніри області</h2>
+
+
+<!--<div class="list-group card" style="border: 1px solid #d6d2d2; width: 100%;">-->
+<div class="container" style="width: 100%;">
+    {% for organization in organizations %}
+    <div class="card mb-3" style="width: 99%;">
+        <div class="list-group-item list-group-item-action" style="margin: 5px;">
+            <h4 style="padding: 10px;">{{ organization.full_name }}:</h4>
+            <ol>
+                {% for tournament in tournaments if tournament.organization_id == organization.organization_id %}
+                <h5>
+                    <li>
+                        <a href="/tournaments/{{ tournament.slug }}">
+                            {{ tournament.full_name }}
+                        </a>
+                    </li>
+                </h5>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+

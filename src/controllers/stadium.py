@@ -7,6 +7,8 @@ from typing import List
 from core.templating import templates
 from core.database import get_db
 from services import stadium as crud_stadium
+from services.region import get_regions_list
+from services.stadium import get_stadium_teams
 from validation import stadium as schemas
 
 router = APIRouter()
@@ -31,7 +33,7 @@ def read_stadiums(
 ):
     stadiums = crud_stadium.get_stadiums(db, skip=skip, limit=limit)
     return templates.TemplateResponse(
-        "stadiums.html",
+        "stadium/stadiums.html",
         {
             "request": request,
             "stadiums": stadiums,
@@ -40,11 +42,20 @@ def read_stadiums(
 
 
 @router.get("/{stadium_id}", response_model=schemas.StadiumSchemas)
-def read_stadium(stadium_id: int, db: Session = Depends(get_db)):
-    db_stadium = crud_stadium.get_stadium(db, stadium_id=stadium_id)
-    if db_stadium is None:
+def read_stadium(request: Request, stadium_id: int, db: Session = Depends(get_db)):
+    stadium = crud_stadium.get_stadium(db, stadium_id=stadium_id)
+
+    if stadium is None:
         raise HTTPException(status_code=404, detail="Stadium not found")
-    return db_stadium
+    return templates.TemplateResponse(
+        "stadium/stadium.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "taems": get_stadium_teams(db, stadium_id=stadium_id),
+            "stadium": stadium,
+        },
+    )
 
 
 @router.put("/{stadium_id}", response_model=schemas.StadiumSchemas)

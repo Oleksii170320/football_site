@@ -1,0 +1,74 @@
+<div class="container" style="width: 100%;">
+    {% set unique_rounds = [] %}
+
+
+    <div class="container" style="width: 100%;">
+        {% for match in matches if match.round_name not in unique_rounds %}
+        <div class="card mb-3" style="width: 99%;">
+
+
+            <h4 style="background-color: #c5c2c2; padding: 5px;">
+                {{ match.season_name }} {{ match.season_year }}
+                {% if match.stage_name %}
+                , {{ match.stage_name }}
+                {% endif %}
+                {% if match.group_name %}
+                , {{ match.group_name }}
+                {% endif %}
+            </h4><br>
+
+            <h4>{{ match.round_name }}, {{ match.event }}</h4>
+
+
+            <table class="table table-striped table-hover" style="width: 100%;">
+                <tbody>
+
+                <tr class="row-default">
+                    <td style="width: 35%;">
+                        <a href="/teams/{{ match.team1_id }}">
+                            <h5><strong>{{ match.team1_name }}</strong> ({{ match.team1_city}})</h5>
+                        </a>
+                    </td>
+                    <td style="width: 10%;">
+                        <img src="{{ url_for('static', path='/img/teams/' ~ match.team1_logo) }}"
+                             alt="{{ match.team1_name }} logo" style="height: 60px">
+                    </td>
+                    <td style="width: 10%;" align="center">
+                        <a href="/matches/{{ match.match_id }}/review" target="_blank">
+                            {% if match.status == "Тех. поразка" %}
+                            <strong style="color: red; text-align: center;">
+                                <h3>
+                                    {{ match.team1_goals }} : {{ match.team2_goals }}
+                                </h3>
+                            </strong><br>
+                            {% else %}
+                            <strong style="text-align: center;">
+                                <h3>{{ match.team1_goals }} : {{ match.team2_goals }}</h3>
+                            </strong><br>
+                            {% if match.team1_penalty %}
+                            <p style="text-align: center;">(п. {{ match.team1_penalty }} : {{ match.team2_penalty
+                                }})</p>
+                            {% endif %}
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td style="width: 10%;">
+                        <img src="{{ url_for('static', path='/img/teams/' ~ match.team2_logo) }}"
+                             alt="{{ match.team2_name }} logo" style="height: 60px">
+                    </td>
+                    <td style="width: 35%;">
+                        <a href="/teams/{{ match.team2_id }}">
+                            <h5><strong>{{ match.team2_name }}</strong> ({{ match.team2_city}})</h5>
+                        </a>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+        {% set _ = unique_rounds.append(match.round_name) %}
+        {% endfor %}
+    </div>
+
+</div>

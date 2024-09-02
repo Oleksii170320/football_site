@@ -1,177 +1,128 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <link rel="stylesheet" href="/static/css/styles_region.css">
-    <link rel="stylesheet" href="/static/css/styles_matches_season.css">
-    <link rel="stylesheet" href="/static/css/styles_team.css">
+<link rel="stylesheet" href="/static/css/styles_region.css">
+<link rel="stylesheet" href="/static/css/styles_matches_season.css">
+<link rel="stylesheet" href="/static/css/styles_team.css">
 {% endblock %}
 
 {% block content %}
-  <div class="card mb-3" style="max-width: 940px; margin: 0 auto;">
-    <article style="padding: 1px">
-      <h3>Досьє гравця</h3>
-      <hr style="border: 2px solid;">
 
-      <div class="team-info">
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <div class="vr">
-                  <div class="team-logo" style="padding: 20px; border: #cccccc;">
-                    {% if person.photo %}
-                      <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}" alt="{{ person.name }} logo" width="200px">
-                    {% else %}
-                      <img src="{{ url_for('static', path='img/person/tamplate.png') }}" alt="{{ person.name }} logo" width="200px">
-                    {% endif %}
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="team-details" style="padding: 20px;">
-                  <h3>{{ person.lastname }} {{ person.name }} {{ person.surname }}</h3>
-                  <hr style="border: 1px solid;">
-                  <table class="table table-hover">
-                    <tbody>
-                      <tr>
-                        <td><strong>Дата народження:</strong></td>
-                          <td>
-                            <span class="epoch-date" data-epoch="{{ person.birthday }}"></span>
-                            (<span class="age" id="age"></span>)
-                          </td>
-                      </tr>
-                      <tr>
-                        <td><strong>Регіон:></strong></td>
-                        <td><a href="/region/{{ person.region.slug }}">{{ person.region.name }}</a></td>
-                      </tr>
-                      <!-- Відображення унікальних команд -->
-                      <tr>
-                          <table class="table table-hover">
-                            <thead>
-                              <tr>
-                                <th scope="col">Клуб</th>
-                                <th scope="col">Амплуа</th>
-                                <th scope="col">Позиція</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {% for team in positions_role %}
-                                <tr class="row-default">
-                                  <td align="left">
-                                     <a href="/teams/{{ team.team_id }}">
-                                       {{ team.team_name }} ({{ team.team_city }})
-                                     </a>
-                                  </td>
-                                  <td align="left"> {{ team.position }}</td>
-                                  <td align="left">
-                                      {% if  team.player_role_id %}
-                                        {{ team.full_name }}
-                                      {% else %}
-                                         -
-                                      {% endif %}
-                                  </td>
+
+<div class="container" style="border: 1px solid #d6d2d2; width: 100%;">
+    <article style="padding: 1px; width: 100%;">
+        <h3 style="text-align: center;">Досьє гравця</h3>
+        <hr style="border: 2px solid;">
+
+        <div class="team-info">
+            <table>
+                <tbody>
+                <tr>
+                    <td>
+                        <div>
+                            <div class="team-logo" style="padding: 20px; border: #cccccc;">
+                                {% if person.photo %}
+                                <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}"
+                                     alt="{{ person.name }} logo" width="200px">
+                                {% else %}
+                                <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+                                     alt="{{ person.name }} logo" width="200px">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="team-details" style="padding: 20px; width: 150%;">
+                            <h3>{{ person.lastname }} {{ person.name }} {{ person.surname }}</h3>
+                            <hr style="border: 1px solid; width: 100%;">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <td><strong>Дата народження:</strong></td>
+                                    <td>{{ person.birthday }} ({{ person.age }} р.)</td>
                                 </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <hr style="border: 2px solid;">
-
-      <div class="card text-center">
-        <div class="card-header">
-          <ul class="nav justify-content-center">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">
-                <button type="button" class="btn btn-outline-dark">Матчі</button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/persons/{{ person.id }}/club_career">
-                <button type="button" class="btn btn-outline-dark">Клубна кар'єра</button>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/persons/{{ person.id }}/tournaments">
-                <button type="button" class="btn btn-outline-dark">Турніри</button>
-              </a>
-            </li>
-          </ul>
+                                <tr>
+                                    <td><strong>Регіон:</strong></td>
+                                    <td><a href="/region/{{ person.region_slug }}">{{ person.region_name }}</a></td>
+                                </tr>
+                                <!-- Відображення унікальних команд -->
+                                <tr>
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Клуб</th>
+                                            <th scope="col">Амплуа</th>
+                                            <th scope="col">Позиція</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for team in positions_role %}
+                                        <tr class="row-default">
+                                            <td align="left">
+                                                <a href="/teams/{{ team.team_id }}">
+                                                    {{ team.team_name }} ({{ team.team_city }})
+                                                </a>
+                                            </td>
+                                            <td align="left"> {{ team.position }}</td>
+                                            <td align="left">
+                                                {% if team.player_role_id %}
+                                                {{ team.full_name }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-      </div>
+        <hr style="border: 2px solid;">
 
+        <div class="card text-center">
+            <div class="card-header">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/persons/{{ person.id }}/matches">
+                            <button type="button" class="btn btn-outline-dark">Матчі</button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/persons/{{ person.id }}/club_career">
+                            <button type="button" class="btn btn-outline-dark">Клубна кар'єра</button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/persons/{{ person.id }}/tournaments">
+                            <button type="button" class="btn btn-outline-dark">Турніри</button>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-      {% if club_career %}
-          {% include "persons/includes/club_career.html" %}
-      {% endif %}
+        {% if matches %}
+        {% include "persons/includes/matches.html" %}
+        {% endif %}
 
-      {% if tournaments %}
+        {% if club_career %}
+        {% include "persons/includes/club_career.html" %}
+        {% endif %}
+
+        {% if tournaments %}
         {% include "persons/includes/tournaments.html" %}
-      {% endif %}
-
+        {% endif %}
 
 
     </article>
-  </div>
+</div>
 
-<script>
-
-    // Функція для форматування дати в форматі dd-mm-yyyy
-    function formatDate(epoch) {
-    if (!epoch) return 'н/д'; // Повертає "н/д", якщо epoch не визначено
-    const date = new Date(epoch * 1000); // Переводимо Epoch в мілісекунди
-    const day = String(date.getDate()).padStart(2, '0'); // Дні з 1 по 31
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Місяці з 1 по 12
-    const year = date.getFullYear(); // Рік
-
-    return `${day}-${month}-${year}`;
-  }
-
-    // Функція для обчислення віку
-    function calculateAge(birthdate) {
-    const today = new Date();
-    const birthDate = new Date(birthdate * 1000);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-    return age;
-  }
-
-    // Функція для обробки всіх елементів з класом epoch-date
-    function formatDates() {
-    document.querySelectorAll('.epoch-date').forEach((element) => {
-      const epoch = parseInt(element.dataset.epoch);
-      const formattedDate = formatDate(epoch);
-
-      if (isNaN(epoch) || epoch === null) {
-        element.textContent = 'н/д'; // Відображає "н/д", якщо epoch не є числом або є null
-      } else {
-        element.textContent = formattedDate;
-
-        // Додатково обробляємо вік для дати народження
-        if (element.dataset.epoch === '{{ person.birthday }}') {
-          const ageElement = document.getElementById('age');
-          if (ageElement) {
-            const age = calculateAge(epoch);
-            ageElement.textContent = `Вік: ${age} років`;
-          }
-        }
-      }
-    });
-  }
-
-    // Викликаємо функцію після завантаження DOM
-    document.addEventListener("DOMContentLoaded", formatDates);
-
-</script>
 
 {% endblock %}

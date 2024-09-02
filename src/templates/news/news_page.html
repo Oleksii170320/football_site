@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/static/css/styles_region.css">
+<link rel="stylesheet" href="/static/css/styles_matches_season.css">
+<link rel="stylesheet" href="/static/css/styles_team.css">
+{% endblock %}
+
+
+{% block aside_left %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card text-center">
+
+    <div class="card mb-3" style="max-width: 940px; margin: 0 auto;">
+
+        <article style="padding: 1px">
+            <h3>{{ news_page.topic }}</h3>{{ news_page.date }}</p>
+            <hr style="border: 2px solid;">
+            <div class="vr">
+                <h4>{{ news_page.brief}}</h4>
+            </div>
+            <hr style="border: 2px solid;">
+            <div class="team-info">
+                {{ news_page.description }}
+            </div>
+
+
+        </article>
+        <div class="team-info">
+        </div>
+
+        {% endblock %}
+
+
+        {% block aside_right %}
+        {% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/static/css/styles_region.css">
+<link rel="stylesheet" href="/static/css/styles_matches_season.css">
+
+<style>
+    .header_page {
+        margin: 0px;
+        padding: 10px;
+        background-color: #353535;
+        text-align: center;
+        color: white;
+        border-top: 1px solid #faf7f7;
+    }
+</style>
+{% endblock %}
+
+
+{% block aside_left %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<!--Додано блок меню -->
+{% include "includes/season_nav_block.html" %}
+
+
+<!--Головна сторінка розіграшу (+/- 7 днів) -->
+{% if main %}
+{% include "tournament/includes/tournament_info.html" %}
+<h3 class="header_page">НАЙБЛИЖЧІ МАТЧІ (+/- 7 ДНІВ)</h3>
+
+{% include "matches/matches_by_round.html" %}
+
+{% include "matches/matches_by_round.html" %}
+<!--Зіграні матчі розіграшу -->
+{% elif results %}
+<h3 class="header_page">Зіграні матчі розіграшу</h3>
+{% include "matches/matches_by_round.html" %}
+<!--Майбутні матчірозіграшу -->
+{% elif upcoming %}
+<h3 class="header_page">Майбутні матчі розіграшу</h3>
+{% include "matches/matches_by_round.html" %}
+<!--Турнірна таблиця -->
+{% elif standings %}
+<h3 class="header_page">ТУРНІРНА ТАБЛИЦЯ</h3>
+{% include "seasons/standings.html" %}
+<!--Архів сезонів -->
+{% elif seasons_archive %}
+<h3 class="header_page">ІСТОРІЯ РОЗІГРАШІВ</h3>
+
+{% include "seasons/season_archive.html" %}
+
+{% endif %}
+
+
+{% endblock %}
+
+
+{% block aside_right %}
+{% endblock %}

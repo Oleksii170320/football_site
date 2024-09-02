@@ -2,66 +2,66 @@
 
 {% block style %}
 <style>
-  /* Загальні стилі */
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+    /* Загальні стилі */
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-  .content-title {
-    text-align: center;
-    margin-bottom: 2em;
-    font-size: 1.5rem;
-    color: #333;
-  }
+    .content-title {
+        text-align: center;
+        margin-bottom: 2em;
+        font-size: 1.5rem;
+        color: #333;
+    }
 
-  .tournament-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5em;
-    justify-content: center;
-  }
+    .tournament-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5em;
+        justify-content: center;
+    }
 
-  .tournament-item {
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1em;
-    width: 100%;
-    max-width: 300px; /* Максимальна ширина для кожного елемента */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: background-color 0.3s, box-shadow 0.3s;
-  }
+    .tournament-item {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1em;
+        width: 100%;
+        max-width: 300px; /* Максимальна ширина для кожного елемента */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
 
-  .tournament-item:hover {
-    background-color: #e9ecef;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
+    .tournament-item:hover {
+        background-color: #e9ecef;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-  .tournament-item h4 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #333;
-  }
+    .tournament-item h4 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #333;
+    }
 
-  /* Вирівнювання для фіксованих блоків */
-  .fiex {
-    display: flex;
-  }
+    /* Вирівнювання для фіксованих блоків */
+    .fiex {
+        display: flex;
+    }
 
-  .justify-center {
-    justify-content: center;
-  }
+    .justify-center {
+        justify-content: center;
+    }
 
-  .flex-col {
-    flex-direction: column;
-  }
+    .flex-col {
+        flex-direction: column;
+    }
 
-  .items-center {
-    align-items: center;
-  }
+    .items-center {
+        align-items: center;
+    }
 </style>
 {% endblock %}
 
@@ -70,18 +70,21 @@
 {% endblock %}
 
 {% block content %}
+
+
 <div class="container">
-  <h3 class="content-title">Список турнірів даного регіону:</h3>
-  <div class="tournament-list">
-      {% for tournament in tournaments %}
-          <div class="tournament-item">
+    <h3 class="content-title">Список турнірів даного регіону:</h3>
+    <div class="tournament-list">
+        {% for tournament in tournaments %}
+        <div class="tournament-item">
             <h4>{{ tournament.full_name }}</h4>
-          </div>
-      {% endfor %}
-  </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+
 {% endblock %}
 
 {% block aside_right %}
-
 {% endblock %}

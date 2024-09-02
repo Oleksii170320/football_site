@@ -1,0 +1,40 @@
+<div class="container" style="width: 100%;">
+    <div class="card mb-3" style="width: 99%;">
+
+        <table class="table table-striped table-hover" style="width: 100%;">
+            <thead>
+            <tr class="row-header">
+                <th>Сезон</th>
+                <th></th>
+                <th>Переможець</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for season in seasons_archive %}
+
+            <tr class="row-default">
+                <td>
+                    <strong>
+                        <a href="/region/{{ season.tournament.organization.region.slug }}/{{ season.id }}/{{ season.slug }}">
+                            {{ season.name }} - {{ season.year }}
+                        </a>
+                    </strong>
+                </td>
+                {% if season.team_winner.name %}
+                <td class=>
+
+                    <img src="{{ url_for('static', path='/img/teams/' ~ season.team_winner.logo) }}"
+                         alt="{{ season.team_winner.logo }} logo">
+
+                </td>
+                <td>
+                    <a href="/teams/{{  season.team_winner.id }}">
+                        <strong>{{ season.team_winner.name }}</strong> ({{ season.team_winner.city }})
+                    </a>
+                </td>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

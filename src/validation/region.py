@@ -2,10 +2,12 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
 
+from validation.news import NewsTableSchemas
 from validation.organization import OrganizationSchemas
 from validation.person import PersonSchemas
 from validation.team import TeamSchemas
 from validation.stadium import StadiumSchemas
+from validation.contacts import ContactSchemas
 
 
 class RegionBaseSchemas(BaseModel):
@@ -30,3 +32,5 @@ class RegionSchemas(RegionBaseSchemas):
     organizations: Optional[list[OrganizationSchemas]] = []
     stadiums: Optional[list[StadiumSchemas]] = []
     persons: Optional[list[PersonSchemas]] = []
+    contact: Optional[list[ContactSchemas]] = []
+    newstables: Optional[list[NewsTableSchemas]] = []

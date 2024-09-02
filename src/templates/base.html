@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Футбольний Сайт</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="/static/css/styles_base.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/img/logo_site/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/img/logo_site/favicon-32x32.png">
@@ -60,7 +61,7 @@
                     <td style="padding: 1px">
                         <a href="/region/{{ region.slug }}" class="region-link"
                            data-region-slug="{{ region.slug }}">
-                            {{ region.name }}
+                            <strong>{{ region.name }}</strong>
                         </a>
                         {% if region.slug %}
                         {% for season in seasons %}
@@ -99,5 +100,6 @@
 </footer>
 
 <script src="/static/js/base.js"></script>
+<script src="{{ url_for('static', path='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

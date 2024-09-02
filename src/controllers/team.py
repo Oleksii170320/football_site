@@ -20,19 +20,181 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[schemas.TeamSchemas])
-def read_teams(request: Request, db: Session = Depends(get_db)):
-
-    news_list = get_news_list(db)
-    regions_list = get_regions_list(db)
-    teams = crud.get_teams(db)
+def read_teams_all(request: Request, db: Session = Depends(get_db)):
+    """Відкриває список всіх команд"""
 
     return templates.TemplateResponse(
-        "teams.html",
+        "team/teams.html",
         {
             "request": request,
-            "news_list": news_list,  # Стрічка новин (всі регіони)
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "teams": teams,
+            "news_list": get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "teams": crud.get_teams(db),
+        },
+    )
+
+
+@router.get("/{team_id}", response_model=schemas.TeamSchemas)
+def read_team_by_id(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Відкриває сторінку команди по ІД"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+        },
+    )
+
+
+@router.get("/{team_id}/matches", response_model=schemas.TeamSchemas)
+def team_matches(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Відкриває всі матчі даної комсанди"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "matches": get_matches_team(db, team_id=team_id),
+        },
+    )
+
+
+@router.get("/{team_id}/application", response_model=schemas.TeamSchemas)
+def team_application(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Відкриває заявку гравців даної команди"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "application": get_team_staff(db, team_id=team_id),
+        },
+    )
+
+
+@router.get("/{team_id}/leadership", response_model=schemas.TeamSchemas)
+def team_leadership(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Керівництво команди"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "leadership": get_team_staff(db, team_id=team_id),
+        },
+    )
+
+
+@router.get("/{team_id}/achievement", response_model=schemas.TeamSchemas)
+def team_achievement(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Історія досягнення команди"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "achievement": get_seasons_winner(db, team_id=team_id),
+        },
+    )
+
+
+@router.get("/{team_id}/history", response_model=schemas.TeamSchemas)
+def read_team_history(
+    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+):
+    """Історія виступів команди в турнірах"""
+
+    team = crud.get_team(db, team_id=team_id)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+
+    return templates.TemplateResponse(
+        "team/team.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "team": team,  # Загальна інформація команди
+            "history": get_seasons_teams_history(
+                db, team_id=team_id
+            ),  # Історія турнірів
+        },
+    )
+
+
+@router.get("/{team_slug}", response_model=schemas.TeamSchemas)
+def read_team_by_slug(
+    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
+):
+    """Відкриває сторінку команди по SLUG"""
+
+    team = crud.get_team_for_slug(db, team_slug=team_slug)
+
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return templates.TemplateResponse(
+        "team.html",
+        {
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "team": team,
         },
     )
 
@@ -46,169 +208,6 @@ def create_team(team: schemas.TeamCreateSchemas, db: Session = Depends(get_db)):
 def read_teams_test(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     teams = crud.get_teams(db, skip=skip, limit=limit)
     return teams
-
-
-@router.get("/{team_id}", response_model=schemas.TeamSchemas)
-def read_team_all(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-        },
-    )
-
-
-@router.get("/{team_id}/matches", response_model=schemas.TeamSchemas)
-def read_team_matches(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-    matches = get_matches_team(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-            "matches": matches,
-        },
-    )
-
-
-@router.get("/{team_id}/application", response_model=schemas.TeamSchemas)
-def read_team_application(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-    application = get_team_staff(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-            "application": application,
-        },
-    )
-
-
-@router.get("/{team_id}/leadership", response_model=schemas.TeamSchemas)
-def read_team_leadership(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-    leadership = get_team_staff(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-            "leadership": leadership,
-        },
-    )
-
-
-@router.get("/{team_id}/achievement", response_model=schemas.TeamSchemas)
-def read_team_achievement(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-    achievement = get_seasons_winner(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-            "achievement": achievement,
-        },
-    )
-
-
-@router.get("/{team_id}/history", response_model=schemas.TeamSchemas)
-def read_team_history(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    seasons_region = get_seasons_region(db, region_slug=region_slug)
-    team = crud.get_team(db, team_id=team_id)
-    history = get_seasons_teams_history(db, team_id=team_id)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-
-    return templates.TemplateResponse(
-        "team/team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "seasons": seasons_region,  # Список цьогорічних турнірів
-            "team": team,  # Загальна інформація команди
-            "history": history,  # Історія турнірів
-        },
-    )
-
-
-@router.get("/{team_slug}", response_model=schemas.TeamSchemas)
-def read_team(
-    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
-):
-
-    regions_list = get_regions_list(db)
-    team = crud.get_team_for_slug(db, team_slug=team_slug)
-
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return templates.TemplateResponse(
-        "team.html",
-        {
-            "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
-            "team": team,
-        },
-    )
 
 
 @router.put("/{team_id}", response_model=schemas.TeamSchemas)

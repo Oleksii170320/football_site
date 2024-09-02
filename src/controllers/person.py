@@ -15,9 +15,9 @@ router = APIRouter()
 
 
 @router.get("/", response_model=schemas.PersonSchemas)
-def read_team(request: Request, db: Session = Depends(get_db)):
+def persons_list(request: Request, db: Session = Depends(get_db)):
+    """Дані для сторінки всіх персон на сайті"""
 
-    regions_list = get_regions_list(db)
     persons = crud.get_persons(db)
 
     if persons is None:
@@ -26,89 +26,97 @@ def read_team(request: Request, db: Session = Depends(get_db)):
         "persons/persons.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "persons": persons,
         },
     )
 
 
 @router.get("/{person_id}", response_model=schemas.PersonSchemas)
-def read_team(request: Request, person_id: int, db: Session = Depends(get_db)):
+def read_person(request: Request, person_id: int, db: Session = Depends(get_db)):
+    """Дані для сторінки персони по ІД"""
 
-    regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = get_persons_position_team(db, person_id=person_id)
 
     if person is None:
-        raise HTTPException(status_code=404, detail="Team not found")
+        raise HTTPException(status_code=404, detail="Person not found")
     return templates.TemplateResponse(
         "persons/person.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "person": person,
-            "positions_role": positions_role,
+            "positions_role": get_persons_position_team(db, person_id=person_id),
+        },
+    )
+
+
+@router.get("/{person_id}/matches", response_model=schemas.PersonSchemas)
+def persons_club_career(
+        request: Request, person_id: int, db: Session = Depends(get_db)
+):
+    """Інформація про матчі, в якіх грав гарець"""
+
+    person = crud.get_person(db, person_id=person_id)
+    if person is None:
+        raise HTTPException(status_code=404, detail="Person not found")
+    return templates.TemplateResponse(
+        "persons/person.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "person": person,
+            "positions_role": get_persons_position_team(db, person_id=person_id),
+            "matches": crud.get_person_matches(
+                db, person_id=person_id
+            ),  # Список команд за які грав гравець
         },
     )
 
 
 @router.get("/{person_id}/club_career", response_model=schemas.PersonSchemas)
-def read_team_career(request: Request, person_id: int, db: Session = Depends(get_db)):
+def persons_club_career(
+    request: Request, person_id: int, db: Session = Depends(get_db)
+):
+    """Інформація футбольної кар'єри гравця"""
 
-    regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = get_persons_position_team(db, person_id=person_id)
-    playing_career = crud.get_person_team_career(db, person_id=person_id)
-
     if person is None:
-        raise HTTPException(status_code=404, detail="Team not found")
+        raise HTTPException(status_code=404, detail="Person not found")
     return templates.TemplateResponse(
         "persons/person.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "person": person,
-            "positions_role": positions_role,
-            "club_career": playing_career,  # Список команд за які грав гравець
+            "positions_role": get_persons_position_team(db, person_id=person_id),
+            "club_career": crud.get_person_team_career(
+                db, person_id=person_id
+            ),  # Список команд за які грав гравець
         },
     )
 
 
 @router.get("/{person_id}/tournaments", response_model=schemas.PersonSchemas)
-def read_team_applications(
-    request: Request, person_id: int, db: Session = Depends(get_db)
+def persons_tournaments(
+        request: Request, person_id: int, db: Session = Depends(get_db)
 ):
+    """Інформація про турніри, в яких грав гравець"""
 
-    regions_list = get_regions_list(db)
     person = crud.get_person(db, person_id=person_id)
-    positions_role = get_persons_position_team(db, person_id=person_id)
-    tournaments = crud.get_person_teams_tournaments(db, person_id=person_id)
 
     if person is None:
-        raise HTTPException(status_code=404, detail="Team not found")
+        raise HTTPException(status_code=404, detail="Person not found")
     return templates.TemplateResponse(
         "persons/person.html",
         {
             "request": request,
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "person": person,
-            "positions_role": positions_role,
-            "tournaments": tournaments,  # Список Турнрірів, ву яких гралда команда
-        },
-    )
-
-
-@router.get("/", response_model=List[schemas.PersonSchemas])
-def read_regions(request: Request, db: Session = Depends(get_db)):
-    """виводить список регіонів"""
-
-    persons = crud.get_persons(db)
-
-    return templates.TemplateResponse(
-        "regions.html",
-        {
-            "request": request,
-            "persons": persons,
+            "positions_role": get_persons_position_team(db, person_id=person_id),
+            "tournaments": crud.get_person_teams_tournaments(
+                db, person_id=person_id
+            ),  # Список Турнрірів, ву яких гралда команда
         },
     )
 

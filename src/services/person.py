@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import desc, extract, and_, func
-from sqlalchemy.orm import Session
+from sqlalchemy import desc, extract, and_, func, Integer, case
+from sqlalchemy.orm import Session, aliased
 
 from models import (
     Person,
@@ -17,12 +17,44 @@ from models import (
     Association,
     Region,
     PlayerRole,
+    MatchProperties,
+    Match,
+    RefEvent,
+    MatchEvent,
 )
 from validation import person as schemas
 
 
 def get_person(db: Session, person_id: int):
-    return db.query(Person).filter(Person.id == person_id).first()
+    """Повна інформація про гравця/персону"""
+    current_year = datetime.now().year
+    result = (
+        db.query(
+            Person.id,
+            Person.slug,
+            Person.photo,
+            Person.name,
+            Person.lastname,
+            Person.surname,
+            func.strftime(
+                "%d-%m-%Y", func.date(func.datetime(Person.birthday, "unixepoch"))
+            ).label("birthday"),
+            Person.region_id,
+            Region.slug.label("region_slug"),
+            Region.name.label("region_name"),
+            # Додавання поля для обчислення віку
+            (
+                    current_year
+                    - func.strftime("%Y", func.datetime(Person.birthday, "unixepoch")).cast(
+                Integer
+            )
+            ).label("age"),
+        )
+        .join(Region, Region.id == Person.region_id)
+        .filter(Person.id == person_id)
+        .first()
+    )
+    return result
 
 
 def get_person_team(db: Session, person_id: int):
@@ -53,35 +85,134 @@ def get_person_team(db: Session, person_id: int):
     )
 
 
-def get_person_team_career(db: Session, person_id: int):
+def get_person_matches(db: Session, person_id: int):
     """Команди та періоди, в якіх грав гравець"""
+
+    Team1 = aliased(Team)
+    Team2 = aliased(Team)
 
     result = (
         db.query(
-            Team.id,  # id команди
-            PositionRole.player_number,  # номер футболки гравця в даній команді
-            Team.logo,  # логотип команди
-            Team.name,  # Назва команди
-            Team.city,  # Місто команди
-            # PositionRole.startdate,  # Дата заявки гравця в команді
-            # PositionRole.enddate,  # Дата відзаявки гравцяя в команді
+            Person.id.label("person_id"),
+            Match.id.label("match_id"),
+            func.strftime("%d-%m-%Y", func.datetime(Match.event, "unixepoch")).label(
+                "event"
+            ),
+            Team1.id.label("team1_id"),
+            Team1.slug.label("team1_slug"),
+            Team1.logo.label("team1_logo"),
+            Team1.name.label("team1_name"),
+            Team1.city.label("team1_city"),
+            Match.team1_penalty,
+            Match.team1_goals,
+            Match.team2_penalty,
+            Match.team2_goals,
+            Team2.id.label("team2_id"),
+            Team2.slug.label("team2_slug"),
+            Team2.logo.label("team2_logo"),
+            Team2.name.label("team2_name"),
+            Team2.city.label("team2_city"),
+            Season.name.label("season_name"),
+            Season.year.label("season_year"),
+        )
+        .join(Team1, Team1.id == Match.team1_id)
+        .join(Team2, Team2.id == Match.team2_id)
+        .join(MatchProperties, MatchProperties.match_id == Match.id)
+        .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
+        .join(Person, Person.id == TeamPerson.person_id)
+        .join(Season, Season.id == Match.season_id)
+        .filter(Person.id == person_id)
+        .order_by(desc(Match.event))
+        .all()
+    )
+    return result
+
+
+def get_person_team_career(db: Session, person_id: int):
+    """Команди та періоди, в яких грав гравець"""
+
+    result = (
+        db.query(
+            PositionRole.player_number.label("player_number"),  # Номер футболки гравця
+            Team.id.label("team_id"),  # id команди
+            Team.slug.label("team_slug"),
+            Team.logo.label("team_logo"),  # логотип команди
+            Team.name.label("team_name"),  # Назва команди
+            Team.city.label("team_city"),  # Місто команди
+            Position.position.label("position"),  # Позиція гравця
             func.strftime(
                 "%Y", func.date(func.datetime(PositionRole.startdate, "unixepoch"))
             ).label("startdate"),
             func.strftime(
                 "%Y", func.date(func.datetime(PositionRole.enddate, "unixepoch"))
             ).label("enddate"),
-            Position.position,  # Дата персони в команді
-            func.strftime("%Y", func.now()).label("current_year"),
+            func.count(func.distinct(MatchProperties.match_id)).label(
+                "matches_count"
+            ),  # кількість матчів
+            func.sum(case((RefEvent.id == 1, 1), (RefEvent.id == 2, 1), else_=0)).label(
+                "goals"
+            ),  # Кількість голів
+            func.sum(case((RefEvent.id == 2, 1), else_=0)).label(
+                "penalty_goals"
+            ),  # Кількість голів з пенальті
+            func.sum(case((RefEvent.id == 5, 1), else_=0)).label(
+                "yellow_cards"
+            ),  # Кількість жовтих карток
+            func.sum(case((RefEvent.id == 6, 1), (RefEvent.id == 7, 1), else_=0)).label(
+                "red_cards"
+            ),  # Кількість червоних карток
         )
         .join(TeamPerson, PositionRole.team_person_id == TeamPerson.id)
         .join(Team, TeamPerson.team_id == Team.id)
         .join(Position, Position.id == PositionRole.position_id)
+        .outerjoin(MatchProperties, MatchProperties.player_id == TeamPerson.id)
+        .outerjoin(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
+        .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
         .filter(TeamPerson.person_id == person_id)
+        .group_by(
+            Team.id,
+            Team.slug,
+            Team.logo,
+            Team.name,
+            Team.city,
+            Position.position,
+            PositionRole.player_number,
+            PositionRole.startdate,
+            PositionRole.enddate,
+        )
         .order_by(desc(PositionRole.enddate))
         .all()
     )
     return result
+
+
+# def get_person_team_career(db: Session, person_id: int):
+#     """Команди та періоди, в якіх грав гравець"""
+#
+#     result = (
+#         db.query(
+#             Team.id,  # id команди
+#             PositionRole.player_number,  # номер футболки гравця в даній команді
+#             Team.logo,  # логотип команди
+#             Team.name,  # Назва команди
+#             Team.city,  # Місто команди
+#             func.strftime(
+#                 "%Y", func.date(func.datetime(PositionRole.startdate, "unixepoch"))
+#             ).label("startdate"),
+#             func.strftime(
+#                 "%Y", func.date(func.datetime(PositionRole.enddate, "unixepoch"))
+#             ).label("enddate"),
+#             Position.position,  # Дата персони в команді
+#             func.strftime("%Y", func.now()).label("current_year"),
+#         )
+#         .join(TeamPerson, PositionRole.team_person_id == TeamPerson.id)
+#         .join(Team, TeamPerson.team_id == Team.id)
+#         .join(Position, Position.id == PositionRole.position_id)
+#         .filter(TeamPerson.person_id == person_id)
+#         .order_by(desc(PositionRole.enddate))
+#         .all()
+#     )
+#     return result
 
 
 def get_person_teams_tournaments(db: Session, person_id: int):
@@ -130,6 +261,17 @@ def get_person_teams_tournaments(db: Session, person_id: int):
         .all()
     )
     return result
+
+
+def get_region_persons(db: Session, region_slug: str):
+    """Виводить персон, які відносяться до даного регіону"""
+    persons_list = (
+        db.query(Person)
+        .join(Region, Region.id == Person.region_id)
+        .filter(Region.slug == region_slug)
+        .all()
+    )
+    return persons_list
 
 
 def get_persons(db: Session):

@@ -1,10 +1,25 @@
 from sqlalchemy.orm import Session
-from models import stadium as models
+from models import stadium as models, Team
 from validation import stadium as schemas
 
 
 def get_stadium(db: Session, stadium_id: int):
     return db.query(models.Stadium).filter(models.Stadium.id == stadium_id).first()
+
+
+def get_stadium_teams(db: Session, stadium_id: int):
+    result = (
+        db.query(
+            models.Stadium.id,
+            Team.id,
+            Team.name,
+            Team.city,
+        )
+        .join(Team, Team.stadium_id == models.Stadium.id)
+        .filter(models.Stadium.id == stadium_id)
+        .all()
+    )
+    return result
 
 
 def get_stadiums(db: Session, skip: int = 0, limit: int = 100):

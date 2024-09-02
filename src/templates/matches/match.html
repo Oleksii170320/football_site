@@ -1,34 +1,42 @@
 {% extends "base.html" %}
 
 {% block style %}
-   <link rel="stylesheet" href="/static/css/styles_matches_season.css">
+<link rel="stylesheet" href="/static/css/styles_matches_season.css">
 <style>
 
 
     #main, #main_1, #main_2 {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid grey;
+        display: flex;
+        flex-direction: column;
+        /*border: 1px solid grey;*/
 
-}
+    }
 
-.teams-container {
-    display: flex;
-    justify-content: space-between; /* Розміщує елементи на однаковій відстані по горизонталі */
-}
+    .teams-container {
+        display: flex;
+        justify-content: space-between; /* Розміщує елементи на однаковій відстані по горизонталі */
+    }
 
-.team {
-    flex: 1; /* Це забезпечує рівномірний розподіл простору між командами */
-    margin: 0 10px; /* Відстань між командами */
-     border: 1px solid grey;
-}
-.region-info {
-    color: white;
-}
+    .team {
+        flex: 1; /* Це забезпечує рівномірний розподіл простору між командами */
+        margin: 0 10px; /* Відстань між командами */
+        border: 1px solid grey;
+    }
+
+    .region-info {
+        color: white;
+    }
+
+    .header_page {
+        margin: 0px;
+        padding: 10px;
+        background-color: #353535;
+        text-align: center;
+        color: white;
+
 </style>
 
 {% endblock %}
-
 
 
 {% block aside_left %}
@@ -36,48 +44,50 @@
 
 {% block content %}
 
-    <div class="nav-block">
-        <div class="region-info">
-            <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
-                 alt="{{ match.tournament_name }} logo" height="90px">
-            <h2>
-                {{ match.season_name }} {{ match.season_year }}
-                {% if match.stage_name %}
-                - {{ match.stage_name }}
-                {% endif %}
-                {% if match.round_name %}
-                - {{ match.round_name }}
-                {% endif %}
-            </h2>
-        </div>
+<div class="nav-block">
+    <div class="region-info">
+        <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
+             alt="{{ match.tournament_name }} logo" height="90px">
+        <h2>
+            {{ match.season_name }} {{ match.season_year }}
+            {% if match.stage_name %}
+            - {{ match.stage_name }}
+            {% endif %}
+            {% if match.round_name %}
+            - {{ match.round_name }}
+            {% endif %}
+        </h2>
     </div>
+</div>
 
 <table class="table table-striped">
     <tbody>
     <tr>
-        <td>
+        <td style="width: 15%;" align="center">
             <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}" alt="{{ match.team1_name }} logo"
                  height="120px">
         </td>
-        <td align="right">
+        <td style="width: 20%;" align="right">
             <a href="/teams/{{ match.team1_id }}">
                 <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
             </a>
         </td>
-        <td align="center" style="text-align: center; vertical-align: middle;">
-            <h5>Дата - {{ match.event }}<br>
-                Стадіон - {{ match.stadium_name }} {{ match.stadium_city }}</h5><br>
+        <td align="center" style="text-align: center; vertical-align: middle; width: 30%;">
+            <h5>Дата: {{ match.event }}<br>
+                Стадіон: {% if match.stadium_name %} {{ match.stadium_name }} {{ match.stadium_city }}{% else %} - {%
+                endif %}<br>
+                Статус: {{ match.status.value }}<br></h5><br>
             <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
             {% if match.team1_penalty and match.team2_penalty %}
             (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
             {% endif %}<br>
         </td>
-        <td align="left">
+        <td style="width: 20%;" align="left">
             <a href="/teams/{{ match.team2_id }}">
                 <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
             </a>
         </td>
-        <td>
+        <td style="width: 15%;" align="center">
             <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}" alt="{{ match.team2_name }} logo"
                  height="120px">
         </td>
@@ -85,7 +95,7 @@
     </tbody>
 </table>
 
-   <hr style="border: 2px solid;">
+<hr style="border: 2px solid;">
 
 <div class="card text-center">
     <div class="card-header">
@@ -100,11 +110,11 @@
                     <button type="button" class="btn btn-outline-dark">Склади команд</button>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/matches/{{ match.match_id }}/statistics">
-                    <button type="button" class="btn btn-outline-dark">Статистика</button>
-                </a>
-            </li>
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link" href="/matches/{{ match.match_id }}/statistics">-->
+            <!--                    <button type="button" class="btn btn-outline-dark">Статистика</button>-->
+            <!--                </a>-->
+            <!--            </li>-->
         </ul>
     </div>
 </div>
@@ -121,14 +131,9 @@
 {% include "matches/includes/match_statistics.html" %}
 {% endif %}
 
-<div id="main_2">
+{% include "matches/includes/infographics.html" %}
 
-
-</div>
-</div>
-</div>
 {% endblock %}
-
 
 
 {% block aside_right %}

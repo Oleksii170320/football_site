@@ -6,6 +6,7 @@ from core.database import Base
 from models.annonated import intpk
 
 if TYPE_CHECKING:
+    from models.region import Region
     from models.tournament import Tournament
 
 
@@ -18,11 +19,17 @@ class News(Base):
     brief: Mapped[str | None]
     description: Mapped[str | None]
     photo: Mapped[str | None]
-    category_id: Mapped[int] = mapped_column(
-        ForeignKey("tournaments.id", onupdate="SET NULL", ondelete="SET NULL"),
+    region_id: Mapped[int] = mapped_column(
+        ForeignKey("regions.id", onupdate="SET NULL", ondelete="SET NULL"),
     )
+    # region_id: Mapped[int] = mapped_column(
+    #     ForeignKey("tournaments.id", onupdate="SET NULL", ondelete="SET NULL"),
+    # )
 
     # зв'язки з таблицями
-    tournament: Mapped["Tournament"] = relationship(
+    region: Mapped["Region"] = relationship(
         back_populates="newstables",
     )
+    # tournament: Mapped["Tournament"] = relationship(
+    #     back_populates="newstables",
+    # )

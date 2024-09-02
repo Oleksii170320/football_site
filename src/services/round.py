@@ -2,7 +2,7 @@ from datetime import date
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
-from models import round as models
+from models import round as models, Round, Match
 from validation import round as schemas
 
 

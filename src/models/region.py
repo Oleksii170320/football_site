@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from models.person import Person
     from models.news import News
 
+    from models.contacts import Contact
+
 
 class Region(Base):
     __tablename__ = "regions"
@@ -36,6 +38,12 @@ class Region(Base):
         back_populates="region",
     )
     persons: Mapped[list["Person"]] = relationship(
+        back_populates="region",
+    )
+    contact: Mapped[list["Contact"]] = relationship(
+        back_populates="region",
+    )
+    newstables: Mapped[list["News"]] = relationship(
         back_populates="region",
     )
 
