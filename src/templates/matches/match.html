@@ -33,7 +33,7 @@
         background-color: #353535;
         text-align: center;
         color: white;
-
+    }
 </style>
 
 {% endblock %}
@@ -49,13 +49,15 @@
         <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
              alt="{{ match.tournament_name }} logo" height="90px">
         <h2>
-            {{ match.season_name }} {{ match.season_year }}
-            {% if match.stage_name %}
-            - {{ match.stage_name }}
-            {% endif %}
-            {% if match.round_name %}
-            - {{ match.round_name }}
-            {% endif %}
+            <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}">
+                {{ match.season_name }} {{ match.season_year }}
+                {% if match.stage_name %}
+                - {{ match.stage_name }}
+                {% endif %}
+                {% if match.round_name %}
+                - {{ match.round_name }}
+                {% endif %}
+            </a>
         </h2>
     </div>
 </div>
@@ -111,8 +113,8 @@
                 </a>
             </li>
             <!--            <li class="nav-item">-->
-            <!--                <a class="nav-link" href="/matches/{{ match.match_id }}/statistics">-->
-            <!--                    <button type="button" class="btn btn-outline-dark">Статистика</button>-->
+            <!--                <a class="nav-link" href="/matches/{{ match.match_id }}/form">-->
+            <!--                    <button type="button" class="btn btn-outline-dark">Редагувати</button>-->
             <!--                </a>-->
             <!--            </li>-->
         </ul>
@@ -130,6 +132,10 @@
 {% if statistics %}
 {% include "matches/includes/match_statistics.html" %}
 {% endif %}
+
+<!--{% if form %}-->
+<!--{% include "forms/form_match.html" %}-->
+<!--{% endif %}-->
 
 {% include "matches/includes/infographics.html" %}
 

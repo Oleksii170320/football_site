@@ -23,4 +23,4 @@ class TeamPersonSchemas(TeamPersonSchemas):
 
     id: int
     positions_role: list["PositionRoleSchemas"] = []
-    match_properties: list["MatchPropertiesSchemas"] = []
+    # match_properties: list["MatchPropertiesSchemas"] = []

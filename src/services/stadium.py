@@ -8,6 +8,8 @@ def get_stadium(db: Session, stadium_id: int):
 
 
 def get_stadium_teams(db: Session, stadium_id: int):
+    """Запиит для визначення домашнього стадіону пеаній команді"""
+
     result = (
         db.query(
             models.Stadium.id,
@@ -19,11 +21,38 @@ def get_stadium_teams(db: Session, stadium_id: int):
         .filter(models.Stadium.id == stadium_id)
         .all()
     )
+
     return result
 
 
 def get_stadiums(db: Session, skip: int = 0, limit: int = 100):
+    """Запиит на всі стадіони в БД з урахуванням падінгу"""
+
     return db.query(models.Stadium).offset(skip).limit(limit).all()
+
+
+def get_search_stadiums(db: Session, query: str):
+    """Пошук стадіонів за введеним запитом"""
+    result = (
+        db.query(
+            models.Stadium.id,
+            models.Stadium.name,
+            models.Stadium.city,
+            models.Stadium.address,
+            models.Stadium.photo,
+            models.Stadium.capacity,
+            models.Stadium.dimensions,
+            models.Stadium.type_coverage,
+            models.Stadium.region_id,
+        )
+        .filter(
+            models.Stadium.name.ilike(f"%{query}%")
+            | models.Stadium.city.ilike(f"%{query}%")
+        )
+        .all()
+    )
+
+    return result
 
 
 def create_stadium(db: Session, stadium: schemas.StadiumCreateSchemas):

@@ -12,22 +12,18 @@ from models import (
 from validation import region as schemas
 
 
-def get_regions_list(db: Session):
-    """Список всіх регіонів(Областей)"""
-    return db.query(models.Region).all()
-
-
 def get_region(db: Session, region_slug: str):
     return db.query(models.Region).filter(models.Region.slug == region_slug).first()
 
 
-def get_regions(db: Session, region_slug: str = None):
-    query = db.query(Region)
-    if region_slug:
-        query = query.filter(Region.slug == region_slug)
-        return query.first()
-    else:
-        return query.all()
+def get_regions_list(db: Session, **kwargs):
+    """Список всіх регіонів(Областей)"""
+    return db.query(Region).all()
+
+
+def get_regions(db: Session, region_slug: str = None, **kwargs):
+    query = db.query(Region).filter(Region.slug == region_slug)
+    return query.first()
 
 
 def get_region_season(db: Session, region_id: int):
@@ -52,10 +48,6 @@ def get_region_seasons(db: Session, region_id: int):
         .order_by(desc(Season.year))
         .all()
     )
-
-
-# def get_regions(db: Session):
-#     return db.query(models.Region).offset(skip).limit(limit).all()
 
 
 def create_region(db: Session, region: schemas.RegionCreateSchemas):

@@ -47,7 +47,9 @@
         {% for stage in stages %}
         {% for group in groups if group.matches.stage_id == stage.id %}
         <!--    <div class="container mt-5">-->
-        <h5 class="text-center">{{ group.matches.stage.name }} - {{ group.name }}</h5>
+        <h4 class="text-center" style="background-color: #d6d2d2; padding: 5px;">
+            {{ group.matches.stage.name }} - {{ group.name }}
+        </h4>
         <table class="table table-striped">
             <thead>
             <tr class="row-header">

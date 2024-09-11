@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from datetime import date
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -46,6 +49,25 @@ def get_tournament_by_slug(
             "seasons_archive": get_tournament_archive(
                 db, tournament_slug=tournament_slug
             ),
+        },
+    )
+
+
+@router.get("/{tournament_slug}/new_season")
+def get_tournament_by_slug(
+    request: Request, tournament_slug: str, db: Session = Depends(get_db)
+):
+    """Відкриває сторінку турніру по SLUG"""
+    return templates.TemplateResponse(
+        "tournament/tournament.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "tournaments": get_tournament_slug(db, tournament_slug=tournament_slug),
+            "seasons_archive": get_tournament_archive(
+                db, tournament_slug=tournament_slug
+            ),
+            "form": True,
         },
     )
 

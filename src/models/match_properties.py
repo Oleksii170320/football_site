@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from models.match import Match
     from models.team_person_assotiation import TeamPerson
     from models.match_event import MatchEvent
+    from models.position_role import PositionRole
 
 
 class MatchProperties(Base):
@@ -33,9 +34,7 @@ class MatchProperties(Base):
         ForeignKey("matches.id", onupdate="SET NULL", ondelete="SET NULL"),
     )
     player_id: Mapped[int] = mapped_column(
-        ForeignKey(
-            "team_person_association.id", onupdate="SET NULL", ondelete="SET NULL"
-        ),
+        ForeignKey("positions_role.id", onupdate="SET NULL", ondelete="SET NULL"),
         nullable=False,
     )
 
@@ -43,7 +42,7 @@ class MatchProperties(Base):
     matches: Mapped["Match"] = relationship(
         back_populates="match_properties",
     )
-    player: Mapped["TeamPerson"] = relationship(
+    player: Mapped["PositionRole"] = relationship(
         back_populates="match_properties",
     )
     matches_event: Mapped[list["MatchEvent"]] = relationship(

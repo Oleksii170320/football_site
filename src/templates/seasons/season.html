@@ -35,24 +35,37 @@
 
 {% include "matches/matches_by_round.html" %}
 
-{% include "matches/matches_by_round.html" %}
+
 <!--Зіграні матчі розіграшу -->
 {% elif results %}
 <h3 class="header_page">Зіграні матчі розіграшу</h3>
 {% include "matches/matches_by_round.html" %}
+
 <!--Майбутні матчірозіграшу -->
 {% elif upcoming %}
 <h3 class="header_page">Майбутні матчі розіграшу</h3>
 {% include "matches/matches_by_round.html" %}
+
 <!--Турнірна таблиця -->
 {% elif standings %}
 <h3 class="header_page">ТУРНІРНА ТАБЛИЦЯ</h3>
 {% include "seasons/standings.html" %}
+
 <!--Архів сезонів -->
 {% elif seasons_archive %}
 <h3 class="header_page">ІСТОРІЯ РОЗІГРАШІВ</h3>
-
 {% include "seasons/season_archive.html" %}
+
+<!--Команди, які заявлені в розіграш (Додавання команди в розіграш) -->
+{% elif seasons_clubs %}
+<h3 class="header_page">КОМАНДИ УЧАСНИЦІ РОЗІГРАШУ</h3>
+{% include "seasons/include/season_teams.html" %}
+
+<!--Календар матчів (Додавання матчів у розіграш) -->
+{% elif seasons_schedule %}
+<h3 class="header_page">КАЛЕНДАР МАЧТІВ</h3>
+{% include "forms/form_add_new_match.html" %}
+
 
 {% endif %}
 

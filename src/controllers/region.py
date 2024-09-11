@@ -4,9 +4,9 @@ from typing import List
 
 from core.templating import templates
 from core.database import get_db
-from models import Group
-from services import region as crud
+from services import region as crud, get_context_data
 from services.contact import get_contact
+from services.group import get_group_in_season, get_groups
 from services.match import (
     get_season_matches_results,
     get_season_matches_upcoming,
@@ -15,18 +15,18 @@ from services.match import (
 from services.news_list import get_news_list_region
 from services.organization import get_organization, get_region_organization
 from services.person import get_region_persons
-from services.region import get_regions
+from services.region import get_regions, get_regions_list, get_region
+from services.round import get_rounds_list
 from services.season import (
     get_seasons_region,
     get_season_by_id_or_slug,
     get_season_tournament,
 )
-from services.stage import get_distinct_stages_with_groups
+from services.stage import get_distinct_stages_with_groups, get_stages
 from services.standings import get_calculate_standings
-from services.team import get_regions_team_list
+from services.team import get_regions_team_list, get_teams_in_season, get_teams
 from services.tournament import (
     get_region_tournaments,
-    get_tournament_slug,
     get_tournament_for_season,
 )
 from validation import region as schemas_region, match as schemas_match
@@ -35,7 +35,7 @@ from validation.season import SeasonSchemas
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas_region.RegionSchemas])
+@router.get("/")
 def read_regions(request: Request, db: Session = Depends(get_db)):
     """Сторінка зі списком регіонів"""
 
@@ -48,25 +48,23 @@ def read_regions(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{region_slug}", response_model=schemas_region.RegionSchemas)
+@router.get("/{region_slug}")
 def read_region_by_slug(
-        request: Request, region_slug: str, db: Session = Depends(get_db)
+    request: Request, region_slug: str, db: Session = Depends(get_db)
 ):
     """виводить окремий регіон по SLUG"""
 
-    region = get_regions(db, region_slug=region_slug)
-
-    if region is None:
-        raise HTTPException(status_code=404, detail="Region not found")
     return templates.TemplateResponse(
         "region.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
-            "region": region,  # Виводить всю необхідну інформацію по даному регіону
+            "region": get_region(
+                db, region_slug=region_slug
+            ),  # Виводить всю необхідну інформацію по даному регіону
             "news_list": get_news_list_region(
                 db, region_slug=region_slug
             ),  # Стрічка новин (даного регіону)
@@ -74,7 +72,7 @@ def read_region_by_slug(
     )
 
 
-@router.get("/{region_slug}/teams", response_model=schemas_region.RegionSchemas)
+@router.get("/{region_slug}/teams")
 def region_teams(request: Request, region_slug: str, db: Session = Depends(get_db)):
     """Виводить команди даної області"""
 
@@ -86,18 +84,20 @@ def region_teams(request: Request, region_slug: str, db: Session = Depends(get_d
         "region.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
-            "teams": get_regions_team_list(db, region_slug=region_slug),
-            "region": region,  # Виводить всю необхідну інформацію по даному регіону/
+            "teams": get_regions_team_list(
+                db, region_slug=region_slug
+            ),  # List of teams of this region
+            "region": region,  # Information of this region
             "region_teams": True,
         },
     )
 
 
-@router.get("/{region_slug}/persons", response_model=schemas_region.RegionSchemas)
+@router.get("/{region_slug}/persons")
 def region_persons(request: Request, region_slug: str, db: Session = Depends(get_db)):
     """Виводить всі дійові персони даної області"""
 
@@ -109,7 +109,7 @@ def region_persons(request: Request, region_slug: str, db: Session = Depends(get
         "region.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
@@ -120,7 +120,7 @@ def region_persons(request: Request, region_slug: str, db: Session = Depends(get
     )
 
 
-@router.get("/{region_slug}/contacts", response_model=schemas_region.RegionSchemas)
+@router.get("/{region_slug}/contacts")
 def region_contacts(request: Request, region_slug: str, db: Session = Depends(get_db)):
     """Виводить контактні дані обласної організації"""
 
@@ -132,7 +132,7 @@ def region_contacts(request: Request, region_slug: str, db: Session = Depends(ge
         "region.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
@@ -143,9 +143,9 @@ def region_contacts(request: Request, region_slug: str, db: Session = Depends(ge
     )
 
 
-@router.get("/{region_slug}/tournaments", response_model=schemas_region.RegionSchemas)
+@router.get("/{region_slug}/tournaments")
 def region_tournaments(
-        request: Request, region_slug: str, db: Session = Depends(get_db)
+    request: Request, region_slug: str, db: Session = Depends(get_db)
 ):
     """Виводить всі футбольні та футзальні турніри даної області"""
 
@@ -157,7 +157,7 @@ def region_tournaments(
         "region.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
@@ -169,76 +169,57 @@ def region_tournaments(
     )
 
 
-@router.get(
-    "/{region_slug}/{season_id}/{season_slug}",
-    response_model=List[schemas_match.MatchSchemas],
-)
-def region_season(
-    request: Request,
-    region_slug: str,
-    season_id: int,
-        db: Session = Depends(get_db),
-):
-    """Відкриває головну сторінку певного роїіграшу/сезону"""
+@router.get("/{region_slug}/{season_slug}")
+def region_season(request: Request, region_slug: str, season_slug: str):
+    """Відкриває головну сторінку певного розіграшу/сезону"""
 
+    context = get_context_data(
+        request,
+        [
+            "regions_list",
+            "seasons",
+            "region",
+            "season",
+            "tournaments",
+            "matches",
+        ],
+        season_slug=season_slug,
+        region_slug=region_slug,
+    )
     return templates.TemplateResponse(
         "seasons/season.html",
-        {
-            "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
-            "seasons": get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "region": get_regions(
-                db, region_slug=region_slug
-            ),  # Виводить всю необхідну інформацію по даному регіону
-            "season": get_season_by_id_or_slug(db, season_id=season_id),
-            "tournaments": get_tournament_for_season(db, season_id=season_id),
-            "matches": get_season_matches_weeks(db, season_id=season_id),
-            "main": True,
-        },
+        {"request": request, "main": True, **context},
     )
 
 
-@router.get(
-    "/{region_slug}/{season_slug}/{season_id}/main",
-    response_model=List[schemas_match.MatchSchemas],
-)
-def region_season_main(
-        request: Request,
-        region_slug: str,
-        season_id: int,
-    db: Session = Depends(get_db),
-):
+@router.get("/{region_slug}/{season_slug}/main")
+def region_season_main(request: Request, region_slug: str, season_slug: str):
     """Відкриває головну сторінку певного роїіграшу/сезону по кнопці ГОЛОВНА"""
 
+    context = get_context_data(
+        request,
+        [
+            "regions_list",
+            "seasons",
+            "region",
+            "season",
+            "tournaments",
+            "matches",
+        ],
+        season_slug=season_slug,
+        region_slug=region_slug,
+    )
     return templates.TemplateResponse(
         "seasons/season.html",
-        {
-            "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
-            "seasons": get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "region": get_regions(
-                db, region_slug=region_slug
-            ),  # Виводить всю необхідну інформацію по даному регіону
-            "matches": get_season_matches_weeks(db, season_id=season_id),
-            "season": get_season_by_id_or_slug(db, season_id=season_id),
-            "tournaments": get_tournament_for_season(db, season_id=season_id),
-            "main": True,
-        },
+        {"request": request, "main": True, **context},
     )
 
 
-@router.get(
-    "/{region_slug}/{season_slug}/{season_id}/results",
-    response_model=List[schemas_match.MatchSchemas],
-)
+@router.get("/{region_slug}/{season_slug}/results")
 def season_matches_results(
     request: Request,
     region_slug: str,
-    season_id: int,
+    season_slug: str,
     db: Session = Depends(get_db),
 ):
     """Відкриває сторінку з зіграними матчами розіграшу"""
@@ -247,28 +228,25 @@ def season_matches_results(
         "seasons/season.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
             "region": get_regions(
                 db, region_slug=region_slug
             ),  # Виводить всю необхідну інформацію по даному регіону
-            "season": get_season_by_id_or_slug(db, season_id=season_id),
-            "matches": get_season_matches_results(db, season_id=season_id),
+            "season": get_season_by_id_or_slug(db, season_slug=season_slug),
+            "matches": get_season_matches_results(db, season_slug=season_slug),
             "results": True,
         },
     )
 
 
-@router.get(
-    "/{region_slug}/{season_slug}/{season_id}/upcoming",
-    response_model=List[schemas_match.MatchSchemas],
-)
+@router.get("/{region_slug}/{season_slug}/upcoming")
 def season_matches_upcoming(
     request: Request,
     region_slug: str,
-    season_id: int,
+    season_slug: str,
     db: Session = Depends(get_db),
 ):
     """Відкриває сторінку зі ще не зіграними матчами розіграшу"""
@@ -277,61 +255,54 @@ def season_matches_upcoming(
         "seasons/season.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
             "region": get_regions(
                 db, region_slug=region_slug
             ),  # Виводить всю необхідну інформацію по даному регіону
-            "season": get_season_by_id_or_slug(db, season_id=season_id),
-            "matches": get_season_matches_upcoming(db, season_id=season_id),
+            "season": get_season_by_id_or_slug(db, season_slug=season_slug),
+            "matches": get_season_matches_upcoming(db, season_slug=season_slug),
             "upcoming": True,
         },
     )
 
 
-@router.get(
-    "/{region_slug}/{season_slug}/{season_id}/standings",
-    response_model=List[schemas_match.MatchSchemas],
-)
+@router.get("/{region_slug}/{season_slug}/standings")
 def season_standings(
     request: Request,
     region_slug: str,
-    season_id: int,
-    group_id: int = None,  # Новий параметр для фільтрації по групах
+    season_slug: str,
     db: Session = Depends(get_db),
 ):
     """Відкриває турніру таблицю розіграшу"""
-
-    groups = db.query(Group).filter(Group.season_id == season_id).all()
 
     return templates.TemplateResponse(
         "seasons/season.html",
         {
             "request": request,
-            "regions_list": get_regions(db),
+            "regions_list": get_regions_list(db),
             "seasons": get_seasons_region(db, region_slug=region_slug),
-            "standings": get_calculate_standings(db, season_id=season_id),
+            "standings": get_calculate_standings(db, season_slug=season_slug),
             "region": get_regions(db, region_slug=region_slug),
-            "season": get_season_by_id_or_slug(db, season_id=season_id),
-            "groups": groups,  # Отримання всіх груп сезону,  # Список груп
+            "season": get_season_by_id_or_slug(db, season_slug=season_slug),
+            "groups": get_group_in_season(
+                db, season_slug=season_slug
+            ),  # Отримання всіх груп сезону,  # Список груп
             "stages": get_distinct_stages_with_groups(
-                db, season_id=season_id
+                db, season_slug=season_slug
             ),  # Список стадій
         },
     )
 
 
-@router.get(
-    "/{region_slug}/{season_slug}/{tournament_id}/archive",
-    response_model=List[SeasonSchemas],
-)
+@router.get("/{region_slug}/{season_id}/{tournament_slug}/archive")
 def tournament_archive(
     request: Request,
     region_slug: str,
-    season_slug: str,
-    tournament_id: int,
+    season_id: int,
+    tournament_slug: str,
     db: Session = Depends(get_db),
 ):
     """Відкриває історію розіграшів турніру"""
@@ -340,7 +311,35 @@ def tournament_archive(
         "seasons/season.html",
         {
             "request": request,
-            "regions_list": get_regions(db),  # Список регіонів (бокове меню)
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "region": get_regions(
+                db, region_slug=region_slug
+            ),  # Виводить всю необхідну інформацію по даному регіону
+            "season": get_season_by_id_or_slug(db, season_id=season_id),
+            "seasons_archive": get_season_tournament(
+                db, tournament_slug=tournament_slug
+            ),
+        },
+    )
+
+
+@router.get("/{region_slug}/{season_slug}/clubs")
+def tournament_archive(
+    request: Request,
+    region_slug: str,
+    season_slug: str,
+    db: Session = Depends(get_db),
+):
+    """Відкриває історію розіграшів турніру"""
+
+    return templates.TemplateResponse(
+        "seasons/season.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": get_seasons_region(
                 db, region_slug=region_slug
             ),  # Список цьогорічних турнірів
@@ -348,7 +347,39 @@ def tournament_archive(
                 db, region_slug=region_slug
             ),  # Виводить всю необхідну інформацію по даному регіону
             "season": get_season_by_id_or_slug(db, season_slug=season_slug),
-            "seasons_archive": get_season_tournament(db, tournament_id=tournament_id),
+            "teams": get_teams_in_season(db, season_slug=season_slug),
+            "add_team": get_teams(db),
+            "seasons_clubs": True,
+        },
+    )
+
+
+@router.get("/{region_slug}/{season_slug}/schedule")
+def tournament_archive(
+    request: Request,
+    region_slug: str,
+    season_slug: str,
+    db: Session = Depends(get_db),
+):
+    """Відкриває історію розіграшів турніру"""
+
+    return templates.TemplateResponse(
+        "seasons/season.html",
+        {
+            "request": request,
+            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": get_seasons_region(
+                db, region_slug=region_slug
+            ),  # Список цьогорічних турнірів
+            "region": get_regions(
+                db, region_slug=region_slug
+            ),  # Виводить всю необхідну інформацію по даному регіону
+            "season": get_season_by_id_or_slug(db, season_slug=season_slug),
+            "teams": get_teams_in_season(db, season_slug=season_slug),
+            "rounds": get_rounds_list(db),
+            "groups": get_groups(db),
+            "stages": get_stages(db),
+            "seasons_schedule": True,
         },
     )
 

@@ -17,6 +17,7 @@ from controllers import (
     standings,
     person,
     news,
+    session,
 )
 
 
@@ -51,6 +52,7 @@ app.include_router(stadium.router, prefix="/stadiums", tags=["Stadiums"])
 app.include_router(match.router, prefix="/matches", tags=["Matches"])
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
 app.include_router(person.router, prefix="/persons", tags=["Persons"])
-app.include_router(news.router, prefix="/news", tags=["Mews"])
+app.include_router(news.router, prefix="/news", tags=["News"])
+app.include_router(session.router, prefix="/sign-in", tags=["Auth"])
 
 # app.include_router(person.router, prefix="/persons", tags=["Persons"])

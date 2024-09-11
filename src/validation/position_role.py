@@ -5,6 +5,7 @@ from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
 
 from models.position_role import StrongLeg
+from validation.match_properties import MatchPropertiesSchemas
 
 
 class PositionRoleBaseSchemas(BaseModel):
@@ -31,4 +32,4 @@ class PositionRoleSchemas(PositionRoleBaseSchemas):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    # match_properties: list["MatchPropertiesSchemas"] = []
+    match_properties: list["MatchPropertiesSchemas"] = []

@@ -16,7 +16,7 @@ def db():
 
 
 @Manager.command()
-@click.option("-h", "--host", default="127.0.0.4")
+@click.option("-h", "--host", default="127.0.0.1")
 @click.option("-p", "--port", default=8000, type=int)
 def runserver(host, port):
     """Run server"""

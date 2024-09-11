@@ -1,0 +1,146 @@
+<form method="post" action="/seasons" ="{{ tournaments.region_name }}">
+    <div class="mb-3">
+        <label for="tournamentName" class="form-label">Назва турніру</label>
+        <input type="text" class="form-control" id="tournamentName"
+               value="{{ tournaments.name }}" readonly>
+        <!-- Приховане поле для зберігання ідентифікатора турніру -->
+        <input type="hidden" id="tournament_id" name="tournament_id" value="{{ tournaments.id }}">
+    </div>
+
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Дата початку розіграшу</label>
+        <input type="date" class="form-control" id="startDate" name="start_date" placeholder="yyyy-mm-dd">
+    </div>
+
+    <div class="mb-3">
+        <label for="endDate" class="form-label">Дата закінчення розіграшу</label>
+        <input type="date" class="form-control" id="endDate" name="end_date" placeholder="yyyy-mm-dd">
+    </div>
+
+
+    <div class="mb-3">
+        <label for="period" class="form-label">Період розіграшу</label>
+        <input type="text" class="form-control" id="period" name="year" aria-describedby="periodHelp"
+               placeholder="2023/24 або інший варіант">
+    </div>
+
+    <div class="mb-3">
+        <label for="seasonName" class="form-label">Введіть назву даного розіграшу</label>
+        <input type="text" class="form-control" id="seasonName" name="name" aria-describedby="tournamentHelp"
+               oninput="updateSlug()">
+        <div class="form-text">Наприклад: Чемпіонат чи Кубок</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="season_slug" class="form-label">Унікальне значення турніру</label>
+        <input type="text" class="form-control" id="season_slug" name="slug" readonly aria-describedby="tournamentHelp">
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="tournamentTable" name="standing">
+        <label class="form-check-label" for="tournamentTable">Турнірна таблиця</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Створити сезон</button>
+</form>
+
+<script>
+    document.getElementById('startDate').addEventListener('change', updatePeriod);
+    document.getElementById('endDate').addEventListener('change', updatePeriod);
+
+    function updatePeriod() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (startDate && endDate) {
+            const startYear = new Date(startDate).getFullYear();
+            const endYear = new Date(endDate).getFullYear();
+
+            let period;
+            if (startYear === endYear) {
+                period = `${startYear}`; // Якщо роки однакові, записуємо тільки рік
+            } else {
+                period = `${startYear}-${String(endYear).slice(-2)}`; // Якщо роки різні, записуємо формат 2023/24
+            }
+
+            document.getElementById('period').value = period;
+        }
+    }
+
+    function transliterate(text) {
+        const cyrillicToLatinMap = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'є': 'ye', 'ж': 'zh', 'з': 'z',
+            'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+            'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+            'ю': 'yu', 'я': 'ya', 'ь': '', 'ъ': '', 'э': 'e', 'ы': 'y'
+        };
+
+        return text.split('').map(function (char) {
+            const lowerChar = char.toLowerCase();
+            if (cyrillicToLatinMap[lowerChar] !== undefined) {
+                return cyrillicToLatinMap[lowerChar];
+            }
+            return char;
+        }).join('');
+    }
+
+    function updateSlug() {
+        const seasonName = document.getElementById('seasonName').value.trim();
+        const period = document.getElementById('period').value.trim();
+
+        let slug = transliterate(seasonName)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')  // Замінюємо всі не-латинські символи на дефіси
+            .replace(/^-+|-+$/g, '');    // Видаляємо дефіси з початку і кінця
+
+        if (period) {
+            slug = `${slug}-${period}`;
+        }
+
+        document.getElementById('season_slug').value = slug;
+    }
+
+    document.getElementById('seasonName').addEventListener('input', updateSlug);
+    document.getElementById('period').addEventListener('input', updateSlug);
+
+
+    document.querySelector('form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const form = e.target;
+
+        // Отримуємо значення регіону з атрибуту data-region-name
+        const regionName = form.getAttribute('data-region-name');
+
+        const startDateEpoch = new Date(form.startDate.value).getTime() / 1000;
+        const endDateEpoch = new Date(form.endDate.value).getTime() / 1000;
+
+        const data = {
+            name: form.seasonName.value,
+            start_date: startDateEpoch,
+            end_date: endDateEpoch,
+            year: form.period.value,
+            standing: form.tournamentTable.checked ? 1 : 0,
+            slug: form.season_slug.value,
+            tournament_id: form.tournament_id.value,
+        };
+
+        const response = await fetch('/seasons', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const result = await response.json(); // Припускаємо, що сервер повертає JSON з season_id
+            const season_id = result.season_id;   // Отримуємо season_id з відповіді сервера
+            const season_slug = data.slug;
+
+            // Перенаправлення на нову сторінку
+            window.location.href = `/region/${regionName}/${season_slug}`;
+        } else {
+            console.error('Помилка при створенні сезону');
+        }
+    });
+</script>

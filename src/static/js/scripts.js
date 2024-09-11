@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function fetchSeasons(regionSlug, regionId) {
-        fetch(`/api/seasons/${regionSlug}`)
+        fetch(`/seasons/${regionSlug}`)
             .then(response => response.json())
             .then(data => {
                 displaySeasons(data.seasons, regionId);

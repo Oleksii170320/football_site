@@ -13,13 +13,17 @@ if TYPE_CHECKING:
 
 class SeasonBaseSchemas(BaseModel):
     name: Annotated[str, MinLen(1), MaxLen(70)]
-    start_date: date
-    end_date: date
+    start_date: int  # Зміна на EPOCH
+    end_date: int  # Зміна на EPOCH
     year: Annotated[Optional[str], MaxLen(20)] = None
     standing: bool = 1
-    slug: Annotated[str, MinLen(1), MaxLen(70)]
+    slug: Annotated[str, MinLen(1), MaxLen(100)]
     tournament_id: int
     team_winner_id: Optional[int] = None
+
+
+class SeasonCreateSchemas(SeasonBaseSchemas):
+    pass
 
 
 class SeasonCreateSchemas(SeasonBaseSchemas):
@@ -35,5 +39,5 @@ class SeasonSchemas(SeasonBaseSchemas):
 
     id: int
     teams: list["TeamSchemas"] = []
-    matches: list["MatchSchemas"] = []
+    # matches: list["MatchSchemas"] = []
     groups: Optional[list["GroupSchemas"]] = []

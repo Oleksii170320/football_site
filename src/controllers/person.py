@@ -14,7 +14,7 @@ from validation import person as schemas
 router = APIRouter()
 
 
-@router.get("/", response_model=schemas.PersonSchemas)
+@router.get("/")
 def persons_list(request: Request, db: Session = Depends(get_db)):
     """Дані для сторінки всіх персон на сайті"""
 
@@ -32,7 +32,7 @@ def persons_list(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{person_id}", response_model=schemas.PersonSchemas)
+@router.get("/{person_id}")
 def read_person(request: Request, person_id: int, db: Session = Depends(get_db)):
     """Дані для сторінки персони по ІД"""
 
@@ -51,9 +51,9 @@ def read_person(request: Request, person_id: int, db: Session = Depends(get_db))
     )
 
 
-@router.get("/{person_id}/matches", response_model=schemas.PersonSchemas)
+@router.get("/{person_id}/matches")
 def persons_club_career(
-        request: Request, person_id: int, db: Session = Depends(get_db)
+    request: Request, person_id: int, db: Session = Depends(get_db)
 ):
     """Інформація про матчі, в якіх грав гарець"""
 
@@ -74,7 +74,7 @@ def persons_club_career(
     )
 
 
-@router.get("/{person_id}/club_career", response_model=schemas.PersonSchemas)
+@router.get("/{person_id}/club_career")
 def persons_club_career(
     request: Request, person_id: int, db: Session = Depends(get_db)
 ):
@@ -97,9 +97,9 @@ def persons_club_career(
     )
 
 
-@router.get("/{person_id}/tournaments", response_model=schemas.PersonSchemas)
+@router.get("/{person_id}/tournaments")
 def persons_tournaments(
-        request: Request, person_id: int, db: Session = Depends(get_db)
+    request: Request, person_id: int, db: Session = Depends(get_db)
 ):
     """Інформація про турніри, в яких грав гравець"""
 

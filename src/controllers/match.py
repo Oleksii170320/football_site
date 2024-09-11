@@ -20,7 +20,7 @@ from validation import match as schemas
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.MatchSchemas])
+@router.get("/")
 def all_matches_list(request: Request, db: Session = Depends(get_db)):
     """Виводить всі матчі"""
 
@@ -35,7 +35,7 @@ def all_matches_list(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{match_id}", response_model=schemas.MatchSchemas)
+@router.get("/{match_id}")
 def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
     """Виводить матч по ІД"""
 
@@ -53,9 +53,9 @@ def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{match_id}/review", response_model=schemas.MatchSchemas)
+@router.get("/{match_id}/review")
 def match_summary_review(
-        request: Request, match_id: int, db: Session = Depends(get_db)
+    request: Request, match_id: int, db: Session = Depends(get_db)
 ):
     """Виводить дані для огляду подій в матчі"""
 
@@ -74,9 +74,9 @@ def match_summary_review(
     )
 
 
-@router.get("/{match_id}/lineups", response_model=schemas.MatchSchemas)
+@router.get("/{match_id}/lineups")
 def match_summary_lineups(
-        request: Request, match_id: int, db: Session = Depends(get_db)
+    request: Request, match_id: int, db: Session = Depends(get_db)
 ):
     """Виводить склад команд в матчі"""
 
@@ -95,9 +95,9 @@ def match_summary_lineups(
     )
 
 
-@router.get("/{match_id}/statistics", response_model=schemas.MatchSchemas)
+@router.get("/{match_id}/statistics")
 def match_summary_statistics(
-        request: Request, match_id: int, db: Session = Depends(get_db)
+    request: Request, match_id: int, db: Session = Depends(get_db)
 ):
     """Виводить дані для статистики матчу"""
 
@@ -115,7 +115,7 @@ def match_summary_statistics(
     )
 
 
-@router.post("/", response_model=schemas.MatchSchemas)
+@router.post("/")
 def create_match(match: schemas.MatchCreateSchemas, db: Session = Depends(get_db)):
     return crud.create_match(db=db, match=match)
 

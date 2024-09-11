@@ -6,9 +6,10 @@ from typing import List
 
 from core.templating import templates
 from core.database import get_db
+from models import Stadium
 from services import stadium as crud_stadium
 from services.region import get_regions_list
-from services.stadium import get_stadium_teams
+from services.stadium import get_stadium_teams, get_search_stadiums
 from validation import stadium as schemas
 
 router = APIRouter()
@@ -19,6 +20,13 @@ def create_stadium(
     stadium: schemas.StadiumCreateSchemas, db: Session = Depends(get_db)
 ):
     return crud_stadium.create_stadium(db=db, stadium=stadium)
+
+
+@router.get("/search", response_model=List[schemas.StadiumSchemas])
+def search_stadiums_endpoint(query: str, db: Session = Depends(get_db)):
+    # Пошук стадіонів за введеним запитом
+    stadiums = get_search_stadiums(db, query=query)
+    return stadiums
 
 
 @router.get("/test", response_model=List[schemas.StadiumSchemas])

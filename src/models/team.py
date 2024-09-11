@@ -28,7 +28,7 @@ class Team(RegionRelationMixin, Base):
     full_name: Mapped[str | None] = mapped_column(String(120))
     city: Mapped[str | None] = mapped_column(String(50))
     foundation_year: Mapped[str | None] = mapped_column(String(20))
-    logo: Mapped[str | None] = mapped_column(String(256))
+    logo: Mapped[str | None] = mapped_column(String(512))
     description: Mapped[str] = mapped_column(
         Text, default="", server_default="", nullable=True
     )

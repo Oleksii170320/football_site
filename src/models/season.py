@@ -25,7 +25,7 @@ class Season(Base):
     standing: Mapped[bool] = mapped_column(
         default=1, server_default="1", nullable=False
     )
-    slug: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    slug: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     # зовнішні ключі
     tournament_id: Mapped[int] = mapped_column(

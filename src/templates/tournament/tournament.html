@@ -17,19 +17,28 @@
 {% include "tournament/includes/tournament_info.html" %}
 
 <div class="card mb-3" style="width: 99%;">
-    <div style="padding: 5px">
-        <strong>ОПИС:</strong><br>
-        <p>
-            {{ tournaments.description }}
-        </p>
+    <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
+        <strong>ОПИС</strong><br>
     </div>
+    <p style="padding: 10px;">{{ tournaments.description }}</p>
 </div>
 
+{% if form %}
 <div class="card mb-3" style="width: 99%;">
-    <div style="padding: 5px">
-        <strong>ІСТОРІЯ РОЗІГРАШІВ:</strong><br>
-        {% include "seasons/season_archive.html" %}
+    <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
+        <strong>СТВОРЕННЯ НОВОГО РОЗІГРАШУ</strong><br>
     </div>
+    <div style="padding: 10px; background-color: #afadad">
+        {% include "forms/form_new_season.html" %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card mb-3" style="width: 99%;">
+    <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
+        <strong>ІСТОРІЯ РОЗІГРАШІВ</strong><br>
+    </div>
+    {% include "seasons/season_archive.html" %}
 </div>
 
 

@@ -22,14 +22,20 @@
 <header>
     <nav>
         <div class="logo">
-            <a class="navbar-brand" href="/"><img src="/static/img/regions/gerb_country_UA.png" alt="logo"
-                                                  width="30"></a>
+            <a class="navbar-brand" href="/">
+                <img src="/static/img/regions/gerb_country_UA.png" alt="logo" width="30"/>
+            </a>
         </div>
         <ul class="nav-links">
             <li class="nav-item"><a class="nav-link" href="/">Головна</a></li>
             <li class="nav-item"><a class="nav-link" href="/matches">Матчі</a></li>
             <li class="nav-item"><a class="nav-link" href="/teams">Команди</a></li>
             <li class="nav-item"><a class="nav-link" href="/tournaments">Турніри</a></li>
+            {% if user %}
+            {{ user.email }}
+            {% else %}
+            <li class="nav-item"><a class="nav-link" href="/sign-in">Війти</a></li>
+            {% endif %}
         </ul>
         <div class="burger">
             <div class="line1"></div>
@@ -68,7 +74,7 @@
                         {% if region.slug == season.region_slug %}
                         <li>
                             <!--                                          <a href="/matches/tournament/{{ season.id }}">-->
-                            <a href="/region/{{ season.region_slug }}/{{ season.season_id }}/{{ season.season_slug }}">
+                            <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
                                 {{ season.season_name }}
                             </a>
                         </li>

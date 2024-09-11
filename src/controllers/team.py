@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
-from typing import List
+from datetime import datetime
 
+from fastapi import APIRouter, Depends, HTTPException, Request, Form, File, UploadFile
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+from typing import List, Optional
+from pathlib import Path
+
+from config import UPLOAD_DIR_FOR_LOGO
 from core.templating import templates
 from core.database import get_db
 from services import team as crud
@@ -15,11 +20,12 @@ from services.season import (
 )
 from services.team import get_team_staff
 from validation import team as schemas
+from validation.team import TeamCreateSchemas
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.TeamSchemas])
+@router.get("/")
 def read_teams_all(request: Request, db: Session = Depends(get_db)):
     """Відкриває список всіх команд"""
 
@@ -34,7 +40,7 @@ def read_teams_all(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{team_id}", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}")
 def read_team_by_id(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -57,7 +63,7 @@ def read_team_by_id(
     )
 
 
-@router.get("/{team_id}/matches", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}/matches")
 def team_matches(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -81,7 +87,7 @@ def team_matches(
     )
 
 
-@router.get("/{team_id}/application", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}/application")
 def team_application(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -105,7 +111,7 @@ def team_application(
     )
 
 
-@router.get("/{team_id}/leadership", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}/leadership")
 def team_leadership(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -129,7 +135,7 @@ def team_leadership(
     )
 
 
-@router.get("/{team_id}/achievement", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}/achievement")
 def team_achievement(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -153,7 +159,7 @@ def team_achievement(
     )
 
 
-@router.get("/{team_id}/history", response_model=schemas.TeamSchemas)
+@router.get("/{team_id}/history")
 def read_team_history(
     request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
 ):
@@ -180,7 +186,7 @@ def read_team_history(
     )
 
 
-@router.get("/{team_slug}", response_model=schemas.TeamSchemas)
+@router.get("/{team_slug}")
 def read_team_by_slug(
     request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
 ):
@@ -202,6 +208,80 @@ def read_team_by_slug(
 @router.post("/", response_model=schemas.TeamSchemas)
 def create_team(team: schemas.TeamCreateSchemas, db: Session = Depends(get_db)):
     return crud.create_team(db=db, team=team)
+
+
+@router.post("/new_team", response_model=schemas.TeamSchemas)
+def create_team(
+    name: str = Form(...),
+    city: str = Form(...),
+    region_id: int = Form(...),
+    full_name: Optional[str] = Form(None),
+    slug: str = Form(...),
+    foundation_year: Optional[str] = Form(None),
+    clubs_site: Optional[str] = Form(None),
+    stadium_id: Optional[int] = Form(0),
+    president_id: Optional[int] = Form(0),
+    coach_id: Optional[int] = Form(0),
+    logo: Optional[str] = Form(None),
+    # logo: UploadFile = File(...),
+    description: Optional[str] = Form(None),
+    db: Session = Depends(get_db),
+):
+    db_team = TeamCreateSchemas(
+        name=name,
+        city=city,
+        region_id=region_id,
+        full_name=full_name,
+        slug=slug,
+        foundation_year=foundation_year,
+        clubs_site=clubs_site,
+        stadium_id=stadium_id,
+        president_id=president_id,
+        coach_id=coach_id,
+        logo=logo,
+        # logo=logo.filename,
+        description=description,
+    )
+    return crud.create_team(db=db, team=db_team)
+
+
+@router.post("/upload_logo/")
+async def upload_logo(
+    file: UploadFile = File(...),
+    region_slug: str = Form(...),
+    team_slug: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    # Перевірка розширення файлу
+    file_extension = file.filename.split(".")[-1].lower()
+    if file_extension not in ["png", "jpg", "jpeg"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Недопустимий формат файлу. Дозволено лише png, jpg, jpeg.",
+        )
+
+    # Створення директорії, якщо її немає
+    dir_path = Path(UPLOAD_DIR_FOR_LOGO) / region_slug
+    dir_path.mkdir(parents=True, exist_ok=True)
+
+    # Формування нової назви файлу
+    current_date = datetime.now()
+    formatted_date = current_date.strftime("%S-%M-%H-%d-%m-%Y")
+    new_file_name = f"{team_slug}_{formatted_date}.{file_extension}"
+
+    file_path = dir_path / new_file_name
+
+    # Збереження файлу
+    with open(file_path, "wb") as buffer:
+        buffer.write(file.file.read())
+
+    # Оновлення запису в БД з новим ім'ям файлу
+    try:
+        crud.update_team_logo(db, team_slug, new_file_name)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return JSONResponse(content={"filename": new_file_name})
 
 
 @router.get("/test", response_model=List[schemas.TeamSchemas])

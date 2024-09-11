@@ -44,10 +44,10 @@ def get_person(db: Session, person_id: int):
             Region.name.label("region_name"),
             # Додавання поля для обчислення віку
             (
-                    current_year
-                    - func.strftime("%Y", func.datetime(Person.birthday, "unixepoch")).cast(
-                Integer
-            )
+                current_year
+                - func.strftime("%Y", func.datetime(Person.birthday, "unixepoch")).cast(
+                    Integer
+                )
             ).label("age"),
         )
         .join(Region, Region.id == Person.region_id)
@@ -118,7 +118,8 @@ def get_person_matches(db: Session, person_id: int):
         .join(Team1, Team1.id == Match.team1_id)
         .join(Team2, Team2.id == Match.team2_id)
         .join(MatchProperties, MatchProperties.match_id == Match.id)
-        .join(TeamPerson, TeamPerson.id == MatchProperties.player_id)
+        .join(PositionRole, PositionRole.id == MatchProperties.player_id)
+        .join(TeamPerson, TeamPerson.id == PositionRole.team_person_id)
         .join(Person, Person.id == TeamPerson.person_id)
         .join(Season, Season.id == Match.season_id)
         .filter(Person.id == person_id)
@@ -165,7 +166,7 @@ def get_person_team_career(db: Session, person_id: int):
         .join(TeamPerson, PositionRole.team_person_id == TeamPerson.id)
         .join(Team, TeamPerson.team_id == Team.id)
         .join(Position, Position.id == PositionRole.position_id)
-        .outerjoin(MatchProperties, MatchProperties.player_id == TeamPerson.id)
+        .outerjoin(MatchProperties, MatchProperties.player_id == PositionRole.id)
         .outerjoin(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
         .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
         .filter(TeamPerson.person_id == person_id)

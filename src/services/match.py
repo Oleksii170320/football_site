@@ -6,6 +6,7 @@ from models import (
     Match,
     MatchProperties,
     PositionRole,
+    Organization,
     TeamPerson,
     Person,
     Season,
@@ -18,6 +19,7 @@ from models import (
     MatchEvent,
     RefEvent,
     Group,
+    Region,
 )
 from validation import match as schemas
 
@@ -40,6 +42,8 @@ def get_all_match(db: Session):
             Season.id.label("season_id"),
             Season.name.label("season_name"),
             Season.year.label("season_year"),
+            Season.slug.label("season_slug"),
+            Region.slug.label("region_slug"),
             Tournament.logo.label("tournament_logo"),
             Tournament.name.label("tournament_name"),
             Stadium.name.label("stadium_name"),
@@ -61,6 +65,8 @@ def get_all_match(db: Session):
         )
         .join(Season, Season.id == Match.season_id)
         .join(Tournament, Tournament.id == Season.tournament_id)
+        .join(Organization, Organization.id == Tournament.organization_id)
+        .join(Region, Region.id == Organization.region_id)
         .outerjoin(Stadium, Stadium.id == Match.stadium_id)
         .join(team1_alias, team1_alias.id == Match.team1_id)
         .join(team2_alias, team2_alias.id == Match.team2_id)
@@ -162,7 +168,8 @@ def get_match_event(db: Session, match_id: int):
             TeamPerson.team_id.label("team_id"),
         )
         .join(TeamPerson, TeamPerson.person_id == Person.id)
-        .join(MatchProperties, MatchProperties.player_id == TeamPerson.id)
+        .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
+        .join(MatchProperties, MatchProperties.player_id == PositionRole.id)
         .join(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
         .join(RefEvent, RefEvent.id == MatchEvent.event_id)
         .filter(MatchProperties.match_id == match_id)
@@ -271,7 +278,7 @@ def get_matches_results_season(db: Session, season_id: int):
     return db_match
 
 
-def get_season_matches(db: Session, season_id: int):
+def get_season_matches(db: Session, season_id: int = None, season_slug: str = None):
     """Перелік всіх матчів поточного розіграшу"""
     Team1 = aliased(Team)
     Team2 = aliased(Team)
@@ -303,18 +310,29 @@ def get_season_matches(db: Session, season_id: int):
             Team2.name.label("team2_name"),
             Team2.city.label("team2_city"),
             Match.status,
+            Season.slug,
         )
         .join(Round, Round.id == Match.round_id)
         .outerjoin(Stage, Stage.id == Match.stage_id)
         .outerjoin(Group, Group.id == Match.group_id)
         .join(Team1, Team1.id == Match.team1_id)
         .join(Team2, Team2.id == Match.team2_id)
-        .filter(Match.season_id == season_id)
+        .join(Season, Season.id == Match.season_id)
     )
+
+    if season_id is not None:
+        db_match = db_match.filter(Match.season_id == season_id)
+    elif season_slug is not None:
+        db_match = db_match.filter(Season.slug == season_slug)
+    else:
+        return None  # або підняти виключення, якщо обидва параметри None
+
     return db_match
 
 
-def get_season_matches_weeks(db: Session, season_id: int):
+def get_season_matches_weeks(
+    db: Session, season_id: int = None, season_slug: str = None, **kwargs
+):
     """Перелік матчів поточного розіграшу в межах -7 до +7 днів від поточної дати"""
 
     # Обчислення дати -7 та +7 днів від поточної дати
@@ -322,23 +340,27 @@ def get_season_matches_weeks(db: Session, season_id: int):
     start_date = current_date - timedelta(days=7)
     end_date = current_date + timedelta(days=7)
 
+    # Отримання матчів та додаткове фільтрування за діапазоном дат
     matches_results = (
-        get_season_matches(db, season_id=season_id)
+        get_season_matches(db, season_id=season_id, season_slug=season_slug)
         .filter(
             func.date(Match.event, "unixepoch").between(
                 start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
             )
         )
-        .all()
+        .all()  # Тут викликаємо .all(), щоб завершити запит і отримати список результатів
     )
 
     return matches_results
 
 
-def get_season_matches_results(db: Session, season_id: int):
+def get_season_matches_results(
+    db: Session, season_id: int = None, season_slug: str = None
+):
     """Перелік зіграних матчів поточного розіграшу"""
+
     matches_results = (
-        get_season_matches(db, season_id=season_id)
+        get_season_matches(db, season_id=season_id, season_slug=season_slug)
         .filter(Match.status.in_(["played", "technical_defeat"]))
         .order_by(desc(Match.event))
         .all()
@@ -346,10 +368,12 @@ def get_season_matches_results(db: Session, season_id: int):
     return matches_results
 
 
-def get_season_matches_upcoming(db: Session, season_id: int):
+def get_season_matches_upcoming(
+    db: Session, season_id: int = None, season_slug: str = None
+):
     """Перелік не зіграних матчів поточного розіграшу"""
     matches_upcoming = (
-        get_season_matches(db, season_id=season_id)
+        get_season_matches(db, season_id=season_id, season_slug=season_slug)
         .filter(Match.status.in_(["not_played", "postponed", "canceled"]))
         .order_by(Round.id)  # Сортування в зворотному порядку
         .all()
@@ -357,17 +381,16 @@ def get_season_matches_upcoming(db: Session, season_id: int):
     return matches_upcoming
 
 
-def get_matches_upcoming_season(db: Session, season_id: int):
-    db_match = (
-        db.query(Match)
-        .filter(
-            Match.season_id == season_id,
-            Match.status.in_(["not_played", "postponed", "canceled"]),
-        )
-        .order_by(Match.event)
+def get_season_matches_schedule(
+    db: Session, season_id: int = None, season_slug: str = None
+):
+    """Перелік не зіграних матчів поточного розіграшу"""
+    matches_upcoming = (
+        get_season_matches(db, season_id=season_id, season_slug=season_slug)
+        .order_by(Round.id)  # Сортування в зворотному порядку
         .all()
     )
-    return db_match
+    return matches_upcoming
 
 
 def create_match(db: Session, match: schemas.MatchCreateSchemas):

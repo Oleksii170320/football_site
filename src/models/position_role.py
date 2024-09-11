@@ -89,9 +89,9 @@ class PositionRole(Base):
     position: Mapped["Position"] = relationship(
         back_populates="positions_role",
     )
-    # match_properties: Mapped["MatchProperties"] = relationship(
-    #     back_populates="player",
-    # )
+    match_properties: Mapped["MatchProperties"] = relationship(
+        back_populates="player",
+    )
 
 
 # Функція для оновлення поля enddate, якщо active = 1

@@ -47,7 +47,7 @@ def read_organization(
 
 @router.post("/", response_model=schemas.OrganizationSchemas)
 def create_organization(
-        organization: schemas.OrganizationCreateSchemas, db: Session = Depends(get_db)
+    organization: schemas.OrganizationCreateSchemas, db: Session = Depends(get_db)
 ):
     return crud.create_organization(db=db, organization=organization)
 

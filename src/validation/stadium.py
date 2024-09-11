@@ -15,12 +15,12 @@ class StadiumBaseSchemas(BaseModel):
     photo: Annotated[Optional[str], MaxLen(256)]
     capacity: Annotated[Optional[str], MaxLen(30)]
     dimensions: Annotated[Optional[str], MaxLen(20)]
+    type_coverage: TypeCoverage
     region_id: Optional[int]
-    status: TypeCoverage
 
 
 class StadiumCreateSchemas(StadiumBaseSchemas):
-    status: TypeCoverage = TypeCoverage.not_specified
+    type_coverage: TypeCoverage = TypeCoverage.not_specified.value
     # pass
 
 

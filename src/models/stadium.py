@@ -58,15 +58,3 @@ class Stadium(RegionRelationMixin, Base):
         "Match",
         back_populates="stadium",
     )
-
-    # зовнішні ключі
-    # region_id: Mapped[int | None] = mapped_column(
-    #     Integer,
-    #     ForeignKey("regions.id", onupdate="SET NULL", ondelete="SET NULL"),
-    #     nullable=True,
-    # )
-
-    # зв'язки з таблицями
-    # region: Mapped["Region"] = relationship(
-    #     back_populates="stadiums",
-    # )

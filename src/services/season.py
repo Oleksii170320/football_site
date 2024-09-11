@@ -10,6 +10,7 @@ from models import (
     Tournament,
     Organization,
     Region,
+    TeamSeason,
 )
 from validation import season as schemas
 
@@ -70,7 +71,7 @@ def get_seasons_teams_history(db: Session, team_id: int):
 
 
 def get_season_by_id_or_slug(
-    db: Session, season_id: int = None, season_slug: str = None
+    db: Session, season_id: int = None, season_slug: str = None, **kwargs
 ):
     query = db.query(Season)
     if season_id is not None:
@@ -82,20 +83,26 @@ def get_season_by_id_or_slug(
     return query.first()
 
 
-def get_season_tournament(db: Session, tournament_id: int):
+def get_season_tournament(
+    db: Session, tournament_id: int = None, tournament_slug: str = None
+):
     """Виводить список сезонів одного турніру по id турніру"""
 
-    season = (
-        db.query(Season)
-        .filter(Season.tournament_id == tournament_id)
-        .order_by(desc(Season.year))
-        .all()
-    )
+    season = db.query(Season).join(Tournament, Tournament.id == Season.tournament_id)
 
-    return season
+    if tournament_id is not None:
+        season = season.filter(Season.tournament_id == tournament_id)
+    elif tournament_slug is not None:
+        season = season.filter(Tournament.slug == tournament_slug)
+    else:
+        return None  # or raise an exception if both are None
+
+    return season.order_by(desc(Season.year)).all()
 
 
-def get_seasons_region(db: Session, region_slug: str):
+def get_seasons_region(
+    db: Session, region_slug: str, season_slug: str = None, **kwargs
+):
     current_year = datetime.now().year
     seasons = (
         db.query(
@@ -122,6 +129,7 @@ def get_seasons_region(db: Session, region_slug: str):
             func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch")))
             >= str(current_year),
         )
+        .order_by(desc(Season.end_date))
         .all()
     )
     return seasons
@@ -140,7 +148,7 @@ def get_seasons_region_id(db: Session, region_id: int):
 
 
 def create_season(db: Session, season: schemas.SeasonCreateSchemas):
-    db_season = Season(**season.model_dump())
+    db_season = Season(**season.dict())
     db.add(db_season)
     db.commit()
     db.refresh(db_season)
@@ -168,8 +176,20 @@ def delete_season(db: Session, season_id: int):
 
 
 def link_season_team(db: Session, season_id: int, team_id: int):
+    """Створення запису в таблиці-медіаторі (m2m) Сезон-кКоманда"""
+
     season = db.query(Season).filter(Season.id == season_id).first()
     team = db.query(Team).filter(Team.id == team_id).first()
     season.teams_associations.append(team)
+    db.commit()
+    return season
+
+
+def delete_season_team(db: Session, season_id: int, team_id: int):
+    """Видалення запису в таблиці-медіаторі (m2m) Сезон-Команда"""
+
+    season = db.query(Season).filter(Season.id == season_id).first()
+    team = db.query(Team).filter(Team.id == team_id).first()
+    season.teams_associations.remove(team)
     db.commit()
     return season
