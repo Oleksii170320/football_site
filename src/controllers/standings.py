@@ -1,14 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
-from typing import List
-
-from core.templating import templates
-from core.database import get_db
-from models import Match
-from services.region import get_regions_list, get_region
-from services.season import get_seasons_region
-from services.standings import get_calculate_standings
-from validation import match as schemas
 
 router = APIRouter()
 
