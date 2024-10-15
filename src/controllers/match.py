@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
-from core.templating import templates
+from core.templating import render
 
 from core.database import get_db
 from models.match import MatchStatus, Match
@@ -28,10 +28,10 @@ router = APIRouter()
 async def all_matches_list(request: Request, db: AsyncSession = Depends(get_db)):
     """Виводить всі матчі"""
 
-    return templates.TemplateResponse(
+    return render(
         "matches/matches.html",
+        request,
         {
-            "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "matches": await crud.get_matches(db),
@@ -45,10 +45,10 @@ async def read_match(
 ):
     """Виводить матч по ІД"""
 
-    return templates.TemplateResponse(
+    return render(
         "matches/match.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "match": await crud.get_match(db, match_id=match_id),
         },
@@ -61,14 +61,12 @@ async def match_summary_review(
 ):
     """Виводить дані для огляду подій в матчі"""
 
-    return templates.TemplateResponse(
+    return render(
         "matches/match.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": await crud.get_match(
-                db, match_id=match_id
-            ),  # Головна інформація про матч
+            "match": await crud.get_match(db, match_id=match_id),
             "events": await get_match_event(db, match_id=match_id),
             "replacement": await get_match_replacement(db, match_id=match_id),
         },
@@ -81,14 +79,12 @@ async def match_summary_lineups(
 ):
     """Виводить склад команд в матчі"""
 
-    return templates.TemplateResponse(
+    return render(
         "matches/match.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": await crud.get_match(
-                db, match_id=match_id
-            ),  # Головна інформація про матч
+            "match": await crud.get_match(db, match_id=match_id),
             "lineups": await get_match_statistics(db, match_id=match_id),
             "replacements": await get_replacement(db, match_id=match_id),
         },

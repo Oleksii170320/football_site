@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
 from services import region as crud, get_context_data
 from services.contact import get_contact
@@ -36,10 +36,10 @@ router = APIRouter()
 async def read_regions(request: Request, db: AsyncSession = Depends(get_db)):
     """Сторінка зі списком регіонів"""
 
-    return templates.TemplateResponse(
+    return render(
         "regions.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "regions": await get_regions(db),
         },
@@ -52,20 +52,14 @@ async def read_region_by_slug(
 ):
     """виводить окремий регіон по SLUG"""
 
-    return templates.TemplateResponse(
+    return render(
         "region.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "region": await get_region(
-                db, region_slug=region_slug
-            ),  # Виводить всю необхідну інформацію по даному регіону
-            "news_list": await get_news_list_region(
-                db, region_slug=region_slug
-            ),  # Стрічка новин (даного регіону)
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
+            "region": await get_region(db, region_slug=region_slug),
+            "news_list": await get_news_list_region(db, region_slug=region_slug),
         },
     )
 
@@ -76,17 +70,13 @@ async def region_tournaments(
 ):
     """Виводить всі футбольні та футзальні турніри даної області"""
 
-    return templates.TemplateResponse(
+    return render(
         "region.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "region": await get_regions(
-                db, region_slug=region_slug
-            ),  # Виводить всю необхідну інформацію по даному регіону/
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
+            "region": await get_regions(db, region_slug=region_slug),
             "tournaments": await get_region_tournaments(db, region_slug=region_slug),
             "organizations": await get_region_organization(db, region_slug=region_slug),
             "region_tournaments": True,
@@ -100,20 +90,14 @@ async def region_teams(
 ):
     """Виводить команди даної області"""
 
-    return templates.TemplateResponse(
+    return render(
         "region.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "teams": await get_regions_team_list(
-                db, region_slug=region_slug
-            ),  # List of teams of this region
-            "region": await get_regions(
-                db, region_slug=region_slug
-            ),  # Information of this region
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
+            "teams": await get_regions_team_list(db, region_slug=region_slug),
+            "region": await get_regions(db, region_slug=region_slug),
             "region_teams": True,
         },
     )
@@ -125,18 +109,14 @@ async def region_persons(
 ):
     """Виводить всі дійові персони даної області"""
 
-    return templates.TemplateResponse(
+    return render(
         "region.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
             "persons": await get_region_persons(db, region_slug=region_slug),
-            "region": await get_regions(
-                db, region_slug=region_slug
-            ),  # Виводить всю необхідну інформацію по даному регіону/
+            "region": await get_regions(db, region_slug=region_slug),
             "region_persons": True,
         },
     )
@@ -148,14 +128,12 @@ async def region_contacts(
 ):
     """Виводить контактні дані обласної організації"""
 
-    return templates.TemplateResponse(
+    return render(
         "region.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
             "contact": await get_contact(db, region_slug=region_slug),
             "region_contacts": True,
@@ -172,14 +150,12 @@ async def region_season(
 ):
     """Відкриває головну сторінку певного розіграшу/сезону"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
             "season": await get_season_by_id_or_slug(db, season_slug=season_slug),
             "matches": await get_season_matches_results(db, season_slug=season_slug),
@@ -190,25 +166,26 @@ async def region_season(
 
 
 @router.get("/{region_slug}/{season_slug}/main")
-async def region_season_main(request: Request, region_slug: str, season_slug: str):
+async def region_season_main(
+    request: Request,
+    region_slug: str,
+    season_slug: str,
+    db: AsyncSession = Depends(get_db),
+):
     """Відкриває головну сторінку певного роїіграшу/сезону по кнопці ГОЛОВНА"""
 
-    context = await get_context_data(
-        request,
-        [
-            "regions_list",
-            "seasons",
-            "region",
-            "season",
-            "tournaments",
-            "matches",
-        ],
-        season_slug=season_slug,
-        region_slug=region_slug,
-    )
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
-        {"request": request, "main": True, **context},
+        request,
+        {
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": await get_seasons_region(db, region_slug=region_slug),
+            "region": await get_regions(db, region_slug=region_slug),
+            "season": await get_season_by_id_or_slug(db, season_slug=season_slug),
+            "matches": await get_season_matches_results(db, season_slug=season_slug),
+            "tournaments": await get_tournament_for_season(db, season_slug=season_slug),
+            "main": True,
+        },
     )
 
 
@@ -221,10 +198,10 @@ async def season_matches_results(
 ):
     """Відкриває сторінку з зіграними матчами розіграшу"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
@@ -244,10 +221,10 @@ async def season_matches_upcoming(
 ):
     """Відкриває сторінку зі ще не зіграними матчами розіграшу"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
@@ -294,10 +271,10 @@ async def tournament_archive(
 ):
     """Відкриває історію розіграшів турніру"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
@@ -318,10 +295,10 @@ async def tournament_archive(
 ):
     """Відкриває історію розіграшів турніру"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
@@ -342,10 +319,10 @@ async def tournament_archive(
 ):
     """Відкриває історію розіграшів турніру"""
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
@@ -370,11 +347,11 @@ async def tournament_archive(
 ):
     """Відкриває історію розіграшів турніру"""
 
-    return templates.TemplateResponse(
+    return render(
         # "seasons/season.html",
         "index.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),

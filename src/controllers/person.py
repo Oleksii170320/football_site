@@ -5,7 +5,7 @@ from typing import List
 
 from starlette.responses import HTMLResponse
 
-from core.templating import templates
+from core.templating import render
 from core.database import get_db
 from services import person as crud
 from services.position_role import get_persons_position_team
@@ -20,7 +20,7 @@ router = APIRouter()
 async def persons_list(request: Request, db: AsyncSession = Depends(get_db)):
     """Дані для сторінки всіх персон на сайті"""
 
-    return templates.TemplateResponse(
+    return render(
         "persons/persons.html",
         {
             "request": request,
@@ -36,17 +36,13 @@ async def read_person(
 ):
     """Дані для сторінки персони по ІД"""
 
-    return templates.TemplateResponse(
+    return render(
         "persons/person.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "person": await crud.get_person(
-                db, person_id=person_id
-            ),  # Отримання даних персони
-            "positions_role": await get_persons_position_team(
-                db, person_id=person_id
-            ),  # Ролі та позиції
+            "person": await crud.get_person(db, person_id=person_id),
+            "positions_role": await get_persons_position_team(db, person_id=person_id),
         },
     )
 
@@ -57,16 +53,14 @@ async def persons_club_career(
 ):
     """Інформація про матчі, в якіх грав гарець"""
 
-    return templates.TemplateResponse(
+    return render(
         "persons/person.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "person": await crud.get_person(db, person_id=person_id),
             "positions_role": await get_persons_position_team(db, person_id=person_id),
-            "matches": await crud.get_person_matches(
-                db, person_id=person_id
-            ),  # Список команд за які грав гравець
+            "matches": await crud.get_person_matches(db, person_id=person_id),
         },
     )
 
@@ -77,10 +71,10 @@ async def persons_club_career(
 ):
     """Інформація футбольної кар'єри гравця"""
 
-    return templates.TemplateResponse(
+    return render(
         "persons/person.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "person": await crud.get_person(db, person_id=person_id),
             "positions_role": await get_persons_position_team(db, person_id=person_id),
@@ -95,10 +89,10 @@ async def persons_tournaments(
 ):
     """Інформація про турніри, в яких грав гравець"""
 
-    return templates.TemplateResponse(
+    return render(
         "persons/person.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "person": await crud.get_person(db, person_id=person_id),
             "positions_role": await get_persons_position_team(db, person_id=person_id),

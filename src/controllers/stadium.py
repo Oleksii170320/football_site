@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from typing import List
 
-from core.templating import templates
+from core.templating import templates, render
 from core.database import get_db
 from models import Stadium
 from services import stadium as crud_stadium
@@ -39,10 +39,10 @@ async def read_stadiums(
     db: AsyncSession = Depends(get_db),
 ):
     stadiums = await crud_stadium.get_stadiums(db, skip=skip, limit=limit)
-    return templates.TemplateResponse(
+    return render(
         "stadium/stadiums.html",
+        request,
         {
-            "request": request,
             "stadiums": stadiums,
         },
     )
@@ -53,10 +53,10 @@ async def read_stadium(
     request: Request, stadium_id: int, db: AsyncSession = Depends(get_db)
 ):
 
-    return templates.TemplateResponse(
+    return render(
         "stadium/stadium.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "taems": await get_stadium_teams(db, stadium_id=stadium_id),
             "stadium": await crud_stadium.get_stadium(db, stadium_id=stadium_id),

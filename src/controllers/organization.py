@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from typing import List
 
-from core.templating import templates
+from core.templating import templates, render
 from core.database import get_db
 from services import organization as crud, get_regions_list
 from services.news_list import get_news_list
@@ -22,10 +21,10 @@ async def read_organizations(
 ):
     """Виводить список всіх футбольних організацій"""
 
-    return templates.TemplateResponse(
+    return render(
         "organizations.html",
+        request,
         {
-            "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "organizations": await crud.get_organizations(db, skip=skip, limit=limit),
@@ -39,10 +38,10 @@ async def read_organization(
 ):
     """Виводить організацію по ІД"""
 
-    return templates.TemplateResponse(
+    return render(
         "organization.html",
+        request,
         {
-            "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "organization": await crud.get_organization(

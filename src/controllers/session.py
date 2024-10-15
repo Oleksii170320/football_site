@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse
 
 from core.database import get_db
 from core.sessions import get_session
-from core.templating import templates
+from core.templating import templates, render
 from services import get_regions_list, get_seasons_region
 from services.users import authenticate
 
@@ -31,10 +31,10 @@ router = APIRouter()
 @router.get("/")
 async def signInPage(request: Request, db: AsyncSession = Depends(get_db)):
     regions_list = await get_regions_list(db)  # Асинхронний виклик
-    return templates.TemplateResponse(
+    return render(
         "session/login.html",
+        request,
         {
-            "request": request,
             "regions_list": regions_list,  # Список регіонів (бокове меню)
         },
     )

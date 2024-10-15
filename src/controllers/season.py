@@ -4,7 +4,7 @@ from typing import List
 
 from starlette.responses import JSONResponse, RedirectResponse
 
-from core.templating import templates
+from core.templating import templates, render
 from core.database import get_db
 from models import TeamSeason
 from services import season as crud, get_regions_list
@@ -20,10 +20,10 @@ async def read_seasons(
     request: Request, skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)
 ):
 
-    return templates.TemplateResponse(
+    return render(
         "seasons/season_list.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "seasons": await crud.get_seasons(db, skip=skip, limit=limit),
         },

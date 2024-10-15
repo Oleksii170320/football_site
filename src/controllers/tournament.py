@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from core.templating import templates
+from core.templating import templates, render
 from core.database import get_db
 from services import tournament as crud
 from services.news_list import get_news_list
@@ -23,10 +23,10 @@ async def read_all_tournaments(
 ):
     """Відкриває список всіх турнірів"""
 
-    return templates.TemplateResponse(
+    return render(
         "tournaments.html",
+        request,
         {
-            "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "tournaments": await crud.get_tournaments(db, skip=skip, limit=limit),
@@ -40,10 +40,10 @@ async def get_tournament_by_slug(
 ):
     """Відкриває сторінку турніру по SLUG"""
 
-    return templates.TemplateResponse(
+    return render(
         "tournament/tournament.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),
             "tournaments": await get_tournament_slug(db, tournament_slug),
             "seasons_archive": await get_tournament_archive(db, tournament_slug),
@@ -57,10 +57,10 @@ async def get_tournament_by_slug(
 ):
     """Відкриває сторінку турніру по SLUG"""
 
-    return templates.TemplateResponse(
+    return render(
         "tournament/tournament.html",
+        request,
         {
-            "request": request,
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "tournaments": await get_tournament_slug(
                 db, tournament_slug=tournament_slug
