@@ -70,14 +70,14 @@
                  height="120px">
         </td>
         <td style="width: 20%;" align="right">
-            <a href="/teams/{{ match.team1_id }}">
+            <a href="/teams/{{ match.team1_slug }}/application">
                 <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
             </a>
         </td>
         <td align="center" style="text-align: center; vertical-align: middle; width: 30%;">
             <h5>Дата: {{ match.event }}<br>
-                Стадіон: {% if match.stadium_name %} {{ match.stadium_name }} {{ match.stadium_city }}{% else %} - {%
-                endif %}<br>
+                Стадіон: <a href="/stadiums/{{ match.stadium_id }}">{% if match.stadium_name %} {{ match.stadium_name }} {{ match.stadium_city }}{% else %} - {%
+                    endif %}</a><br>
                 Статус: {{ match.status.value }}<br></h5><br>
             <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
             {% if match.team1_penalty and match.team2_penalty %}
@@ -85,7 +85,7 @@
             {% endif %}<br>
         </td>
         <td style="width: 20%;" align="left">
-            <a href="/teams/{{ match.team2_id }}">
+            <a href="/teams/{{ match.team2_slug }}/application">
                 <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
             </a>
         </td>

@@ -1,10 +1,14 @@
-from typing import List
+from datetime import date
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
+from pydantic import ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from core.templating import templates
 
 from core.database import get_db
+from models.match import MatchStatus, Match
 from services import match as crud
 from services.match import (
     get_match_statistics,
@@ -21,126 +25,193 @@ router = APIRouter()
 
 
 @router.get("/")
-def all_matches_list(request: Request, db: Session = Depends(get_db)):
+async def all_matches_list(request: Request, db: AsyncSession = Depends(get_db)):
     """Виводить всі матчі"""
 
     return templates.TemplateResponse(
         "matches/matches.html",
         {
             "request": request,
-            "news_list": get_news_list(db),  # Стрічка новин (всі регіони)
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "matches": crud.get_matches(db),
+            "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "matches": await crud.get_matches(db),
         },
     )
 
 
 @router.get("/{match_id}")
-def read_match(request: Request, match_id: int, db: Session = Depends(get_db)):
+async def read_match(
+    request: Request, match_id: int, db: AsyncSession = Depends(get_db)
+):
     """Виводить матч по ІД"""
 
-    match = crud.get_match(db, match_id=match_id)
-
-    if match is None:
-        raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": match,
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "match": await crud.get_match(db, match_id=match_id),
         },
     )
 
 
 @router.get("/{match_id}/review")
-def match_summary_review(
-    request: Request, match_id: int, db: Session = Depends(get_db)
+async def match_summary_review(
+    request: Request, match_id: int, db: AsyncSession = Depends(get_db)
 ):
     """Виводить дані для огляду подій в матчі"""
 
-    match = crud.get_match(db, match_id=match_id)
-    if match is None:
-        raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": match,  # Головна інформація про матч
-            "events": get_match_event(db, match_id=match_id),
-            "replacement": get_match_replacement(db, match_id=match_id),
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "match": await crud.get_match(
+                db, match_id=match_id
+            ),  # Головна інформація про матч
+            "events": await get_match_event(db, match_id=match_id),
+            "replacement": await get_match_replacement(db, match_id=match_id),
         },
     )
 
 
 @router.get("/{match_id}/lineups")
-def match_summary_lineups(
-    request: Request, match_id: int, db: Session = Depends(get_db)
+async def match_summary_lineups(
+    request: Request, match_id: int, db: AsyncSession = Depends(get_db)
 ):
     """Виводить склад команд в матчі"""
 
-    match = crud.get_match(db, match_id=match_id)
-    if match is None:
-        raise HTTPException(status_code=404, detail="Match not found")
     return templates.TemplateResponse(
         "matches/match.html",
         {
             "request": request,
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": match,  # Головна інформація про матч
-            "lineups": get_match_statistics(db, match_id=match_id),
-            "replacements": get_replacement(db, match_id=match_id),
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "match": await crud.get_match(
+                db, match_id=match_id
+            ),  # Головна інформація про матч
+            "lineups": await get_match_statistics(db, match_id=match_id),
+            "replacements": await get_replacement(db, match_id=match_id),
         },
     )
 
 
-@router.get("/{match_id}/statistics")
-def match_summary_statistics(
-    request: Request, match_id: int, db: Session = Depends(get_db)
+# @router.post("/new_match")
+# async def create_match(
+#     match: schemas.MatchCreateSchemas, db: AsyncSession = Depends(get_db)
+# ):
+#     return await crud.create_match(db=db, match=match)
+
+
+from typing import Optional
+from fastapi import Form
+
+
+class MatchCreateForm:
+    def __init__(
+        self,
+        event_epoch: Optional[int] = Form(None),
+        season_id: int = Form(...),
+        group_id: Optional[int] = Form(None),
+        stage_id: Optional[int] = Form(None),
+        round_id: Optional[int] = Form(None),
+        stadium_id: Optional[int] = Form(None),
+        team1_id: int = Form(...),
+        team1_goals: Optional[int] = Form(None),
+        team2_goals: Optional[int] = Form(None),
+        team2_id: int = Form(...),
+        team1_penalty: Optional[int] = Form(None),
+        team2_penalty: Optional[int] = Form(None),
+        status: str = Form(
+            ...
+        ),  # Замість MatchStatus, оскільки це потрібно конвертувати з форми
+        standing: bool = Form(True),
+        # Додаємо поля region_slug та season_slug
+        region_slug: str = Form(...),
+        season_slug: str = Form(...),
+    ):
+        self.event_epoch = event_epoch
+        self.season_id = season_id
+        self.group_id = group_id
+        self.stage_id = stage_id
+        self.round_id = round_id
+        self.stadium_id = stadium_id
+        self.team1_id = team1_id
+        self.team1_goals = team1_goals
+        self.team2_goals = team2_goals
+        self.team2_id = team2_id
+        self.team1_penalty = team1_penalty
+        self.team2_penalty = team2_penalty
+        self.status = status
+        self.standing = standing
+        self.region_slug = region_slug  # Нове поле
+        self.season_slug = season_slug  # Нове поле
+
+
+@router.post("/new_match")
+async def create_match(
+    match_form: MatchCreateForm = Depends(), db: AsyncSession = Depends(get_db)
 ):
-    """Виводить дані для статистики матчу"""
+    match_data = {
+        "event": match_form.event_epoch,
+        "season_id": match_form.season_id,
+        "group_id": match_form.group_id,
+        "stage_id": match_form.stage_id,
+        "round_id": match_form.round_id,
+        "stadium_id": match_form.stadium_id,
+        "team1_id": match_form.team1_id,
+        "team1_goals": match_form.team1_goals,
+        "team2_goals": match_form.team2_goals,
+        "team2_id": match_form.team2_id,
+        "team1_penalty": match_form.team1_penalty,
+        "team2_penalty": match_form.team2_penalty,
+        "status": match_form.status,
+        "standing": match_form.standing,
+        "region_slug": match_form.region_slug,
+        "season_slug": match_form.season_slug,
+    }
 
-    match = crud.get_match(db, match_id=match_id)
-    if match is None:
-        raise HTTPException(status_code=404, detail="Match not found")
-    return templates.TemplateResponse(
-        "matches/match.html",
-        {
-            "request": request,
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": match,
-            "statistics": [],
-        },
-    )
+    try:
+        match = schemas.MatchCreateSchemas(**match_data)
+        await create_match(db=db, match=match)
+        return {
+            "success": True,
+            "region_slug": match_form.region_slug,
+            "season_slug": match_form.season_slug,
+        }
+    except ValidationError as e:
+        return {"success": False, "error": e.errors()}
 
 
 @router.post("/")
-def create_match(match: schemas.MatchCreateSchemas, db: Session = Depends(get_db)):
-    return crud.create_match(db=db, match=match)
+async def create_match(
+    match: schemas.MatchCreateSchemas, db: AsyncSession = Depends(get_db)
+):
+    return await crud.create_match(db=db, match=match)
 
 
 @router.get("/test", response_model=List[schemas.MatchSchemas])
-def read_matches_test(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    matches = crud.get_matches(db, skip=skip, limit=limit)
+async def read_matches_test(
+    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+):
+    matches = await crud.get_matches(db, skip=skip, limit=limit)
     return matches
 
 
 @router.put("/{match_id}", response_model=schemas.MatchSchemas)
-def update_match(
+async def update_match(
     match_id: int,
     match: schemas.MatchUpdateSchemas,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    db_match = crud.update_match(db=db, match_id=match_id, match=match)
+    db_match = await crud.update_match(db=db, match_id=match_id, match=match)
     if db_match is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return db_match
 
 
 @router.delete("/{match_id}", response_model=schemas.MatchSchemas)
-def delete_match(match_id: int, db: Session = Depends(get_db)):
-    db_match = crud.delete_match(db=db, match_id=match_id)
+async def delete_match(match_id: int, db: AsyncSession = Depends(get_db)):
+    db_match = await crud.delete_match(db=db, match_id=match_id)
     if db_match is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return db_match

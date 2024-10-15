@@ -1,4 +1,5 @@
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from models import News, Region, Tournament, Organization
 
@@ -7,9 +8,9 @@ from models import News, Region, Tournament, Organization
 #     return db.query(News).order_by(desc(News.event)).all()
 
 
-def get_news_list(db: Session):
-    return (
-        db.query(
+async def get_news_list(db: AsyncSession):
+    stmt = (
+        select(
             News.id,
             News.event,
             func.strftime("%d-%m-%Y", func.datetime(News.event, "unixepoch")).label(
@@ -24,13 +25,14 @@ def get_news_list(db: Session):
         )
         .join(Region, Region.id == News.region_id)
         .order_by(desc(News.event))
-        .all()
     )
+    result = await db.execute(stmt)
+    return result.fetchall()  # Отримуємо всі результати
 
 
-def get_news_list_region(db: Session, region_slug: str):
-    result = (
-        db.query(
+async def get_news_list_region(db: Session, region_slug: str):
+    stmt = (
+        select(
             News.id,
             News.event,
             func.strftime("%d-%m-%Y", func.datetime(News.event, "unixepoch")).label(
@@ -46,14 +48,15 @@ def get_news_list_region(db: Session, region_slug: str):
         .join(Region, Region.id == News.region_id)
         .filter(Region.slug == region_slug)
         .order_by(desc(News.event))
-        .all()
     )
-    return result
+
+    result = await db.execute(stmt)
+    return result.all()
 
 
-def get_news_page(db: Session, news_id: int):
-    return (
-        db.query(
+async def get_news_page(db: AsyncSession, news_id: int):
+    stmt = (
+        select(
             News.id,
             News.event,
             func.strftime("%d-%m-%Y", func.datetime(News.event, "unixepoch")).label(
@@ -68,5 +71,7 @@ def get_news_page(db: Session, news_id: int):
         )
         .join(Region, Region.id == News.region_id)
         .filter(News.id == news_id)
-        .first()
     )
+
+    result = await db.execute(stmt)
+    return result.first()

@@ -14,7 +14,7 @@
 
         {% set unique_rounds = [] %}
 
-        {% for round in matches | sort(attribute='round_id', reverse=True) if round.round_name not in unique_rounds and
+        {% for round in matches if round.round_name not in unique_rounds and
         round.stage_id == stage.stage_id %}
         {% set _ = unique_rounds.append(round.round_name) %}
 

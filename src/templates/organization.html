@@ -7,6 +7,8 @@
 
 {% block content %}
 
-<h3>{{ organization.name }}</h3>
+<h3>{{ organization.full_name }}</h3><br>
+<h4>{{ organization.name }}</h4><br>
+<h4>{{ organization.region.name }}</h4><br>
 
 {% endblock %}

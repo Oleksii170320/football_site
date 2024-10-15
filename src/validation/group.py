@@ -8,7 +8,7 @@ from validation.match import MatchSchemas
 class GroupBaseSchemas(BaseModel):
     name: Annotated[str, MinLen(1), MaxLen(50)]
     slug: str
-    season_id: Optional[int | None] = None
+    # season_id: Optional[int | None] = None
 
 
 class GroupCreateSchemas(GroupBaseSchemas):

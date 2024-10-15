@@ -1,40 +1,33 @@
-from sqlalchemy import distinct
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Match, Season
 from models.stage import Stage
 
 
-def get_stages(db: Session):
-    stage_list = db.query(Stage).all()
-    return stage_list
+async def get_stages(db: AsyncSession):
+    stage_list = await db.execute(select(Stage))
+    return stage_list.scalars().all()
 
 
-# def get_distinct_stages_with_groups(db: Session, season_id: int):
-#     distinct_stage = (
-#         db.query(distinct(Stage.id))
-#         .join(Match, Match.stage_id == Stage.id)
-#         .filter(Match.season_id == season_id, Match.group_id.is_not(None))
-#     ).all()
-#     return distinct_stage
-
-
-def get_distinct_stages_with_groups(
-    db: Session, season_id: int = None, season_slug: str = None
+async def get_distinct_stages_with_groups(
+    db: AsyncSession, season_id: int = None, season_slug: str = None
 ):
-    """Отримує унікальні stage_id з групами для певного сезону"""
+    """Отримує унікальні stage_id з групами для певного сезону асинхронно."""
 
-    distinct_stage = (
-        db.query(Stage.id)
+    stmt = (
+        select(Stage.id)
         .join(Match, Match.stage_id == Stage.id)
         .join(Season, Season.id == Match.season_id)
+        .distinct()
     )
 
     if season_id is not None:
-        distinct_stage = distinct_stage.filter(Match.season_id == season_id)
+        stmt = stmt.filter(Match.season_id == season_id)
     elif season_slug is not None:
-        distinct_stage = distinct_stage.filter(Season.slug == season_slug)
+        stmt = stmt.filter(Season.slug == season_slug)
     else:
-        return None  # або підняти виключення, якщо обидва параметри None
+        return None
 
-    return distinct_stage.distinct().all()
+    result = await db.execute(stmt)
+    return result.all()

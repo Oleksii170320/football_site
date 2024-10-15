@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from validation.match import MatchSchemas
 from validation.person import PersonSchemas
@@ -30,6 +30,8 @@ class TeamUpdateSchemas(TeamBaseSchemas):
 
 
 class TeamSchemas(TeamBaseSchemas):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     seasons_won: List["SeasonSchemas"] = []
     matches_1: List["MatchSchemas"] = []

@@ -9,7 +9,7 @@
                 <td style="width: 12%;"><strong>{{ match.event }}</strong></td>
                 <td style="width: 20%;">{{ match.season_name }} {{ match.season_year }}</td>
                 <td style="width: 22%;">
-                    <a href="/teams/{{ match.team1_id }}">
+                    <a href="/teams/{{ match.team1_slug }}/application">
                         <h5><strong>{{ match.team1_name }}</strong> ({{ match.team1_city}})</h5>
                     </a>
                 </td>
@@ -41,7 +41,7 @@
                          alt="{{ match.team2_name }} logo" style="max-width: 100%; height: 40px">
                 </td>
                 <td style="width: 22%;">
-                    <a href="/teams/{{ match.team2_id }}">
+                    <a href="/teams/{{ match.team2_slug }}/application">
                         <h5><strong>{{ match.team2_name }}</strong> ({{ match.team2_city}})</h5>
                     </a>
                 </td>

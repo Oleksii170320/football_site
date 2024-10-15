@@ -1,8 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Annotated
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
-from datetime import date
 
 from .group import GroupSchemas
 
@@ -26,10 +24,6 @@ class SeasonCreateSchemas(SeasonBaseSchemas):
     pass
 
 
-class SeasonCreateSchemas(SeasonBaseSchemas):
-    pass
-
-
 class SeasonUpdateSchemas(SeasonBaseSchemas):
     pass
 
@@ -40,4 +34,4 @@ class SeasonSchemas(SeasonBaseSchemas):
     id: int
     teams: list["TeamSchemas"] = []
     # matches: list["MatchSchemas"] = []
-    groups: Optional[list["GroupSchemas"]] = []
+    # groups: Optional[list["GroupSchemas"]] = []

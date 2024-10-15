@@ -1,5 +1,8 @@
-from fastapi import FastAPI, Request, Depends
+from typing import List
+
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from core.database import get_db
@@ -18,8 +21,10 @@ from controllers import (
     person,
     news,
     session,
+    api,
 )
-
+from services.team import get_teams_in_season
+from validation.team import TeamSchemas
 
 app = FastAPI(title="Football")
 
@@ -28,17 +33,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/", tags=["Home"])
-def home(request: Request, db: Session = Depends(get_db)):
-
-    news_list = get_news_list(db)
-    regions_list = get_regions_list(db)
+async def home(request: Request, db: AsyncSession = Depends(get_db)):
 
     return templates.TemplateResponse(
         "home.html",
         {
             "request": request,
-            "news_list": news_list,  # Стрічка новин (всі регіони)
-            "regions_list": regions_list,  # Список регіонів (бокове меню)
+            "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
         },
     )
 
@@ -53,6 +55,8 @@ app.include_router(match.router, prefix="/matches", tags=["Matches"])
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
 app.include_router(person.router, prefix="/persons", tags=["Persons"])
 app.include_router(news.router, prefix="/news", tags=["News"])
+app.include_router(api.router, prefix="/api", tags=["API"])
 app.include_router(session.router, prefix="/sign-in", tags=["Auth"])
+
 
 # app.include_router(person.router, prefix="/persons", tags=["Persons"])

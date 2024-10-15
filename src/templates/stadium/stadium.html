@@ -38,7 +38,7 @@
                 <td>
                     <div class="team-details" style="padding: 20px; width: 100%;">
                         <h3>
-                            "{{ stadium.name }}" {{ stadium.city }}
+                            {{ stadium.name }} {{ stadium.city }}
                         </h3>
                         <hr style="border: 1px solid;">
                         <table class="table table-hover">
@@ -97,7 +97,7 @@
                                 <td><strong>Домашня команда/ди:</strong></td>
                                 <td>
                                     {% for team in taems %}
-                                    <a href="/teams/{{ team.id }}">
+                                    <a href="/teams/{{ team.slug }}/application">
                                         {{ team.name }} ({{ team.city }})<br>
                                         {% endfor %}
                                     </a>

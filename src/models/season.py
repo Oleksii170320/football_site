@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from slugify import slugify
 from sqlalchemy import Integer, BigInteger, String, ForeignKey
@@ -45,9 +45,9 @@ class Season(Base):
     matches: Mapped["Match"] = relationship(
         back_populates="season",
     )
-    groups: Mapped["Group"] = relationship(
-        back_populates="season",
-    )
+    # groups: Mapped[Optional[list["Group"]]] = relationship(
+    #     back_populates="season", lazy="selectin"
+    # )
 
     # many-to-many relationship to Team, bypassing the TeamSeason class
     teams_associations: Mapped[list["Team"]] = relationship(
@@ -66,8 +66,3 @@ class Season(Base):
 
     def generate_slug(self, name: str, year: str) -> str:
         return slugify(f"{name}-{year}")
-
-    # association between Team -> TeamSeason -> Season
-    # team_associations: Mapped[list["TeamSeason"]] = relationship(
-    #     back_populates="season"
-    # )

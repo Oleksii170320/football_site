@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from typing import List
 
 from core.templating import templates
 from core.database import get_db
-from services import organization as crud
+from services import organization as crud, get_regions_list
+from services.news_list import get_news_list
 from validation import organization as schemas
 
 
@@ -12,53 +14,58 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[schemas.OrganizationSchemas])
-def read_organizations(
-    request: Request, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+async def read_organizations(
+    request: Request,
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
 ):
     """Виводить список всіх футбольних організацій"""
 
-    organizations = crud.get_organizations(db, skip=skip, limit=limit)
     return templates.TemplateResponse(
         "organizations.html",
         {
             "request": request,
-            "organizations": organizations,
+            "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "organizations": await crud.get_organizations(db, skip=skip, limit=limit),
         },
     )
 
 
-@router.get("/{organization_id}", response_model=schemas.OrganizationSchemas)
-def read_organization(
-    request: Request, organization_id: int, db: Session = Depends(get_db)
+@router.get("/{organization_slug}", response_model=schemas.OrganizationSchemas)
+async def read_organization(
+    request: Request, organization_slug: str, db: AsyncSession = Depends(get_db)
 ):
-    """Виводить огранізацію по ІД"""
+    """Виводить організацію по ІД"""
 
-    organization = crud.get_organization(db, organization_id=organization_id)
-    if organization is None:
-        raise HTTPException(status_code=404, detail="Organization not found")
     return templates.TemplateResponse(
         "organization.html",
         {
             "request": request,
-            "organization": organization,
+            "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "organization": await crud.get_organization(
+                db, organization_slug=organization_slug
+            ),
         },
     )
 
 
 @router.post("/", response_model=schemas.OrganizationSchemas)
-def create_organization(
-    organization: schemas.OrganizationCreateSchemas, db: Session = Depends(get_db)
+async def create_organization(
+    organization: schemas.OrganizationCreateSchemas, db: AsyncSession = Depends(get_db)
 ):
-    return crud.create_organization(db=db, organization=organization)
+    return await crud.create_organization(db=db, organization=organization)
 
 
 @router.put("/{organization_id}", response_model=schemas.OrganizationSchemas)
-def update_organization(
+async def update_organization(
     organization_id: int,
     organization: schemas.OrganizationUpdateSchemas,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    db_organization = crud.update_organization(
+    db_organization = await crud.update_organization(
         db=db, organization_id=organization_id, organization=organization
     )
     if db_organization is None:
@@ -67,8 +74,13 @@ def update_organization(
 
 
 @router.delete("/{organization_id}", response_model=schemas.OrganizationSchemas)
-def delete_organization(organization_id: int, db: Session = Depends(get_db)):
-    db_organization = crud.delete_organization(db=db, organization_id=organization_id)
+async def delete_organization(
+    organization_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    db_organization = await crud.delete_organization(
+        db=db, organization_id=organization_id
+    )
     if db_organization is None:
         raise HTTPException(status_code=404, detail="Organization not found")
     return db_organization

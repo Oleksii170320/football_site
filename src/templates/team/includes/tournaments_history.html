@@ -1,4 +1,5 @@
 <h2>Історія розіграшів</h2>
+
 <table class="table table-striped table-hover">
     <thead>
     <tr class="row-header">
@@ -12,18 +13,18 @@
     {% for season in history %}
     <tr class="row-default">
         <td align="left">
-            <a href="/region/{{ season.tournament.organization.region.slug }}/{{ season.slug }}">
-                {{ season.name }}
+            <a href="/region/{{ season.region_slug }}/{{ season.season_slug}}">
+                {{ season.season_name }}
             </a>
         </td>
         <td align="center">
-            {{ season.year }}
+            {{ season.season_year }}
         </td>
         <td align="center">
-            {{ season.tournament.organization.association.name }}
+            {{ season.association_name }}
         </td>
         <td align="center">
-            {{ season.tournament.organization.name }}
+            {{ season.organization_name }}
         </td>
     </tr>
     {% endfor %}

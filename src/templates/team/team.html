@@ -38,39 +38,39 @@
                     <td>
                         <div>
                             <div class="team-logo" style="padding: 20px; border: #cccccc;">
-                                <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}"
-                                     alt="{{ team.name }} logo" width="200px">
+                                <img src="{{ url_for('static', path='/img/teams/' ~ team.team_logo) }}"
+                                     alt="{{ team.team_name }} logo" width="200px">
                             </div>
                         </div>
                     </td>
                     <td>
                         <div class="team-details" style="padding: 20px;">
-                            <h3>{{ team.full_name }}</h3>
+                            <h3>{{ team.team_full_name }}</h3>
                             <hr style="border: 1px solid;">
                             <table class="table table-hover">
                                 <tbody>
                                 <tr>
                                     <td style="padding: 1px">Президент:</td>
                                     <td style="padding: 1px">
-                                        <a href="/persons/{{ team.president.id }}">
-                                            {{ team.president.lastname }} {{ team.president.name }} {{
-                                            team.president.surname }}
+                                        <a href="/persons/{{ team.president_id }}/club_career">
+                                            {{ team.president_lastname }} {{ team.president_name }} {{
+                                            team.president_surname }}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr style="padding: 1px">
                                     <td style="padding: 1px">Головний тренер:</td>
                                     <td style="padding: 1px">
-                                        <a href="/persons/{{ team.coach.id }}">
-                                            {{ team.coach.lastname }} {{ team.coach.name }} {{ team.coach.surname }}
+                                        <a href="/persons/{{ team.coach_id }}/club_career">
+                                            {{ team.coach_lastname }} {{ team.coach_name }} {{ team.coach_surname }}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 1px">Стадіон:</td>
                                     <td style="padding: 1px">
-                                        <a href="/stadiums/{{team.stadium.id}}">
-                                            {{ team.stadium.name }}, {{ team.stadium.city }}
+                                        <a href="/stadiums/{{team.stadium_id}}">
+                                            {{ team.stadium_name }}, {{ team.stadium_city }}
                                         </a>
                                     </td>
                                 </tr>
@@ -82,7 +82,7 @@
                                     <td style="padding: 1px">Сайт клубу:</td>
                                     <td style="padding: 1px">
                                         <a href="{{ team.clubs_site }}" target="_blank">
-                                            {{ team.slug }}
+                                            {{ team.team_slug }}
                                         </a>
                                     </td>
                                 </tr>
@@ -95,32 +95,31 @@
             </table>
         </div>
         <hr style="border: 2px solid;">
-
-        <div class="card text-center">
+           <div class="card text-center">
             <div class="card-header">
                 <ul class="nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/teams/{{ team.id }}/matches">
+                        <a class="nav-link active" aria-current="page" href="/teams/{{ team.team_id }}/matches">
                             <button type="button" class="btn btn-outline-dark">Матчі</button>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/teams/{{ team.id }}/application">
+                        <a class="nav-link" href="/teams/{{ team.team_slug }}/application">
                             <button type="button" class="btn btn-outline-dark">Склад команди</button>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/teams/{{ team.id }}/leadership">
+                        <a class="nav-link" href="/teams/{{ team.team_slug }}/leadership">
                             <button type="button" class="btn btn-outline-dark">Керівництво</button>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/teams/{{ team.id }}/achievement">
+                        <a class="nav-link" href="/teams/{{ team.team_slug }}/achievement">
                             <button type="button" class="btn btn-outline-dark">Досягнення</button>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/teams/{{ team.id }}/history">
+                        <a class="nav-link" href="/teams/{{ team.team_slug }}/history">
                             <button type="button" class="btn btn-outline-dark">Історія турнірів</button>
                         </a>
                     </li>
@@ -176,8 +175,8 @@
                         Переможець
                     </td>
                     <td align="left">
-                        <a href="/region/{{ season.tournament.organization.region.slug }}/{{ season.slug }}">
-                            {{ season.name }} - {{ season.year }}
+                        <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
+                            {{ season.season_name }} - {{ season.season_year }}
                         </a>
                     </td>
                 </tr>

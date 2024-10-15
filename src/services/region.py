@@ -1,6 +1,9 @@
 from datetime import date
 
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.future import select
 from sqlalchemy import desc
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from models import (
     region as models,
@@ -12,79 +15,96 @@ from models import (
 from validation import region as schemas
 
 
-def get_region(db: Session, region_slug: str):
-    return db.query(models.Region).filter(models.Region.slug == region_slug).first()
+async def get_region(db: AsyncSession, region_slug: str):
+    result = await db.execute(select(Region).filter(models.Region.slug == region_slug))
+    return result.scalars().first()
 
 
-def get_regions_list(db: Session, **kwargs):
+async def get_regions_list(db: AsyncSession, **kwargs):
     """Список всіх регіонів(Областей)"""
-    return db.query(Region).all()
+    result = await db.execute(select(Region))  # Використовуємо select замість query
+    return result.scalars().all()  # scalars() отримує тільки самі об'єкти без метаданих
 
 
-def get_regions(db: Session, region_slug: str = None, **kwargs):
-    query = db.query(Region).filter(Region.slug == region_slug)
+async def get_regions(db: AsyncSession, region_slug: str = None, **kwargs):
+    query = await db.execute(
+        select(
+            Region.id,
+            Region.slug,
+            Region.emblem,
+            Region.name,
+        ).filter(Region.slug == region_slug)
+    )
     return query.first()
 
 
-def get_region_season(db: Session, region_id: int):
-    return (
-        db.query(Season)
+async def get_region_season(db: AsyncSession, region_id: int):
+    stmt = (
+        select(Season)
         .join(Season.tournament)
         .join(Tournament.organization)
         .join(Organization.region)
         .filter(Region.id == region_id, Season.year == date.today().year)
         .order_by(desc(Season.year))
-        .all()
     )
+    result = await db.execute(stmt)  # Асинхронне виконання запиту
+    return result.scalars().all()  # Отримуємо всі результати
 
 
-def get_region_seasons(db: Session, region_id: int):
-    return (
-        db.query(Season)
+async def get_region_seasons(db: Session, region_id: int):
+    stmt = (
+        select(Season)
         .join(Season.tournament)
         .join(Tournament.organization)
         .join(Organization.region)
         .filter(Region.id == region_id, Season.year == date.today().year)
         .order_by(desc(Season.year))
-        .all()
     )
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
-def create_region(db: Session, region: schemas.RegionCreateSchemas):
+async def create_region(db: AsyncSession, region: schemas.RegionCreateSchemas):
     db_region = models.Region(**region.model_dump())
     db.add(db_region)
-    db.commit()
-    db.refresh(db_region)
+    await db.commit()  # Асинхронний коміт
+    await db.refresh(db_region)  # Асинхронне оновлення об'єкта після вставки
     return db_region
 
 
-def update_region(
-    db: Session,
-    region_id: int,
-    # region_name: str,
-    region: schemas.RegionUpdateSchemas,
+async def update_region(
+    db: AsyncSession, region_id: int, region: schemas.RegionUpdateSchemas
 ):
-    db_region = (
-        db.query(models.Region)
-        .filter(
-            models.Region.id == region_id,
-            # models.Region.name == region_name
-        )
-        .first()
-    )
+    result = await db.execute(select(Region).where(Region.id == region_id))
+    db_region = result.scalar_one_or_none()
+
     if db_region is None:
         return None
-    for key, value in region.model_dump().items():
+
+    for key, value in region.dict(exclude_unset=True).items():
         setattr(db_region, key, value)
-    db.commit()
-    db.refresh(db_region)
+
+    await db.commit()
+    await db.refresh(db_region)
     return db_region
 
 
-def delete_region(db: Session, region_id: int):
+async def delete_region(db: Session, region_id: int):
     db_region = db.query(models.Region).filter(models.Region.id == region_id).first()
     if db_region is None:
         return None
     db.delete(db_region)
     db.commit()
+    return db_region
+
+
+async def delete_region(db: AsyncSession, region_id: int):
+    result = await db.execute(select(Region).where(Region.id == region_id))
+    db_region = result.scalar_one_or_none()
+
+    if db_region is None:
+        return None
+
+    await db.delete(db_region)
+    await db.commit()
     return db_region

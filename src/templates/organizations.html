@@ -10,11 +10,21 @@
  <div class="fiex justify-center flex-col items-center">
 
   <div class="fiex center my-3 gap-5">
-      <br>
-    {% for organization in organizations %}
-    <ul>
-      <li>{{ organization.name }}</li>
-    </ul>
+    {% for region in regions_list %}
+      <ul>
+        <li>
+            <h4>{{ region.name }}</h4><br>
+            {% for organization in organizations if organization.region.id == region.id %}
+            <ul>
+              <li>
+                  <a href="/organizations/{{organization.slug}}">
+                      {{ organization.name }} - {{ organization.full_name }}
+                  </a>
+              </li>
+            </ul>
+            {% endfor %}
+        </li>
+      </ul>
     {% endfor %}
   </div>
 

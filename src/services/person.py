@@ -1,6 +1,8 @@
 from datetime import datetime
+from typing import List
 
-from sqlalchemy import desc, extract, and_, func, Integer, case
+from sqlalchemy import desc, extract, and_, func, Integer, case, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, aliased
 
 from models import (
@@ -25,11 +27,11 @@ from models import (
 from validation import person as schemas
 
 
-def get_person(db: Session, person_id: int):
+async def get_person(db: AsyncSession, person_id: int):
     """Повна інформація про гравця/персону"""
     current_year = datetime.now().year
-    result = (
-        db.query(
+    stmt = (
+        select(
             Person.id,
             Person.slug,
             Person.photo,
@@ -52,9 +54,10 @@ def get_person(db: Session, person_id: int):
         )
         .join(Region, Region.id == Person.region_id)
         .filter(Person.id == person_id)
-        .first()
     )
-    return result
+
+    result = await db.execute(stmt)
+    return result.first()
 
 
 def get_person_team(db: Session, person_id: int):
@@ -85,14 +88,14 @@ def get_person_team(db: Session, person_id: int):
     )
 
 
-def get_person_matches(db: Session, person_id: int):
+async def get_person_matches(db: AsyncSession, person_id: int):
     """Команди та періоди, в якіх грав гравець"""
 
     Team1 = aliased(Team)
     Team2 = aliased(Team)
 
-    result = (
-        db.query(
+    stmt = (
+        select(
             Person.id.label("person_id"),
             Match.id.label("match_id"),
             func.strftime("%d-%m-%Y", func.datetime(Match.event, "unixepoch")).label(
@@ -124,16 +127,16 @@ def get_person_matches(db: Session, person_id: int):
         .join(Season, Season.id == Match.season_id)
         .filter(Person.id == person_id)
         .order_by(desc(Match.event))
-        .all()
     )
-    return result
+    result = await db.execute(stmt)
+    return result.all()
 
 
-def get_person_team_career(db: Session, person_id: int):
+async def get_person_team_career(db: AsyncSession, person_id: int):
     """Команди та періоди, в яких грав гравець"""
 
-    result = (
-        db.query(
+    stmt = (
+        select(
             PositionRole.player_number.label("player_number"),  # Номер футболки гравця
             Team.id.label("team_id"),  # id команди
             Team.slug.label("team_slug"),
@@ -182,9 +185,9 @@ def get_person_team_career(db: Session, person_id: int):
             PositionRole.enddate,
         )
         .order_by(desc(PositionRole.enddate))
-        .all()
     )
-    return result
+    result = await db.execute(stmt)
+    return result.all()
 
 
 # def get_person_team_career(db: Session, person_id: int):
@@ -216,11 +219,12 @@ def get_person_team_career(db: Session, person_id: int):
 #     return result
 
 
-def get_person_teams_tournaments(db: Session, person_id: int):
+async def get_person_teams_tournaments(db: AsyncSession, person_id: int):
     """Турніри, в якіх гравець брав участь"""
-    result = (
-        db.query(
+    stmt = (
+        select(
             Team.id.label("team_id"),  # id команди
+            Team.slug.label("team_slug"),  # slug команди
             Team.logo.label("team_logo"),  # логотип команди
             Team.name.label("team_name"),  # Назва команди
             Team.city.label("team_city"),  # Місто команди
@@ -259,50 +263,58 @@ def get_person_teams_tournaments(db: Session, person_id: int):
             )
         )
         .order_by(Season.year.desc())
-        .all()
     )
-    return result
+    result = await db.execute(stmt)
+    return result.all()
 
 
-def get_region_persons(db: Session, region_slug: str):
+async def get_region_persons(db: AsyncSession, region_slug: str):
     """Виводить персон, які відносяться до даного регіону"""
-    persons_list = (
-        db.query(Person)
+    # Створюємо асинхронний запит
+    stmt = (
+        select(Person)
         .join(Region, Region.id == Person.region_id)
         .filter(Region.slug == region_slug)
-        .all()
     )
-    return persons_list
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
-def get_persons(db: Session):
-    persons_list = db.query(Person).all()
-    return persons_list
+async def get_persons(db: AsyncSession) -> List[Person]:
+    result = await db.execute(select(Person))
+    return result.scalars().all()
 
 
-def create_person(db: Session, person: schemas.PersonSchemas):
+async def create_person(db: AsyncSession, person: schemas.PersonSchemas):
     db_person = Person(**person.dict())
-    db.add(db_person)
-    db.commit()
-    db.refresh(db_person)
+    async with db.begin():  # Запускає асинхронну транзакцію
+        db.add(db_person)
+        await db.commit()  # Виконує асинхронне збереження
+        await db.refresh(db_person)  # Оновлює об'єкт після збереження
     return db_person
 
 
-def update_person(db: Session, person_id: int, person: schemas.PersonUpdateSchemas):
-    db_person = db.query(Person).filter(Person.id == person_id).first()
-    if db_person is None:
-        return None
-    for key, value in person.dict().items():
-        setattr(db_person, key, value)
-    db.commit()
-    db.refresh(db_person)
+async def update_person(
+    db: AsyncSession, person_id: int, person: schemas.PersonUpdateSchemas
+):
+    async with db.begin():  # Запускає асинхронну транзакцію
+        db_person = await db.execute(select(Person).filter(Person.id == person_id))
+        db_person = db_person.scalars().first()
+        if db_person is None:
+            return None
+        for key, value in person.dict().items():
+            setattr(db_person, key, value)
+        await db.commit()  # Виконує асинхронне збереження
+        await db.refresh(db_person)  # Оновлює об'єкт після збереження
     return db_person
 
 
-def delete_person(db: Session, person_id: int):
-    db_person = db.query(Person).filter(Person.id == person_id).first()
-    if db_person is None:
-        return None
-    db.delete(db_person)
-    db.commit()
+async def delete_person(db: AsyncSession, person_id: int):
+    async with db.begin():  # Запускає асинхронну транзакцію
+        result = await db.execute(select(Person).filter(Person.id == person_id))
+        db_person = result.scalars().first()
+        if db_person is None:
+            return None
+        await db.delete(db_person)  # Виконує асинхронне видалення
+        await db.commit()  # Виконує асинхронне збереження
     return db_person

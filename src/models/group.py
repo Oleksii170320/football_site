@@ -19,16 +19,16 @@ class Group(Base):
     id: Mapped[intpk]
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     slug: Mapped[str] = mapped_column(String, nullable=True)
-
+    # season_id: Mapped[int | None]
     # зовнішні ключі
-    season_id: Mapped[int | None] = mapped_column(
-        ForeignKey("seasons.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
+    # season_id: Mapped[int | None] = mapped_column(
+    #     ForeignKey("seasons.id", onupdate="SET NULL", ondelete="SET NULL"),
+    # )
 
     # зв'язки з таблицями
-    season: Mapped["Season"] = relationship(
-        back_populates="groups",
-    )
+    # season: Mapped["Season"] = relationship(
+    #     back_populates="groups",
+    # )
     matches: Mapped["Match"] = relationship(
         back_populates="group",
     )

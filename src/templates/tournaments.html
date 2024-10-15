@@ -76,9 +76,12 @@
     <h3 class="content-title">Список турнірів даного регіону:</h3>
     <div class="tournament-list">
         {% for tournament in tournaments %}
-        <div class="tournament-item">
-            <h4>{{ tournament.full_name }}</h4>
-        </div>
+        <a href="/tournaments/{{tournament.slug}}">
+            <div class="tournament-item">
+
+                <h4>{{ tournament.full_name }}</h4>
+            </div>
+        </a>
         {% endfor %}
     </div>
 </div>

@@ -18,17 +18,54 @@ FUNCTIONS = {
 }
 
 
-def get_user(request: Request):
-    session = get_session(request)
+# def get_user(request: Request):
+#     session = get_session(request)
+#     user = session.get("user")
+#     return user
+#
+#
+# def get_context_data(request: Request, fields, *args, **kwargs):
+#     user = get_user(request)
+#     db = next(get_db())
+#     context = {"user": user}
+#     for field in fields:
+#         context[field] = FUNCTIONS[field](db, *args, **kwargs)
+#
+#     return context
+
+
+async def get_user(request: Request):
+    session = get_session(request)  # Використовуємо асинхронний виклик
     user = session.get("user")
     return user
 
 
-def get_context_data(request: Request, fields, *args, **kwargs):
-    user = get_user(request)
-    db = next(get_db())
+async def get_context_data(request: Request, fields, *args, **kwargs):
+    user = await get_user(request)  # Асинхронне отримання користувача
+    db = await anext(
+        get_db()
+    )  # Використовуємо асинхронний генератор для отримання сесії
     context = {"user": user}
+
     for field in fields:
-        context[field] = FUNCTIONS[field](db, *args, **kwargs)
+        function = FUNCTIONS.get(field)
+        if function is None:
+            continue
+
+        # Перевіряємо аргументи функції
+        if field == "matches":
+            context[field] = await function(
+                db,
+                season_id=kwargs.get("season_id"),
+                season_slug=kwargs.get("season_slug"),
+            )
+        elif field in ["seasons", "region", "season", "tournaments"]:
+            context[field] = await function(
+                db,
+                season_slug=kwargs.get("season_slug"),
+                region_slug=kwargs.get("region_slug"),
+            )
+        else:
+            context[field] = await function(db)
 
     return context

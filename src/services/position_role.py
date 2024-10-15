@@ -1,4 +1,5 @@
-from sqlalchemy import desc
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from models import Person, PositionRole, TeamPerson, Team, Position, PlayerRole
@@ -24,15 +25,16 @@ def get_persons_position(db: Session, person_id: int):
     return result
 
 
-def get_persons_position_team(db: Session, person_id: int):
-    # Виконання запиту для отримання даних
-    result = (
-        db.query(
+async def get_persons_position_team(db: AsyncSession, person_id: int):
+    # Створення асинхронного запиту для отримання даних
+    stmt = (
+        select(
             PositionRole.id,
             PositionRole.player_role_id,
             PlayerRole.full_name,
             Position.position,
             Team.id.label("team_id"),
+            Team.slug.label("team_slug"),
             Team.name.label("team_name"),
             Team.city.label("team_city"),
         )
@@ -41,6 +43,7 @@ def get_persons_position_team(db: Session, person_id: int):
         .join(Team, Team.id == TeamPerson.team_id)
         .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
         .filter(TeamPerson.person_id == person_id, PositionRole.active.is_(True))
-        .all()
     )
-    return result
+
+    result = await db.execute(stmt)
+    return result.all()

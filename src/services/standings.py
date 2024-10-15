@@ -1,36 +1,45 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_, select
 from models import Match, Group, Team, Season
 
 
-def get_calculate_standings(
-    db: Session, season_id: int = None, season_slug: str = None, group_id: int = None
+async def get_calculate_standings(
+    db: AsyncSession,
+    season_id: int = None,
+    season_slug: str = None,
+    group_id: int = None,
 ):
     standings = {}
 
-    # Фільтруємо матчі за season_id, статусом і standing
-    matches_query = db.query(Match).join(Season, Season.id == Match.season_id)
+    # Створюємо запит
+    stmt = (
+        select(Match)
+        .join(Season, Season.id == Match.season_id)
+        .options(joinedload(Match.team_1), joinedload(Match.team_2))
+    )
 
     if season_id is not None:
-        matches_query = matches_query.filter(
+        stmt = stmt.filter(
             Match.season_id == season_id,
             Match.standing.is_(True),
             or_(Match.status == "played", Match.status == "technical_defeat"),
         )
     elif season_slug is not None:
-        matches_query = matches_query.filter(
+        stmt = stmt.filter(
             Season.slug == season_slug,
             Match.standing.is_(True),
             or_(Match.status == "played", Match.status == "technical_defeat"),
         )
     else:
-        return None  # or raise an exception if both are None
+        return None  # або підняти виключення, якщо обидва параметри None
 
-    # Якщо group_id не None, то додатково фільтруємо за group_id
     if group_id is not None:
-        matches_query = matches_query.filter(Match.group_id == group_id)
+        stmt = stmt.filter(Match.group_id == group_id)
 
-    matches = matches_query.all()
+    # Виконуємо запит
+    result = await db.execute(stmt)
+    matches = result.scalars().all()
 
     for match in matches:
         # Перевіряємо наявність команди 1 ("господар матчу") в standings
@@ -42,6 +51,7 @@ def get_calculate_standings(
 
         if match.team1_id not in standings[match.stage_id][match.group_id]:
             standings[match.stage_id][match.group_id][match.team1_id] = {
+                "team_slug": match.team_1.slug,
                 "team_name": match.team_1.name,
                 "team_city": match.team_1.city,
                 "logo": match.team_1.logo,
@@ -57,6 +67,7 @@ def get_calculate_standings(
 
         if match.team2_id not in standings[match.stage_id][match.group_id]:
             standings[match.stage_id][match.group_id][match.team2_id] = {
+                "team_slug": match.team_2.slug,
                 "team_name": match.team_2.name,
                 "team_city": match.team_2.city,
                 "logo": match.team_2.logo,
@@ -137,6 +148,7 @@ def get_calculate_standings(
                 standings_list.append(
                     {
                         "team_id": team_id,
+                        "team_slug": stats["team_slug"],
                         "team_name": stats["team_name"],
                         "team_city": stats["team_city"],
                         "logo": stats["logo"],

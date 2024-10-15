@@ -28,7 +28,7 @@
                 <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" class="card-img-top team-logo"
                      alt="{{ team.name }}">
                 <div class="card-body">
-                    <a href="/teams/{{ team.id }}">
+                    <a href="/teams/{{ team.slug }}">
                         <h5 class="card-title">{{ team.name }} ({{ team.city }})</h5>
                     </a>
                     <p class="card-text">{{ team.region.name }}</p>

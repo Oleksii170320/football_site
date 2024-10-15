@@ -1,102 +1,154 @@
 <div class="card mb-3" style="width: 99%; padding: 10px; background-color: #afadad">
-    <h3 class="header_page">СТВОРИТИ МАТЧІ ТУРНІРУ</h3>
-
+    <h3 class="header_page">СТВОРИТИ МАТЧ ТУРНІРУ</h3>
 
     <!-- Повідомлення про успіх -->
-    <div id="successMessage"
-         style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
-        Команда успішно створена!
+    <div id="successMessage" style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
+        Матч успішно створений!
     </div>
 
-    <form id="teamForm" method="post">
-        <div class="d-flex justify-content-between">
-            <!-- Поле для вибору стадії -->
-            <div class="form-group" style="width: 48%;">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        Додати стадію
-                    </label>
+    <!-- Модальне вікно -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Успіх</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <select class="form-select form-select-lg mb-3" aria-label="Large select example">
-                    <option selected>зроби вибір</option>
+                <div class="modal-body">
+                    Матч успішно створений!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрити</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="matchForm" action="/matches/new_match" method="post">
+                <!-- Поле вибору сезону -->
+        <input type="hidden" name="season_id" id="season_id" value="{{ season.season_id }}">
+        <input type="hidden" name="region_slug" value="{{ region.slug }}">
+        <input type="hidden" name="season_slug" value="{{ season.season_slug }}">
+        <input type="hidden" name="event_epoch" id="event_epoch">
+        <input type="hidden" name="standing" id="standing" value="true">
+
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="form-group" style="width: 48%;">
+                <label for="stage_id">Етап турніру</label>
+                <select class="form-select" name="stage_id" id="stage_id">
+                    <option value="">Виберіть етап турніру</option>
                     {% for stage in stages %}
-                    <option>{{ stage.name }}</option>
+                    <option value="{{ stage.id }}">{{ stage.name }}</option>
                     {% endfor %}
-                    <option>Створити нову назву стадії</option>
                 </select>
             </div>
 
-            <!-- Поле для вибору групи -->
             <div class="form-group" style="width: 48%;">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
-                    <label class="form-check-label" for="flexCheckDefault1">
-                        Групова стадія
-                    </label>
-                </div>
-                <select class="form-select form-select-lg mb-3" aria-label="Large select example">
-                    <option selected>зроби вибір</option>
+                <label for="groupName">Група</label>
+                <select class="form-select" id="groupName" name="group_id">
+                    <option value="">Виберіть назву групи</option>
                     {% for group in groups %}
-                    <option>{{ group.name }}</option>
+                    <option value="{{ group.id }}">{{ group.name }}</option>
                     {% endfor %}
-                    <option>Створити нову назву групи</option>
                 </select>
             </div>
         </div>
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="form-group" style="width: 48%;">
+                <label for="round_id">Тур</label>
+                <select class="form-select" name="round_id" id="round_id">
+                    <option value="">Виберіть тур</option>
+                    {% for round in rounds %}
+                    <option value="{{ round.id }}">{{ round.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="form-group" style="width: 32%;">
+                <label for="startDate" class="form-label">Дата матчу</label>
+                <input type="date" class="form-control" id="startDate" placeholder="yyyy-mm-dd">
+            </div>
+            <div class="form-group" style="width: 32%;">
+                <label for="startTime" class="form-label">Початок</label>
+                <input type="time" class="form-control" id="startTime" placeholder="HH:MM">
+            </div>
+
+            <div class="form-group" style="width: 32%;">
+                <label for="stadium_id" class="form-label">Стадіон</label>
+                <select class="form-select" name="stadium_id" id="stadium_id">
+                    <option value="">Виберіть стадіон</option>
+                    {% for stadium in stadiums %}
+                    <option value="{{ stadium.id }}">{{ stadium.city }} - {{ stadium.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="form-group" style="width: 45%;">
+                <label for="team1_id" class="form-label">Команда господар</label>
+                <select class="form-select" name="team1_id" id="team1_id" required>
+                    <option value="">Виберіть команду</option>
+                    {% for team in teams %}
+                    <option value="{{ team.id }}">{{ team.name }} ({{ team.city }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group" style="width: 10%;">
+                <label for="team1_goals" class="form-label">Голи</label>
+                <input type="number" class="form-control" name="team1_goals" id="team1_goals" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group" style="width: 10%;">
+                <label for="team2_goals" class="form-label">Голи</label>
+                <input type="number" class="form-control" name="team2_goals" id="team2_goals" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group" style="width: 45%;">
+                <label for="team2_id" class="form-label">Команда гостей</label>
+                <select class="form-select" name="team2_id" id="team2_id" required>
+                    <option value="">Виберіть команду</option>
+                    {% for team in teams %}
+                    <option value="{{ team.id }}">{{ team.name }} ({{ team.city }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="form-group" style="width: 20%;">
+                <label for="team1_penalty" class="form-label">Пенальті (господар)</label>
+                <input type="number" class="form-control" name="team1_penalty" id="team1_penalty" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group" style="width: 20%;">
+                <label for="team2_penalty" class="form-label">Пенальті (гості)</label>
+                <input type="number" class="form-control" name="team2_penalty" id="team2_penalty" min="0" placeholder="0">
+            </div>
+        </div>
+
         <div class="d-flex justify-content-between">
-            <!-- Матч на виліт чи ні -->
-            <div class="form-check" style="width: 48%;">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                <label class="form-check-label" for="flexRadioDefault1">
-                    ПЛЕЙ-ОФ
-                </label>
-            </div>
-            <div class="form-check" style="width: 48%;">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                <label class="form-check-label" for="flexRadioDefault2">
-                    ГРУПОВИЙ ЕТАП
-                </label>
+            <div class="form-group" style="width: 20%;">
+                <label for="status" class="form-label">Статус</label>
+                <select class="form-select" name="status" id="status" required>
+                    <option value="Не зіграно">Не зіграно</option>
+                    <option value="Зіграно">Зіграно</option>
+                    <option value="Тех. поразка">Тех. поразка</option>
+                    <option value="Перенесено">Перенесено</option>
+                    <option value="Не відбудеться">Не відбудеться</option>
+                </select>
             </div>
 
-            <!-- Раунд матчу -->
-            <select class="form-select form-select-lg mb-3" aria-label="Large select example" style="width: 48%;">
-                {% for round in rounds %}
-                <option>{{ round.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="d-flex justify-content-start">
-            <!-- Дата матчу -->
-            <div class="mb-3" style="width: 20%;">
-                <label for="startDate" class="form-label">Дата початку розіграшу</label>
-                <input type="date" class="form-control" id="startDate" name="start_date" placeholder="yyyy-mm-dd">
-            </div>
-            <!-- Час матчу -->
-            <div class="mb-3 ms-2" style="width: 20%;">
-                <label for="startTime" class="form-label">Початок:</label>
-                <input type="time" class="form-control" id="startTime" name="start_time" placeholder="HH:MM">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Створити матч</button>
             </div>
         </div>
-
-        <div class="d-flex justify-content-center">
-            <!-- Команда господар -->
-            <select class="form-select form-select-lg mb-3" aria-label="Large select example" style="width: 30%;">
-                {% for team in teams %}
-                <option>{{ team.name }} ({{ team.city }})</option>
-                {% endfor %}
-            </select>
-     
-            <!-- Команда гостей -->
-            <select class="form-select form-select-lg mb-3" aria-label="Large select example" style="width: 30%;">
-                {% for team in teams %}
-                <option>{{ team.name }} ({{ team.city }})</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Створити нову команду</button>
     </form>
-
 </div>
+
+<script src="/static/js/forms/form_add_new_match.js"></script>

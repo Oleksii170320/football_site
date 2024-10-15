@@ -18,7 +18,7 @@
             <img src="{{ url_for('static', path='/img/teams/' ~ career.team_logo) }}" alt="{{ career.team_name }} logo" height="30px">
           </td>
           <td align="left">
-            <a class="nav-link" href="/teams/{{ career.team_id }}">
+            <a class="nav-link" href="/teams/{{ career.team_slug }}/application">
               {{ career.team_name }} ({{ career.team_city }})
             </a>
           </td>
@@ -26,7 +26,7 @@
           <td align="center">{{ career.organization_name }} - {{ career.level.value }}</td>
           <td align="center">{{ career.season_year }}</td>
           <td align="left">
-            <a class="nav-link" href="/region/{{ career.region_slug }}/{{ career.tournament_id }}/{{ career.season_slug }}">
+            <a class="nav-link" href="/region/{{ career.region_slug }}/{{ career.season_slug }}">
               {{ career.season_name }}
             </a>
           </td>

@@ -1,17 +1,23 @@
 <div class="card mb-3" style="width: 99%; padding: 10px; background-color: #afadad">
+
     <h3 class="header_page">ЗАЯВИТИ КОМАНДУ</h3>
 
     <div style="padding: 20px 0px 70px 20px;">
-        <div id="successMessage"
+        <div id="successMessage_add_team"
              style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
-            Команда успішно створена!
+            Команда успішно заявлена!
+        </div>
+
+        <div id="errorMessage_add_team"
+             style="display: none; background-color: #f13636; color: white; padding: 10px; margin-top: 10px;">
+            Команда вже заявлена!
         </div>
 
         <form method="post" action="/seasons/add_teams" id="add-teams-form">
 
-            <input type="hidden" name="season_id" value="{{ season.id }}">
+            <input type="hidden" name="season_id" value="{{ season.season_id }}">
             <input type="hidden" name="region_slug" value="{{ region.slug }}">
-            <input type="hidden" name="season_slug" value="{{ season.slug }}">
+            <input type="hidden" name="season_slug" value="{{ season.season_slug }}">
 
             <!-- Поле введення назви команди -->
             <div class="mb-3">
@@ -35,97 +41,33 @@
 
             <!-- Список варіантів команд -->
             <div class="mb-3">
-                <label class="form-label">Видеріть команду</label>
+                <label class="form-label">Виберіть команду</label>
                 <select id="team-select" class="form-select" name="team_id" aria-label="Select a team" size="3">
                     {% for team in add_team %}
                     <option value="{{ team.id }}">
-                        <a href="/teams/{{ team.id }}">{{ team.name }} ({{ team.city }}, {{ team.region.name
-                            }})</a>
+                        <a href="/teams/{{ team.id }}">{{ team.name }} ({{ team.city }}, {{ team.region.name}})</a>
                     </option>
                     {% endfor %}
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Добавить команду</button>
+<!--            <button type="submit" class="btn btn-primary">Добавить команду</button>-->
+            <button type="submit" id="declare-team" class="btn btn-primary">Заявити команду</button>
 
         </form>
+
+      <!-- Приховане поле для введення season_slug -->
+    <input type="hidden" id="season_slug" name="season_slug" value="{{ season.season_slug }}">
+
+    <div id="teamList">
+        <!-- Тут буде відображено список команд -->
+    </div>
+
+
     </div>
 </div>
 
 
-<script>
 
-    // Функція для пошуку команди (фільтр по значеннях)
-    function filterTeams() {
-        let nameFilter = document.getElementById('team-name-input').value.toLowerCase();
-        let cityFilter = document.getElementById('team-city-input').value.toLowerCase();
-        let regionFilter = document.getElementById('team-region-input').value.toLowerCase();
-        let options = document.querySelectorAll('#team-select option');
+<script src="/static/js/forms/form_add_team_in_season.js"></script>
 
-        options.forEach(function (option) {
-            let optionText = option.textContent;
-            let teamName = optionText.split(' (')[0].toLowerCase();
-            let cityAndRegion = optionText.split(' (')[1]?.split(')')[0].split(', ');
-            let teamCity = cityAndRegion ? cityAndRegion[0].toLowerCase() : '';
-            let teamRegion = cityAndRegion ? cityAndRegion[1].toLowerCase() : '';
-
-            if (
-                teamName.includes(nameFilter) &&
-                teamCity.includes(cityFilter) &&
-                teamRegion.includes(regionFilter)
-            ) {
-                option.style.display = '';  // Відобразити
-            } else {
-                option.style.display = 'none';  // Сховати
-            }
-        });
-    }
-
-    document.getElementById('team-name-input').addEventListener('input', filterTeams);
-    document.getElementById('team-city-input').addEventListener('input', filterTeams);
-    document.getElementById('team-region-input').addEventListener('input', filterTeams);
-
-    // Функція яка додає команду в розіграш
-    async function submitForm() {
-        const formData = new FormData(document.getElementById('add-teams-form'));
-
-        try {
-            const response = await fetch('/seasons/add_teams', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                // Успішна відповідь, перезавантаження сторінки
-                console.log('Success:', data);
-                window.location.reload(); // Перезавантаження сторінки
-
-                // Показати повідомлення про успіх
-                const successMessage = document.getElementById('successMessage');
-                successMessage.style.display = 'block'; // Показати повідомлення
-
-                setTimeout(() => {
-                    successMessage.style.display = 'none'; // Приховати повідомлення через 5 секунд
-                }, 5000);
-
-            } else {
-                console.error('Error:', data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    // Додаємо обробник подій на кнопку
-    document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
-        event.preventDefault();  // Запобігаємо стандартній відправці форми
-        submitForm();
-    });
-
-</script>

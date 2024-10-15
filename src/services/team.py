@@ -1,8 +1,11 @@
-from sqlalchemy import func, case, desc
-from sqlalchemy.orm import Session
+from typing import Optional
+
+from sqlalchemy import func, case, desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session, aliased, selectinload
 
 from models import (
-    team as models,
+    Team,
     Region,
     TeamPerson,
     TeamSeason,
@@ -14,45 +17,133 @@ from models import (
     MatchProperties,
     MatchEvent,
     Season,
+    Stadium,
 )
 from validation import team as schemas
 
 
-def get_team(db: Session, team_id: int):
-    return db.query(models.Team).filter(models.Team.id == team_id).first()
+async def get_team(db: AsyncSession, team_id: int = None, team_slug: str = None):
+    president = aliased(Person)
+    coach = aliased(Person)
+
+    stmt = (
+        select(
+            Team.id.label("team_id"),
+            Team.name.label("team_name"),
+            Team.full_name.label("team_full_name"),
+            Team.logo.label("team_logo"),
+            Team.slug.label("team_slug"),
+            Team.foundation_year,
+            Team.clubs_site,
+            Team.president_id,
+            president.lastname.label("president_lastname"),
+            president.name.label("president_name"),
+            president.surname.label("president_surname"),
+            Team.coach_id,
+            coach.lastname.label("coach_lastname"),
+            coach.name.label("coach_name"),
+            coach.surname.label("coach_surname"),
+            Team.stadium_id,
+            Stadium.name.label("stadium_name"),
+            Stadium.city.label("stadium_city"),
+        )
+        .outerjoin(president, president.id == Team.president_id)
+        .outerjoin(coach, coach.id == Team.coach_id)
+        .outerjoin(Stadium, Stadium.id == Team.stadium_id)
+    )
+
+    if team_id is not None:
+        stmt = stmt.filter(Team.id == team_id)
+    elif team_slug is not None:
+        stmt = stmt.filter(Team.slug == team_slug)
+    else:
+        return None  # або підняти виключення, якщо обидва параметри None
+
+    result = await db.execute(stmt)
+    return result.first()
 
 
 def get_team_for_slug(db: Session, team_slug: str):
-    return db.query(models.Team).filter(models.Team.slug == team_slug).first()
+    return db.query(Team).filter(Team.slug == team_slug).first()
 
 
-def get_regions_team_list(db: Session, region_slug: str):
-    team_list = (
-        db.query(models.Team)
-        .join(models.Team.region)
-        .filter(Region.slug == region_slug)
-        .all()
+async def get_regions_team_list(db: Session, region_slug: str):
+    team_list = await db.execute(
+        select(Team).join(Team.region).filter(Region.slug == region_slug)
     )
-    return team_list
+    return team_list.scalars().all()
 
 
-def get_teams_in_season(db: Session, season_slug: str):
-    team_list = (
-        db.query(models.Team)
-        .join(TeamSeason, TeamSeason.team_id == models.Team.id)
-        .join(Season, Season.id == TeamSeason.season_id)
-        .filter(Season.slug == season_slug)
-        .order_by(models.Team.name)
-        .all()
+# async def get_teams_in_season(db: AsyncSession, season_slug: str):
+#     stmt = (
+#         select(Team)
+#         .join(TeamSeason, TeamSeason.team_id == Team.id)
+#         .join(Season, Season.id == TeamSeason.season_id)
+#         .filter(Season.slug == season_slug)
+#         .order_by(Team.name)
+#     )
+#     result = await db.execute(stmt)
+#     team_list = result.scalars().all()
+#     return team_list
+
+
+async def get_teams_in_season(db: AsyncSession, season_slug: str):
+    """function to get a list of teams from a season"""
+
+    stmt = (
+        select(
+            Team.id,
+            Team.slug,
+            Team.logo,
+            Team.name,
+            Team.city,
+            Team.full_name,
+            Region.name.label("region_name"),
+            Season.id.label("season_id"),
+            Season.slug.label("season_slug"),
+        )
+        .join(Region, Region.id == Team.region_id)  # З'єднання з Region
+        .join(TeamSeason, TeamSeason.team_id == Team.id)  # З'єднання з TeamSeason
+        .join(Season, Season.id == TeamSeason.season_id)  # З'єднання з Season
+        .filter(Season.slug == season_slug)  # Фільтр по slug сезону
+        .order_by(Team.name)  # Сортування по імені команди
     )
-    return team_list
+
+    result = await db.execute(stmt)
+    team_list = result.all()  # Отримання всіх результатів як список кортежів
+
+    # Формування результату у вигляді JSON
+    teams = [
+        {
+            "id": team[0],  # team.id
+            "slug": team[1],  # team.slug
+            "logo": team[2],  # team.logo
+            "name": team[3],  # team.name
+            "city": team[4],  # team.city
+            "full_name": team[5],  # team.full_name
+            "region_name": team[6],  # region.name (поле region)
+            "season_id": team[7],  # season.id
+            "season_slug": team[8],  # season.slug
+        }
+        for team in team_list  # Кожен team — це кортеж з вибраними полями
+    ]
+
+    return teams
 
 
-def get_team_staff(db: Session, team_id: int):
+async def get_teams_for_id(db: AsyncSession, season_id: int):
+    # Додайте логування або перевірку даних для відлагодження
+    teams = await db.execute(
+        select(Team).join(Season.teams_associations).filter(Season.id == season_id)
+    )
+    return teams.scalars().all()
+
+
+async def get_team_staff(db: AsyncSession, team_slug: str):
     """Персонал команди"""
 
-    result = (
-        db.query(
+    stmt = (
+        select(
             Person.id,
             Person.photo,
             Person.name,
@@ -99,13 +190,15 @@ def get_team_staff(db: Session, team_id: int):
             ).label("red_cards"),
         )
         .join(TeamPerson, TeamPerson.person_id == Person.id)
+        .join(Team, Team.id == TeamPerson.team_id)
         .join(PositionRole, PositionRole.team_person_id == TeamPerson.id)
         .join(Position, Position.id == PositionRole.position_id)
         .join(PlayerRole, PlayerRole.id == PositionRole.player_role_id)
         .outerjoin(MatchProperties, MatchProperties.player_id == PositionRole.id)
         .outerjoin(MatchEvent, MatchEvent.player_match_id == MatchProperties.id)
         .outerjoin(RefEvent, RefEvent.id == MatchEvent.event_id)
-        .filter(TeamPerson.team_id == team_id, PositionRole.active.is_(True))
+        .filter(Team.slug == team_slug, PositionRole.active.is_(True))
+        # .filter(TeamPerson.team_id == team_id, PositionRole.active.is_(True))
         .group_by(
             Person.id,
             Person.photo,
@@ -119,49 +212,100 @@ def get_team_staff(db: Session, team_id: int):
             PlayerRole.full_name,
         )
         .order_by(desc(PositionRole.enddate))
-        .all()
     )
-    return result
+
+    result = await db.execute(stmt)
+    return result.all()
 
 
-def get_teams(db: Session):
-    return db.query(models.Team).order_by(models.Team.name).all()
+async def get_teams(db: AsyncSession):
+    result = await db.execute(select(Team).order_by(Team.name))
+    return result.scalars().all()
 
 
-def create_team(db: Session, team: schemas.TeamCreateSchemas):
-    db_team = models.Team(**team.model_dump())
+async def get_team_for_id(db: AsyncSession, team_id: int):
+    return await db.get(Team, team_id)
+
+
+# def create_team(db: Session, team: schemas.TeamCreateSchemas):
+#     db_team = Team(**team.model_dump())
+#     db.add(db_team)
+#     db.commit()
+#     db.refresh(db_team)
+#     return db_team
+
+
+# async def create_team(db: AsyncSession, team: schemas.TeamCreateSchemas):
+#     db_team = Team(**team.model_dump())
+#     db.add(db_team)
+#     await db.commit()  # Асинхронний коміт
+#     await db.refresh(db_team)  # Оновлення даних
+#     return db_team
+
+
+async def create_team(db: AsyncSession, team: schemas.TeamCreateSchemas):
+    db_team = Team(**team.model_dump())
     db.add(db_team)
-    db.commit()
-    db.refresh(db_team)
+    await db.commit()
+    await db.refresh(db_team)
+
+    # Завантажте асоційовані дані заздалегідь
+    await db.execute(
+        select(Team)
+        .options(
+            selectinload(Team.seasons_won),
+            selectinload(Team.matches_1),
+            selectinload(Team.matches_2),
+        )
+        .where(Team.id == db_team.id)
+    )
+
     return db_team
 
 
-def update_team(db: Session, team_id: int, team: schemas.TeamUpdateSchemas):
-    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
-    if db_team is None:
-        return None
-    for key, value in team.dict().items():
-        setattr(db_team, key, value)
-    db.commit()
-    db.refresh(db_team)
-    return db_team
+async def update_team(
+    db: AsyncSession, team_id: int, team: schemas.TeamUpdateSchemas
+) -> Optional[Team]:
+    async with db.begin():
+        # Запит на отримання існуючої команди
+        db_team = await db.execute(select(Team).filter(Team.id == team_id))
+        db_team = db_team.scalars().first()
+
+        if db_team is None:
+            return None
+
+        for key, value in team.dict().items():
+            setattr(db_team, key, value)
+
+        db.add(db_team)
+        await db.commit()
+        return db_team
 
 
-def update_team_logo(db: Session, team_slug: str, new_logo_name: str) -> models.Team:
-    # Отримуємо запис команди за ідентифікатором
-    team = db.query(models.Team).filter(models.Team.slug == team_slug).first()
-    if team is None:
-        raise ValueError(f"Команду з id {team_slug} не знайдено.")
-    team.logo = new_logo_name
-    db.commit()
-    db.refresh(team)
-    return team
+async def update_team_logo(
+    db: AsyncSession, team_slug: str, new_logo_name: str
+) -> Optional[Team]:
+    async with db.begin():
+        # Отримуємо запис команди за slug
+        result = await db.execute(select(Team).filter(Team.slug == team_slug))
+        team = result.scalars().first()
+
+        if team is None:
+            raise ValueError(f"Команду з slug {team_slug} не знайдено.")
+
+        team.logo = new_logo_name
+        await db.commit()
+        return team
 
 
-def delete_team(db: Session, team_id: int):
-    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
-    if db_team is None:
-        return None
-    db.delete(db_team)
-    db.commit()
-    return db_team
+async def delete_team(db: AsyncSession, team_id: int) -> Optional[Team]:
+    async with db.begin():
+        result = await db.execute(select(Team).filter(Team.id == team_id))
+        db_team = result.scalars().first()
+
+        if db_team is None:
+            return None
+
+        await db.delete(db_team)
+        await db.commit()
+        return db_team

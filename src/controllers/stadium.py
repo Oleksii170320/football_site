@@ -1,6 +1,7 @@
 import enum
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -15,31 +16,29 @@ from validation import stadium as schemas
 router = APIRouter()
 
 
-@router.post("/", response_model=schemas.StadiumSchemas)
-def create_stadium(
-    stadium: schemas.StadiumCreateSchemas, db: Session = Depends(get_db)
-):
-    return crud_stadium.create_stadium(db=db, stadium=stadium)
-
-
 @router.get("/search", response_model=List[schemas.StadiumSchemas])
-def search_stadiums_endpoint(query: str, db: Session = Depends(get_db)):
-    # Пошук стадіонів за введеним запитом
-    stadiums = get_search_stadiums(db, query=query)
+async def search_stadiums_endpoint(query: str, db: AsyncSession = Depends(get_db)):
+    """Пошук стадіонів за введеним запитом"""
+    stadiums = await crud_stadium.get_search_stadiums(db=db, query=query)
     return stadiums
 
 
 @router.get("/test", response_model=List[schemas.StadiumSchemas])
-def read_stadiums_test(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    stadiums = crud_stadium.get_stadiums(db, skip=skip, limit=limit)
+async def read_stadiums_test(
+    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+):
+    stadiums = await crud_stadium.get_stadiums(db, skip=skip, limit=limit)
     return stadiums
 
 
 @router.get("/", response_model=List[schemas.StadiumSchemas])
-def read_stadiums(
-    request: Request, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
+async def read_stadiums(
+    request: Request,
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
 ):
-    stadiums = crud_stadium.get_stadiums(db, skip=skip, limit=limit)
+    stadiums = await crud_stadium.get_stadiums(db, skip=skip, limit=limit)
     return templates.TemplateResponse(
         "stadium/stadiums.html",
         {
@@ -50,29 +49,35 @@ def read_stadiums(
 
 
 @router.get("/{stadium_id}", response_model=schemas.StadiumSchemas)
-def read_stadium(request: Request, stadium_id: int, db: Session = Depends(get_db)):
-    stadium = crud_stadium.get_stadium(db, stadium_id=stadium_id)
+async def read_stadium(
+    request: Request, stadium_id: int, db: AsyncSession = Depends(get_db)
+):
 
-    if stadium is None:
-        raise HTTPException(status_code=404, detail="Stadium not found")
     return templates.TemplateResponse(
         "stadium/stadium.html",
         {
             "request": request,
-            "regions_list": get_regions_list(db),  # Список регіонів (бокове меню)
-            "taems": get_stadium_teams(db, stadium_id=stadium_id),
-            "stadium": stadium,
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "taems": await get_stadium_teams(db, stadium_id=stadium_id),
+            "stadium": await crud_stadium.get_stadium(db, stadium_id=stadium_id),
         },
     )
 
 
+@router.post("/", response_model=schemas.StadiumSchemas)
+async def create_stadium(
+    stadium: schemas.StadiumCreateSchemas, db: AsyncSession = Depends(get_db)
+):
+    return await crud_stadium.create_stadium(db=db, stadium=stadium)
+
+
 @router.put("/{stadium_id}", response_model=schemas.StadiumSchemas)
-def update_stadium(
+async def update_stadium(
     stadium_id: int,
     stadium: schemas.StadiumUpdateSchemas,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    db_stadium = crud_stadium.update_stadium(
+    db_stadium = await crud_stadium.update_stadium(
         db=db, stadium_id=stadium_id, stadium=stadium
     )
     if db_stadium is None:
@@ -81,8 +86,8 @@ def update_stadium(
 
 
 @router.delete("/{stadium_id}", response_model=schemas.StadiumSchemas)
-def delete_stadium(stadium_id: int, db: Session = Depends(get_db)):
-    db_stadium = crud_stadium.delete_stadium(db=db, stadium_id=stadium_id)
+async def delete_stadium(stadium_id: int, db: AsyncSession = Depends(get_db)):
+    db_stadium = await crud_stadium.delete_stadium(db=db, stadium_id=stadium_id)
     if db_stadium is None:
         raise HTTPException(status_code=404, detail="Stadium not found")
     return db_stadium

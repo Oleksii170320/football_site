@@ -1,10 +1,20 @@
-<form method="post" action="/seasons" ="{{ tournaments.region_name }}">
+<form method="post" action="/seasons" data-region-name="{{ tournaments.region_name }}">
+    <!-- Поле вибору сезону -->
+    <input type="hidden" name="tournament_slug" id="tournament_slug" value="{{ tournaments.slug }}">
+
+
     <div class="mb-3">
         <label for="tournamentName" class="form-label">Назва турніру</label>
         <input type="text" class="form-control" id="tournamentName"
                value="{{ tournaments.name }}" readonly>
-        <!-- Приховане поле для зберігання ідентифікатора турніру -->
         <input type="hidden" id="tournament_id" name="tournament_id" value="{{ tournaments.id }}">
+    </div>
+
+    <div class="mb-3">
+        <label for="seasonName" class="form-label">Введіть/Редагуйте назву даного розіграшу</label>
+        <input type="text" class="form-control" id="seasonName" name="name" aria-describedby="tournamentHelp"
+               value="{{ tournaments.name }}" oninput="updateSlug()">
+        <div class="form-text">Наприклад: Чемпіонат чи Кубок</div>
     </div>
 
     <div class="mb-3">
@@ -17,18 +27,10 @@
         <input type="date" class="form-control" id="endDate" name="end_date" placeholder="yyyy-mm-dd">
     </div>
 
-
     <div class="mb-3">
         <label for="period" class="form-label">Період розіграшу</label>
         <input type="text" class="form-control" id="period" name="year" aria-describedby="periodHelp"
                placeholder="2023/24 або інший варіант">
-    </div>
-
-    <div class="mb-3">
-        <label for="seasonName" class="form-label">Введіть назву даного розіграшу</label>
-        <input type="text" class="form-control" id="seasonName" name="name" aria-describedby="tournamentHelp"
-               oninput="updateSlug()">
-        <div class="form-text">Наприклад: Чемпіонат чи Кубок</div>
     </div>
 
     <div class="mb-3">
@@ -48,6 +50,7 @@
     document.getElementById('startDate').addEventListener('change', updatePeriod);
     document.getElementById('endDate').addEventListener('change', updatePeriod);
 
+    // Автоматичне формування періоду
     function updatePeriod() {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
@@ -58,15 +61,19 @@
 
             let period;
             if (startYear === endYear) {
-                period = `${startYear}`; // Якщо роки однакові, записуємо тільки рік
+                period = `${startYear}`;
             } else {
-                period = `${startYear}-${String(endYear).slice(-2)}`; // Якщо роки різні, записуємо формат 2023/24
+                period = `${startYear}-${String(endYear).slice(-2)}`;
             }
 
             document.getElementById('period').value = period;
+
+            // Оновлюємо slug після зміни періоду
+            updateSlug();
         }
     }
 
+    // Транслітерація
     function transliterate(text) {
         const cyrillicToLatinMap = {
             'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'є': 'ye', 'ж': 'zh', 'з': 'z',
@@ -84,15 +91,25 @@
         }).join('');
     }
 
+    // Оновлення slug
     function updateSlug() {
-        const seasonName = document.getElementById('seasonName').value.trim();
+        const tournamentName = document.getElementById('tournamentName').value.trim();
+        let seasonName = document.getElementById('seasonName').value.trim();
         const period = document.getElementById('period').value.trim();
 
+        // Якщо користувач не ввів значення для seasonName, використовуємо tournamentName
+        if (!seasonName) {
+            seasonName = tournamentName;
+            document.getElementById('seasonName').value = seasonName;
+        }
+
+        // Створюємо slug для seasonName
         let slug = transliterate(seasonName)
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')  // Замінюємо всі не-латинські символи на дефіси
-            .replace(/^-+|-+$/g, '');    // Видаляємо дефіси з початку і кінця
+            .replace(/^-+|-+$/g, '');     // Видаляємо дефіси з початку і кінця
 
+        // Додаємо період до slug, якщо він заданий
         if (period) {
             slug = `${slug}-${period}`;
         }
@@ -100,17 +117,24 @@
         document.getElementById('season_slug').value = slug;
     }
 
+
     document.getElementById('seasonName').addEventListener('input', updateSlug);
     document.getElementById('period').addEventListener('input', updateSlug);
 
+    // Автопідстановка назви турніру в поле seasonName
+    document.addEventListener('DOMContentLoaded', function () {
+        const seasonNameInput = document.getElementById('seasonName');
+        if (!seasonNameInput.value.trim()) {
+            seasonNameInput.value = document.getElementById('tournamentName').value.trim();
+        }
+    });
 
+    // Форма для відправки даних
     document.querySelector('form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const form = e.target;
 
-        // Отримуємо значення регіону з атрибуту data-region-name
         const regionName = form.getAttribute('data-region-name');
-
         const startDateEpoch = new Date(form.startDate.value).getTime() / 1000;
         const endDateEpoch = new Date(form.endDate.value).getTime() / 1000;
 
@@ -133,12 +157,11 @@
         });
 
         if (response.ok) {
-            const result = await response.json(); // Припускаємо, що сервер повертає JSON з season_id
-            const season_id = result.season_id;   // Отримуємо season_id з відповіді сервера
+            const result = await response.json();
             const season_slug = data.slug;
+            const tournamentSlug = document.getElementById('tournament_slug').value;
 
-            // Перенаправлення на нову сторінку
-            window.location.href = `/region/${regionName}/${season_slug}`;
+            window.location.href = `/tournaments/${tournamentSlug}/new_season`;
         } else {
             console.error('Помилка при створенні сезону');
         }

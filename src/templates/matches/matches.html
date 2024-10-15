@@ -68,13 +68,13 @@
         <tbody>
           {% for match in matches %}
           <tr class="row-default">
-            <td>{{ match.season.name }}</td>
+            <td>{{ match.season_name }} {{ match.season_year }}</td>
             <td><p class="card-text"><small class="text-muted"><span class="match-date" data-epoch="{{ match.event }}"></span></small></p></td>
-            <td>{{ match.round.name }}</td>
-            <td>{{ match.stadium.name }} {{ match.stadium.city }}</td>
+            <td>{{ match.round_name }}</td>
+            <td>{{ match.stadium_name }} {{ match.stadium_city }}</td>
             <td align="right">
-              <img src="{{ url_for('static', path='/img/teams/' ~ match.team_1.logo) }}" alt="{{ match.team_1.name }} logo">
-              {{ match.team_1.name }} ({{ match.team_1.city }})
+              <img src="{{ url_for('static', path='/img/teams/' ~ match.team1_logo) }}" alt="{{ match.team1_name }} logo">
+              {{ match.team1_name }} ({{ match.team1_city }})
             </td>
             <td>
               <strong>{{ match.team1_goals }} : {{ match.team2_goals }}</strong>
@@ -84,8 +84,8 @@
                   {% endif %}
             </td>
             <td align="left">
-              <img src="{{ url_for('static', path='/img/teams/' ~ match.team_2.logo) }}" alt="{{ match.team_2.name }} logo">
-              {{ match.team_2.name }} ({{ match.team_2.city }})
+              <img src="{{ url_for('static', path='/img/teams/' ~ match.team2_logo) }}" alt="{{ match.team2_name }} logo">
+              {{ match.team2_name }} ({{ match.team2_city }})
             </td>
             <td>{{ match.status.value }}</td>
           </tr>
