@@ -1,0 +1,91 @@
+<form id="matchForm" action="/matches/new_match" method="post">
+    <!-- Поле вибору сезону -->
+    <input type="hidden" name="season_id" id="season_id" value="{{ season.season_id }}">
+
+
+    <!-- Поле вибору групи -->
+    <label for="group_id">Група</label>
+    <select name="group_id" id="group_id">
+        <option value="">Виберіть групу</option>
+        {% for group in groups %}
+        <option value="{{ group.id }}">{{ group.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Поле вибору етапу -->
+    <label for="stage_id">Етап</label>
+    <select name="stage_id" id="stage_id">
+        <option value="">Виберіть етап турніру</option>
+        {% for stage in stages %}
+        <option value="{{ stage.id }}">{{ stage.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Поле вибору туру -->
+    <label for="round_id">Тур</label>
+    <select name="round_id" id="round_id">
+        <option value="">Виберіть тур</option>
+        {% for round in rounds %}
+        <option value="{{ round.id }}">{{ round.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Поле вибору стадіону -->
+    <label for="stadium_id">Стадіон</label>
+    <select name="stadium_id" id="stadium_id">
+        <option value="">Виберіть стадіон</option>
+        <!-- Значення стадіонів -->
+        <option value="1">Стадіон "Олімпійський"</option>
+        <option value="2">Стадіон "Металіст"</option>
+    </select>
+
+    <!-- Команда 1 -->
+    <label for="team1_id">Команда 1</label>
+    <select name="team1_id" id="team1_id" required>
+        <option value="">Виберіть команду</option>
+        {% for team in teams %}
+        <option value="{{ team.id }}">{{ team.name }} ({{ team.city }})</option>
+        {% endfor %}
+    </select>
+
+    <!-- Голи команди 1 -->
+    <label for="team1_goals">Голи команди 1</label>
+    <input type="number" name="team1_goals" id="team1_goals" min="0" placeholder="0">
+
+    <!-- Команда 2 -->
+    <label for="team2_id">Команда 2</label>
+    <select name="team2_id" id="team2_id" required>
+        <option value="">Виберіть команду</option>
+        {% for team in teams %}
+        <option value="{{ team.id }}">{{ team.name }} ({{ team.city }})</option>
+        {% endfor %}
+    </select>
+
+    <!-- Голи команди 2 -->
+    <label for="team2_goals">Голи команди 2</label>
+    <input type="number" name="team2_goals" id="team2_goals" min="0" placeholder="0">
+
+    <!-- Пенальті команди 1 -->
+    <label for="team1_penalty">Пенальті команди 1</label>
+    <input type="number" name="team1_penalty" id="team1_penalty" min="0" placeholder="0">
+
+    <!-- Пенальті команди 2 -->
+    <label for="team2_penalty">Пенальті команди 2</label>
+    <input type="number" name="team2_penalty" id="team2_penalty" min="0" placeholder="0">
+
+    <!-- Статус матчу -->
+    <label for="status">Статус</label>
+    <select name="status" id="status" required>
+        <option value="Не зіграно">Не зіграно</option>
+        <option value="Зіграно">Зіграно</option>
+        <option value="Тех. поразка">Тех. поразка</option>
+        <option value="postponed">Перенесено</option>
+        <option value="canceled">Не відбудеться</option>
+    </select>
+
+    <!-- Standing (по замовчуванню true) -->
+    <input type="hidden" name="standing" value="1">
+
+    <!-- Відправка форми -->
+    <button type="submit">Створити матч</button>
+</form>

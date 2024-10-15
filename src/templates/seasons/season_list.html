@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <script>
+  </script>
+{% endblock %}
+
+{% block content %}
+<h3>Всі розіграши:</h3>
+ <div class="fiex justify-center flex-col items-center">
+
+  <div class="fiex center my-3 gap-5">
+            {% for season in seasons %}
+            <ul>
+              <li>
+                  <a href="#">
+                      {{ season.name }}
+                  </a>
+              </li>
+            </ul>
+            {% endfor %}
+  </div>
+
+
+  <div class="">
+
+  </div>
+
+</div>
+{% endblock %}

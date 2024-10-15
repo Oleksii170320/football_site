@@ -1,0 +1,182 @@
+<style>
+    #stadiumSuggestions {
+        border: 1px solid #ddd; /* Додаємо рамку */
+        max-height: 200px; /* Максимальна висота для пропозицій */
+        overflow-y: auto; /* Додаємо прокрутку при переповненні */
+        position: absolute; /* Позиціюємо абсолютно */
+        z-index: 1000; /* Піднімаємо на передній план */
+        background-color: #fff; /* Білий фон */
+    }
+
+    .list-group-item {
+        padding: 10px; /* Відступи для елементів списку */
+        cursor: pointer; /* Курсор вказує, що елемент клікабельний */
+    }
+
+    .list-group-item:hover {
+        background-color: #f1f1f1; /* Зміна фону при наведенні */
+    }
+
+    /* Стилі для модальних вікон */
+    .modal {
+        display: none; /* Сховати за замовчуванням */
+        position: fixed; /* Фіксована позиція */
+        z-index: 1050; /* Підняти над іншими елементами */
+        left: 0; top: 0; /* Заповнити весь екран */
+        width: 100%; height: 100%;
+        overflow: auto; /* Прокрутка */
+        background-color: rgba(0, 0, 0, 0.4); /* Напівпрозорий фон */
+    }
+
+    .modal-content {
+        background-color: #fefefe; /* Білий фон для контенту модального вікна */
+        margin: 15% auto; /* Центрування */
+        padding: 20px; /* Внутрішні відступи */
+        border: 1px solid #888; /* Рамка */
+        width: 80%; max-width: 500px; /* Ширина */
+    }
+
+    .modal-header {
+        display: flex; /* Використання флексбокса для розміщення */
+        justify-content: space-between; /* Проміжки між елементами */
+        align-items: center; /* Центрування по вертикалі */
+        border-bottom: 1px solid #ddd; /* Рамка внизу */
+    }
+
+    .modal-body {
+        margin: 10px 0; /* Відступи для тіла модального вікна */
+    }
+
+    .modal-footer {
+        display: flex; /* Використання флексбокса */
+        justify-content: flex-end; /* Вирівнювання кнопок вправо */
+        gap: 10px; /* Проміжок між кнопками */
+    }
+
+    .close {
+        cursor: pointer; /* Курсор вказує на клікабельність */
+    }
+</style>
+
+<div>
+    <div class="card mb-3" style="width: 99%; padding: 10px; background-color: #afadad">
+        <h3 class="header_page">СТВОРИТИ НОВУ КОМАНДУ</h3>
+
+        <!-- Повідомлення про успіх -->
+        <div id="successMessage"
+             style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
+            Команда успішно створена!
+        </div>
+
+        <form id="teamForm" method="post" action="/teams/new_team" enctype="multipart/form-data">
+            <input type="hidden" name="season_id" value="{{ season.season_id }}">
+            <input type="hidden" name="region_slug" id="regionSlugPage" value="{{ region.slug }}">
+            <input type="hidden" name="season_slug" id="seasonSlugPage" value="{{ season.season_slug }}">
+
+            <!-- Назва команди -->
+            <div class="mb-3">
+                <label for="teamName" class="form-label">Введіть коротку назву команди</label>
+                <input type="text" class="form-control" id="teamName" name="name" placeholder="Коротка назва" required>
+            </div>
+
+            <!-- Населений пункт -->
+            <div class="mb-3">
+                <label for="cityName" class="form-label">Введіть назву населеного пункту</label>
+                <input type="text" class="form-control" id="cityName" name="city" placeholder="Назва міста" required>
+            </div>
+
+            <!-- Область -->
+        <div class="mb-3">
+            <label for="regionName" class="form-label">Виберіть область</label>
+            <select class="form-select form-select-lg mb-3" id="regionName" name="region_id" required onchange="updateRegionSlug()">
+                <option selected disabled>Оберіть область</option>
+                {% for region in regions_list %}
+                    <option value="{{ region.id }}" data-slug="{{ region.slug }}">{{ region.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+            <!-- Повна назва команди -->
+            <div class="mb-3">
+                <label for="full-name-input" class="form-label">Повна назва команди</label>
+                <input type="text" class="form-control" id="full-name-input" name="full_name" readonly>
+            </div>
+
+            <!-- Слаг -->
+            <div class="mb-3">
+                <label for="team_slug" class="form-label">Унікальне значення команди</label>
+                <input type="text" class="form-control" id="team_slug" name="slug" readonly required>
+            </div>
+
+            <!-- Рік створення -->
+            <div class="mb-3">
+                <label for="teamYear" class="form-label">Рік створення</label>
+                <input type="text" class="form-control" id="teamYear" name="foundation_year" maxlength="4">
+            </div>
+
+            <!-- Сайт клубу -->
+            <div class="mb-3">
+                <label for="team-site-input" class="form-label">Сайт клубу/команди</label>
+                <input type="text" class="form-control" id="team-site-input" name="clubs_site">
+            </div>
+
+            <!-- Стадіон -->
+            <div class="mb-3">
+                <label for="team-stadium-input" class="form-label">Домашня площадка</label>
+                <input type="text" class="form-control" id="team-stadium-input"
+                       placeholder="Почніть вводити назву стадіону">
+                <input type="hidden" id="stadiumId" name="stadium_id">
+                <div id="stadiumSuggestions" class="list-group" style="display: block;"></div>
+            </div>
+
+            <!-- Опис -->
+            <div class="mb-3">
+                <label for="team-description-input" class="form-label">Опис</label>
+                <textarea class="form-control" id="team-description-input" name="description"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Створити нову команду</button>
+        </form>
+    </div>
+
+    <!-- Модальне вікно для запиту про завантаження логотипу -->
+    <div id="uploadLogoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Завантажити логотип</h4>
+                <span class="close" id="closeLogoModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Ви бажаєте завантажити логотип для цієї команди?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="completeHere" class="btn btn-secondary">Залишитись тут</button>
+                <button id="addLogo" class="btn btn-primary">Додати</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для форми завантаження логотипу -->
+    <div id="uploadFormModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Завантажити логотип</h4>
+                <span class="close" id="closeUploadFormModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="logoForm" method="post" enctype="multipart/form-data">
+                    <input type="file" name="logo" id="logoInput" required>
+                    <!-- Приховані поля для передачі region_slug та team_slug -->
+                    <input type="hidden" name="region_slug" id="regionSlugInput" value="{{ region.slug }}">
+                    <input type="hidden" name="team_slug" id="teamSlugInput" value="{{ slug }}">
+                    <button type="submit" class="btn btn-primary">Завантажити</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/js/forms/form_create_new_team.js"></script>
+
+
