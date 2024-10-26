@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
+from helpers.authentications import (
+    get_current_user_for_button,
+    get_current_user_for_page,
+)
 from services import tournament as crud
 from services.news_list import get_news_list
 from services.region import get_regions_list
@@ -53,7 +56,10 @@ async def get_tournament_by_slug(
 
 @router.get("/{tournament_slug}/new_season")
 async def get_tournament_by_slug(
-    request: Request, tournament_slug: str, db: AsyncSession = Depends(get_db)
+    request: Request,
+    tournament_slug: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_page),
 ):
     """Відкриває сторінку турніру по SLUG"""
 

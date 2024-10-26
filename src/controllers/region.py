@@ -4,7 +4,11 @@ from sqlalchemy.orm import Session
 
 from core.templating import render
 from core.database import get_db
-from services import region as crud, get_context_data
+from helpers.authentications import (
+    get_current_user_for_button,
+    get_current_user_for_page,
+)
+from services import region as crud
 from services.contact import get_contact
 from services.group import get_group_in_season, get_groups
 from services.match import (
@@ -48,7 +52,9 @@ async def read_regions(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get("/{region_slug}")
 async def read_region_by_slug(
-    request: Request, region_slug: str, db: AsyncSession = Depends(get_db)
+    request: Request,
+    region_slug: str,
+    db: AsyncSession = Depends(get_db),
 ):
     """виводить окремий регіон по SLUG"""
 
@@ -147,8 +153,11 @@ async def region_season(
     region_slug: str,
     season_slug: str,
     db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває головну сторінку певного розіграшу/сезону"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -161,6 +170,8 @@ async def region_season(
             "matches": await get_season_matches_results(db, season_slug=season_slug),
             "tournaments": await get_tournament_for_season(db, season_slug=season_slug),
             "main": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -171,8 +182,11 @@ async def region_season_main(
     region_slug: str,
     season_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває головну сторінку певного роїіграшу/сезону по кнопці ГОЛОВНА"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -185,6 +199,8 @@ async def region_season_main(
             "matches": await get_season_matches_results(db, season_slug=season_slug),
             "tournaments": await get_tournament_for_season(db, season_slug=season_slug),
             "main": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -195,8 +211,11 @@ async def season_matches_results(
     region_slug: str,
     season_slug: str,
     db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває сторінку з зіграними матчами розіграшу"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -208,6 +227,8 @@ async def season_matches_results(
             "season": await get_season_by_id_or_slug(db, season_slug=season_slug),
             "matches": await get_season_matches_results(db, season_slug=season_slug),
             "results": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -218,8 +239,11 @@ async def season_matches_upcoming(
     region_slug: str,
     season_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває сторінку зі ще не зіграними матчами розіграшу"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -231,6 +255,8 @@ async def season_matches_upcoming(
             "season": await get_season_by_id_or_slug(db, season_slug=season_slug),
             "matches": await get_season_matches_upcoming(db, season_slug=season_slug),
             "upcoming": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -241,8 +267,11 @@ async def season_standings(
     region_slug: str,
     season_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває турніру таблицю розіграшу"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -257,6 +286,8 @@ async def season_standings(
             "stages": await get_distinct_stages_with_groups(
                 db, season_slug=season_slug
             ),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -268,8 +299,11 @@ async def tournament_archive(
     season_id: int,
     tournament_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває історію розіграшів турніру"""
+
+    username, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -282,6 +316,8 @@ async def tournament_archive(
             "seasons_archive": await get_tournament_archive(
                 db, tournament_slug=tournament_slug
             ),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "username": username,  # Ім'я користувача
         },
     )
 
@@ -292,6 +328,7 @@ async def tournament_archive(
     region_slug: str,
     season_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_page),
 ):
     """Відкриває історію розіграшів турніру"""
 
@@ -316,6 +353,7 @@ async def tournament_archive(
     region_slug: str,
     season_slug: str,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_page),
 ):
     """Відкриває історію розіграшів турніру"""
 

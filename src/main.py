@@ -57,6 +57,3 @@ app.include_router(person.router, prefix="/persons", tags=["Persons"])
 app.include_router(news.router, prefix="/news", tags=["News"])
 app.include_router(api.router, prefix="/api", tags=["API"])
 app.include_router(session.router, prefix="/sign-in", tags=["Auth"])
-
-
-# app.include_router(person.router, prefix="/persons", tags=["Persons"])

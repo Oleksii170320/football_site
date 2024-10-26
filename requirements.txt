@@ -9,3 +9,7 @@ pydantic-settings==2.0.3
 uvicorn==0.23.2
 bcrypt
 python-multipart
+PyJWT
+passlib==1.7.4
+bcrypt==4.2.0
+

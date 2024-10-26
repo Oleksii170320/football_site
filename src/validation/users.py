@@ -1,27 +1,31 @@
-# import uuid
-# from typing import Optional
-#
-# from fastapi_users import schemas
-#
-#
-# class UserRead(schemas.BaseUser[int]):
-#     id: int
-#     email: str
-#     username: str
-#     role_id: int
-#     is_active: Optional[bool] = True
-#     is_superuser: Optional[bool] = False
-#     is_verified: Optional[bool] = False
-#
-#     class Config:
-#         orm_mode = True
-#
-#
-# class UserCreate(schemas.BaseUserCreate):
-#     email: str
-#     username: str
-#     password_hash: str
-#     role_id: int
-#     is_active: Optional[bool] = True
-#     is_superuser: Optional[bool] = False
-#     is_verified: Optional[bool] = False
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
+
+
+class UserRead(BaseModel):
+    id: int
+    username: Optional[str] = None
+    email: EmailStr
+    full_name: Optional[str] = None
+    is_active: bool
+    is_superuser: bool
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class UserCreate(BaseModel):
+    username: Optional[str] = None
+    email: EmailStr
+    password: str  # Пароль передається у відкритому вигляді для хешування
+    full_name: Optional[str] = None
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = None
