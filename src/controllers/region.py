@@ -72,9 +72,14 @@ async def read_region_by_slug(
 
 @router.get("/{region_slug}/tournaments")
 async def region_tournaments(
-    request: Request, region_slug: str, db: AsyncSession = Depends(get_db)
+    request: Request,
+    region_slug: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Виводить всі футбольні та футзальні турніри даної області"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "region.html",
@@ -86,6 +91,8 @@ async def region_tournaments(
             "tournaments": await get_region_tournaments(db, region_slug=region_slug),
             "organizations": await get_region_organization(db, region_slug=region_slug),
             "region_tournaments": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -157,8 +164,6 @@ async def region_season(
 ):
     """Відкриває головну сторінку певного розіграшу/сезону"""
 
-    username, is_authenticated = current_user
-
     return render(
         "seasons/season.html",
         request,
@@ -170,8 +175,7 @@ async def region_season(
             "matches": await get_season_matches_results(db, season_slug=season_slug),
             "tournaments": await get_tournament_for_season(db, season_slug=season_slug),
             "main": True,
-            "is_authenticated": is_authenticated,  # Передаємо значення
-            "username": username,  # Ім'я користувача
+            "is_authenticated": bool(current_user),  # Передаємо значення
         },
     )
 
@@ -186,7 +190,7 @@ async def region_season_main(
 ):
     """Відкриває головну сторінку певного роїіграшу/сезону по кнопці ГОЛОВНА"""
 
-    username, is_authenticated = current_user
+    user_session, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -200,7 +204,7 @@ async def region_season_main(
             "tournaments": await get_tournament_for_season(db, season_slug=season_slug),
             "main": True,
             "is_authenticated": is_authenticated,  # Передаємо значення
-            "username": username,  # Ім'я користувача
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -215,7 +219,7 @@ async def season_matches_results(
 ):
     """Відкриває сторінку з зіграними матчами розіграшу"""
 
-    username, is_authenticated = current_user
+    user_session, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -228,7 +232,7 @@ async def season_matches_results(
             "matches": await get_season_matches_results(db, season_slug=season_slug),
             "results": True,
             "is_authenticated": is_authenticated,  # Передаємо значення
-            "username": username,  # Ім'я користувача
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -271,7 +275,7 @@ async def season_standings(
 ):
     """Відкриває турніру таблицю розіграшу"""
 
-    username, is_authenticated = current_user
+    user_session, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -287,7 +291,7 @@ async def season_standings(
                 db, season_slug=season_slug
             ),
             "is_authenticated": is_authenticated,  # Передаємо значення
-            "username": username,  # Ім'я користувача
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -303,7 +307,7 @@ async def tournament_archive(
 ):
     """Відкриває історію розіграшів турніру"""
 
-    username, is_authenticated = current_user
+    user_session, is_authenticated = current_user
 
     return render(
         "seasons/season.html",
@@ -317,7 +321,7 @@ async def tournament_archive(
                 db, tournament_slug=tournament_slug
             ),
             "is_authenticated": is_authenticated,  # Передаємо значення
-            "username": username,  # Ім'я користувача
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 

@@ -11,6 +11,7 @@ class UserRead(BaseModel):
     is_active: bool
     is_superuser: bool
     created_at: datetime
+    role_id: int = None
 
     class Config:
         orm_mode = True
@@ -21,6 +22,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str  # Пароль передається у відкритому вигляді для хешування
     full_name: Optional[str] = None
+    role_id: int = None
 
 
 class UserUpdate(BaseModel):
@@ -29,3 +31,4 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     is_active: Optional[bool] = None
     is_superuser: Optional[bool] = None
+    role_id: int = None

@@ -46,7 +46,7 @@
         {% endif %}
         <li><a href="/region/{{ region.slug }}/{{ season.season_id }}/{{ season.tournament_slug }}/archive">Архів</a></li>
 
-        {% if is_authenticated %}
+        {% if user_session %}
             <li style="border: 1px solid #8e8c8c; padding: 3px;">
                 <a href="/tournaments/{{ season.tournament_slug }}/new_season">Створити новий розіграш</a>
             </li>

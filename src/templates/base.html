@@ -32,10 +32,10 @@
             <li class="nav-item"><a class="nav-link" href="/matches">Матчі</a></li>
             <li class="nav-item"><a class="nav-link" href="/teams">Команди</a></li>
             <li class="nav-item"><a class="nav-link" href="/tournaments">Турніри</a></li>
-            {% if user %}
-            {{ user.email }}
+            {% if user_session %}
+                <li class="nav-item"><a class="nav-link" href="/sign-in">Вийти</a></li>
             {% else %}
-            <li class="nav-item"><a class="nav-link" href="/sign-in">Війти</a></li>
+                <li class="nav-item"><a class="nav-link" href="/sign-in">Увійти</a></li>
             {% endif %}
         </ul>
         <div class="burger">
