@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from cryptography.fernet import Fernet
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, HTTPException, Request, Form, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import RedirectResponse
 
 from core.database import get_db
@@ -75,7 +75,10 @@ async def login(
 
 
 @router.post("/register/")
-async def register_user(user: schema.UserCreate, db: AsyncSession = Depends(get_db)):
+async def register_user(
+        user: schema.UserCreate,
+        db: AsyncSession = Depends(get_db)
+):
     # Перевірка, чи існує користувач з таким ім'ям
     existing_user = await get_user_by_username(db, user.username)
     if existing_user:

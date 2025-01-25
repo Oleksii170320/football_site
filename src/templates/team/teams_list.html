@@ -21,21 +21,10 @@
 
 <div class="container" style="width: 100%;">
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for team in teams %}
-        <div class="col">
-            <div class="card">
-                <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" class="card-img-top team-logo"
-                     alt="{{ team.name }}">
-                <div class="card-body">
-                    <a href="/teams/{{ team.slug }}">
-                        <h5 class="card-title">{{ team.name }} ({{ team.city }})</h5>
-                    </a>
-                    <p class="card-text">{{ team.region.name }}</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+    <div class="row row-cols-1 row-cols-md-3 g-4" id='teams-container'>
+
     </div>
 </div>
 
+
+<script src="/static/js/teams/teams_list.js"></script>

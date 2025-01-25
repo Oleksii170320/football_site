@@ -10,7 +10,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     CheckConstraint,
-    Boolean,
     event,
 )
 from sqlalchemy.orm import relationship, mapped_column, Mapped

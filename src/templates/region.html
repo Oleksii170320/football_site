@@ -29,10 +29,10 @@
 <!--Стрічка новин по даній області -->
 {% if news_list %}
 {% include "news/news_list.html" %}
-<!--Турніри новин по даній області -->
+<!--Турніри області -->
 {% elif region_tournaments %}
 {% include "tournament/tournaments_list.html" %}
-<!--Команди новин по даній області -->
+<!--Команди області -->
 {% elif region_teams %}
 {% include "team/teams_list.html" %}
 <!--Дійові особи / гравці по даній області -->

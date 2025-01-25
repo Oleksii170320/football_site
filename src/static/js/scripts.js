@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             const regionSlug = this.getAttribute('data-region-slug');
             const regionId = this.closest('tr').getAttribute('data-region-id');
-            fetchSeasons(regionSlug, regionId);
+            FetchfetchSeasons(regionSlug, regionId);
         });
     });
 

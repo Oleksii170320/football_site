@@ -7,7 +7,6 @@ from models.annonated import intpk
 
 if TYPE_CHECKING:
     from models.region import Region
-    from models.tournament import Tournament
 
 
 class News(Base):

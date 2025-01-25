@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
 from services import organization as crud, get_regions_list
 from services.news_list import get_news_list

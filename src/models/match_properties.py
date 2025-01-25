@@ -7,7 +7,6 @@ from models.annonated import intpk
 
 if TYPE_CHECKING:
     from models.match import Match
-    from models.team_person_assotiation import TeamPerson
     from models.match_event import MatchEvent
     from models.position_role import PositionRole
 

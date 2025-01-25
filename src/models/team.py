@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from slugify import slugify
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import   String, Text, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped, declared_attr
 
 from core.database import Base

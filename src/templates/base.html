@@ -1,112 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Футбольний Сайт</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="/static/css/styles_base.css">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="android-chrome" type="image/png" sizes="192x192" href="/static/img/logo_site/android-chrome-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/img/logo_site/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/img/logo_site/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/img/logo_site/favicon-16x16.png">
-    <link rel="manifest" href="/static/img/logo_site/site.webmanifest">
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {% block style %}
-    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="/static/css/stl_base.css">
+    <script src="{{ url_for('static', path='js/bootstrap.bundle.min.js') }}"></script>
 
 </head>
 
-
 <body>
-<header>
-    <nav>
-        <div class="logo">
-            <a class="navbar-brand" href="/">
-                <img src="/static/img/regions/gerb_country_UA.png" alt="logo" width="30"/>
+    <!-- Block menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand p-0" href="/">
+                <img src="/static/img/icons/icon-uaf.png" alt="Logo" height="35">
+                <img src="/static/img/icons/icon-pfl.png" alt="Logo" width="35">
+                <img src="/static/img/icons/icon-aafu.png" alt="Logo" width="35">
+                <img src="/static/img/icons/icon-site_logo.png" alt="Logo" width="35">
             </a>
-        </div>
-        <ul class="nav-links">
-            <li class="nav-item"><a class="nav-link" href="/">Головна</a></li>
-            <li class="nav-item"><a class="nav-link" href="/matches">Матчі</a></li>
-            <li class="nav-item"><a class="nav-link" href="/teams">Команди</a></li>
-            <li class="nav-item"><a class="nav-link" href="/tournaments">Турніри</a></li>
-            {% if user_session %}
-                <li class="nav-item"><a class="nav-link" href="/sign-in">Вийти</a></li>
-            {% else %}
-                <li class="nav-item"><a class="nav-link" href="/sign-in">Увійти</a></li>
-            {% endif %}
-        </ul>
-        <div class="burger">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Головна</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Матчі та турніри</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Контакти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/" class="navbar-brand" >
+                            <img src="/static/img/icons/icon-tg.png" alt="logo" width="25"/>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://www.facebook.com/aafu.org.ua" target="_blank" class="navbar-brand" >
+                            <img src="/static/img/icons/icon-fb.png" alt="logo" width="25"/>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a  href="https://www.youtube.com/channel/UCPjEI04Vvcr3U2Ib62tUarA" target="_blank" class="navbar-brand" >
+                            <img src="/static/img/icons/icon-youtube.png" alt="logo" width="25"/>
+                        </a>
+                    </li>
+                    <div class="d-flex">
+                    {% if user_session %}
+                        <li class="nav-item"><a class="nav-link" href="/sign-in">Вийти</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="/sign-in">Увійти</a></li>
+                    {% endif %}
+                    </div>
+                </ul>
+            </div>
         </div>
     </nav>
-</header>
 
-<div class="container">
-    <aside class="left">
+    <!-- Base block -->
+    <div class="container">
+        <div class="col-12 col-md-11 col-lg-11 mx-auto my-2">
+            <div class="row">
 
-        {% block aside_left %}
+                <!-- Right navigation block -->
+                <aside class="col-12 col-md-4">
+                    <div>
+                        <span>ФУТБОЛЬНІ АСОЦІАЦІЇ:</span>
+                        <hr id="line">
+                    </div>
 
-        {% endblock %}
-
-        <div class="aside-left">
-            <h2>Регіони України</h2>
-            <table class="regions-table">
-                <tbody id="regions-list">
-                {% for region in regions_list %}
-                <tr class="{% if region.id == selected_region_id %}selected-region{% endif %}"
-                    data-region-id="{{ region.id }}">
-
-                    <td style="padding: 1px">
-                        <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
-                             alt="{{ region.name }} logo" class="region-logo">
-                    </td>
-                    <td style="padding: 1px">
-                        <a href="/region/{{ region.slug }}" class="region-link"
-                           data-region-slug="{{ region.slug }}">
-                            <strong>{{ region.name }}</strong>
+                    {% for region in regions_list %}
+                        <a
+                          href="/region/{{ region.slug }}"
+                          title="Відкрити всі турніри {{ region.name }} області"
+                          data-region-slug="{{ region.slug }}"
+                        >
+                            <div class="region">
+                                <img
+                                  src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
+                                  alt="{{ region.name }} logo"
+                                  width="17rem"
+                                  height="21rem"
+                                  class="leftMenu__flag"
+                                >
+                                <span class="leftMenu_text">{{ region.name }}</span>
+                            </div>
                         </a>
                         {% if region.slug %}
-                        {% for season in seasons %}
-                        {% if region.slug == season.region_slug %}
-                        <li>
-                            <!--                                          <a href="/matches/tournament/{{ season.id }}">-->
-                            <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
-                                {{ season.season_name }}
-                            </a>
-                        </li>
+                        <div class="season">
+                          {% for season in seasons %}
+                            {% if region.slug == season.region_slug %}
+                              <a
+                                href="/region/{{ season.region_slug }}/{{ season.season_slug }}/main"
+                                title="Відкрити турнір"
+                                data-season-slug="{{ season.season_slug }}"
+                              >
+                                  <div class="tournament">
+                                      - {{ season.season_name }}
+                                  </div>
+                              </a>
+                            {% endif %}
+                          {% endfor %}
+                          <hr>
+                        </div>
                         {% endif %}
-                        {% endfor %}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <div id="seasons-container"></div> <!-- Контейнер для списку сезонів -->
+                    {% endfor %}
+
+                </aside>
+
+                <!-- Block content -->
+                <div class="col-12 col-md-8" data-main="content">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
-    </aside>
+    </div>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <aside class="right">
-        {% block aside_right %}
-        {% endblock %}
-    </aside>
-</div>
-
-<footer>
-    <p>© 2024 Футбольний Сайт</p>
-</footer>
-
-<script src="/static/js/base.js"></script>
-<script src="{{ url_for('static', path='js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Block footer -->
+    <div class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div  class="container" style="color: white; display: block;">
+            <p>Асоціація аматорського футболу України © 1998-2024</p>
+            <p>
+                м.Київ, пров. Лабораторний, 7а. Будинок футболу, к. 214,
+                телефон (044) 521-0556, факс (044) 521-0624
+            </p>
+        </div>
+    </div>
 </body>
+
+
 </html>

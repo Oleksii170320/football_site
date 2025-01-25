@@ -15,7 +15,6 @@ from models.mixins import RegionRelationMixin
 
 if TYPE_CHECKING:
     from models.team import Team
-    from models.match_properties import MatchProperties
 
 
 metadata = MetaData()

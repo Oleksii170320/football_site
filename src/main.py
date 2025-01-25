@@ -1,12 +1,10 @@
-from typing import List
-
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 from core.database import get_db
 from core.templating import templates
+from helpers.authentications import get_current_user_for_button
 from services.news_list import get_news_list
 from services.region import get_regions_list
 from controllers import (
@@ -23,8 +21,6 @@ from controllers import (
     session,
     api,
 )
-from services.team import get_teams_in_season
-from validation.team import TeamSchemas
 
 app = FastAPI(title="Football")
 
@@ -33,7 +29,12 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/", tags=["Home"])
-async def home(request: Request, db: AsyncSession = Depends(get_db)):
+async def home(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
+):
+    user_session, is_authenticated = current_user
 
     return templates.TemplateResponse(
         "home.html",
@@ -41,6 +42,8 @@ async def home(request: Request, db: AsyncSession = Depends(get_db)):
             "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 

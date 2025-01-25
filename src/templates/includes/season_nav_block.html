@@ -12,6 +12,11 @@
     /*li:hover a {*/
     /*    color: #333; !* Зміна кольору тексту посилання при наведенні мишкою *!*/
     /*}*/
+
+    .region-info a {
+        text-decoration: none;
+    }
+
 </style>
 
 
@@ -46,7 +51,7 @@
         {% endif %}
         <li><a href="/region/{{ region.slug }}/{{ season.season_id }}/{{ season.tournament_slug }}/archive">Архів</a></li>
 
-        {% if user_session %}
+        {% if is_authenticated %}
             <li style="border: 1px solid #8e8c8c; padding: 3px;">
                 <a href="/tournaments/{{ season.tournament_slug }}/new_season">Створити новий розіграш</a>
             </li>

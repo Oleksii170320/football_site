@@ -1,14 +1,11 @@
-from datetime import date
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from core.templating import render
 
 from core.database import get_db
-from models.match import MatchStatus, Match
 from services import match as crud
 from services.match import (
     get_match_statistics,

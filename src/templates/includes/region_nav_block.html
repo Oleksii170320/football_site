@@ -58,6 +58,10 @@
     .nav-links li:hover .dropdown {
         display: block;
     }
+
+    .no-underline {
+    text-decoration: none;
+    }
 </style>
 
 
@@ -65,10 +69,11 @@
 
 
     <div class="region-info">
-        <a href="/region/{{ region.slug }}">
-            <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}" alt="logo {{ region.name }}"
-                 width="50"></a>
-        <a href="/region/{{ region.slug }}"><h4>{{ region.name }}</h4>
+        <a href="/region/{{ region.slug }}" style="text-decoration: none;">
+            <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}" alt="logo {{ region.name }}" width="50">
+        </a>
+        <a href="/region/{{ region.slug }}" style="text-decoration: none;">
+            <h4>{{ region.name }}</h4>
         </a>
     </div>
 

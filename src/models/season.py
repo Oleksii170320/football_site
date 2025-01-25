@@ -1,7 +1,7 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from slugify import slugify
-from sqlalchemy import Integer, BigInteger, String, ForeignKey
+from sqlalchemy import BigInteger, String, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped, declared_attr
 
 from core.database import Base
@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from models.tournament import Tournament
     from models.team import Team
     from models.match import Match
-    from models.group import Group
 
 
 class Season(Base):

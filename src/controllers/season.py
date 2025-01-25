@@ -2,14 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from starlette.responses import JSONResponse, RedirectResponse
+from starlette.responses import JSONResponse
 
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
-from models import TeamSeason
 from services import season as crud, get_regions_list
 
-from services.team import get_teams_for_id
 from validation import season as schemas
 
 router = APIRouter()
@@ -84,9 +82,6 @@ async def link_season_team(
     if not result:
         raise HTTPException(status_code=404, detail="Failed to link season and team")
     return result
-
-
-import logging
 
 
 # @router.post("/add_teams")

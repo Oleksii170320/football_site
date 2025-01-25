@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from enum import Enum
-from sqlalchemy import Column, Enum as SQLAlchemyEnum, BigInteger, Boolean
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import Column, Enum as SQLAlchemyEnum, BigInteger
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from core.database import Base

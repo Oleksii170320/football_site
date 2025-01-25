@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Text, Integer, ForeignKey, Column
+from sqlalchemy import String, Text, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from slugify import slugify
 
@@ -9,7 +9,6 @@ from models.annonated import intpk
 if TYPE_CHECKING:
     from models.organization import Organization
     from models.season import Season
-    from models.news import News
 
 
 class Tournament(Base):
