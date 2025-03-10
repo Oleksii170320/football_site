@@ -14,16 +14,10 @@ class MatchEvent(Base):
     __tablename__ = "matches_event"
 
     id: Mapped[intpk]
-    player_match_id: Mapped[int] = mapped_column(
-        ForeignKey("match_properties.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
-    event_id: Mapped[int] = mapped_column(
-        ForeignKey("ref_event.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
+    player_match_id: Mapped[int] = mapped_column(ForeignKey("match_properties.id", onupdate="SET NULL", ondelete="SET NULL"),)
+    event_id: Mapped[int] = mapped_column(ForeignKey("ref_event.id", onupdate="SET NULL", ondelete="SET NULL"),)
     minute: Mapped[str] = mapped_column(String(10), nullable=False)
-    player_replacement_id: Mapped[int | None] = mapped_column(
-        ForeignKey("match_properties.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
+    player_replacement_id: Mapped[int | None] = mapped_column(ForeignKey("match_properties.id", onupdate="SET NULL", ondelete="SET NULL"),)
 
     # зв'язки з таблицями
     event: Mapped["RefEvent"] = relationship(

@@ -14,6 +14,7 @@ class RegionBaseSchemas(BaseModel):
     name: Annotated[str, MinLen(3), MaxLen(30)]
     emblem: Annotated[Optional[str], MaxLen(30)] = None
     slug: Annotated[Optional[str], MaxLen(30)]
+    status: bool = 0
 
 
 class RegionCreateSchemas(RegionBaseSchemas):

@@ -1,0 +1,32 @@
+.team-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff; /* Фон для картки */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 100%; /* Щоб картки були рівномірні */
+}
+
+.team-card-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 50px; /* Однакова висота */
+    overflow: hidden; /* Запобігає виходу великих картинок */
+}
+
+.team-card-logo img {
+    max-width: 50%; /* Максимальна ширина */
+    max-height: 50%; /* Обмеження по висоті */
+    object-fit: contain; /* Масштабування без обрізання */
+}
+
+.card-body {
+    flex-grow: 1; /* Вирівнює контент */
+    width: 100%;
+    padding-top: 10px;
+}

@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import TYPE_CHECKING
 
 from slugify import slugify
@@ -6,6 +7,7 @@ from sqlalchemy import (
     String,
     Column,
     BigInteger,
+    Enum as SQLAlchemyEnum,
 )
 from sqlalchemy.orm import relationship, mapped_column, Mapped, declared_attr
 
@@ -18,6 +20,11 @@ if TYPE_CHECKING:
 
 
 metadata = MetaData()
+
+
+class PersonSex(str, Enum):
+    man = "man"
+    woman = "woman"
 
 
 class Person(RegionRelationMixin, Base):
@@ -37,6 +44,12 @@ class Person(RegionRelationMixin, Base):
     birthday = Column(BigInteger, nullable=True)
     photo: Mapped[str | None] = mapped_column(String(256))
     slug: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    sex = Column(
+        SQLAlchemyEnum(PersonSex),
+        default=PersonSex.man,
+        server_default=PersonSex.man.value,
+        nullable=False,
+    )
 
     # зв'язки з таблицями
     team_president: Mapped[list["Team"]] = relationship(

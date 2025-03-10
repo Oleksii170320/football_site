@@ -1,0 +1,107 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_archive.css">
+
+
+<input type="hidden" name="season-slug" value="{{ season.season_slug }}">
+
+<h6 class="header_page">КОМАНДИ УЧАСНИЦІ РОЗІГРАШУ</h6>
+
+<div class="block-info">
+
+  <div class="btn-team-list"><!--   This is teams list --></div>
+
+  <div class="btn-add-team">
+      <div class="archive-rows static-entry">
+          <div class="t-team-add-num"> </div>
+          <div class="t-team-add-logo">
+              <img src="/static/img/techical_image/icon_add_team.png">
+          </div>
+          <div class="t-team-add-name">
+              <strong>Додати команду</strong>
+              <span>до участі в турнірі</span>
+          </div>
+          <div class="t-team-add_city"></div>
+          <div class="t-team-add_city"></div>
+      </div>
+  </div>
+
+
+  <form class="block-info-add btn-input-team write-true"
+     method="post"
+     action="/seasons/add_teams"
+     id="add-teams-form">
+
+     <input type="hidden" name="season_id" value="{{ season.season_id }}">
+     <input type="hidden" name="region_slug" value="{{ region.slug }}">
+     <input type="hidden" name="season_slug" value="{{ season.season_slug }}">
+
+    <div class="archive-rows static-entry">
+        <div class="t-team-add-num"></div>
+        <div class="t-team-add-logo">
+            <img src="/static/img/techical_image/icon_team.PNG">
+        </div>
+        <div class="t-team-add-name">
+            <input type="text" class="form-input" id="team-name-input" placeholder="Назва команди">
+        </div>
+        <div class="t-team-add_city">
+            <input type="text" class="form-input" id="team-city-input" placeholder="Населений пункт">
+        </div>
+        <div class="t-team-add_region">
+
+
+        <input type="text"
+               id="team-region-input"
+               name="region_id"
+               class="form-input"
+               list="regionsList"
+               required oninput="updateRegionSlug()">
+
+        <datalist id="regionsList">
+            {% for region in regions_list %}
+                <option value="{{ region.name }} обл."
+                        data-id="{{ region.id }}"
+                        data-name="{{ region.name }}"
+                        data-slug="{{ region.slug }}">
+                </option>
+            {% endfor %}
+        </datalist>
+
+        <input type="hidden" id="regionId" name="region_id_hidden">
+        <input type="hidden" id="regionName" name="region_name_hidden">
+        <input type="hidden" id="regionSlug" name="region_slug_hidden">
+
+        </div>
+    </div>
+
+      <p>Найдіть команду в списку нижче. Не знайшли - створіть нову!</p>
+
+    <div class="archive-rows rows-team-create"
+         id="teamCreateForm"
+         method="post"
+         action="/teams/new_team"
+         enctype="multipart/form-data"
+         >
+
+         <input type="hidden" name="season_id" value="{{ season.season_id }}">
+         <input type="hidden" name="region_slug" id="regionSlugPage" value="{{ region.slug }}">
+         <input type="hidden" name="season_slug" id="seasonSlugPage" value="{{ season.season_slug }}">
+
+
+    </div>
+
+    <div class="archive-rows rows-team-list"></div>
+
+    <div class="team-results"><!--   This is a list of found commands --></div>
+
+  </form>
+
+</div>
+
+<script src="{{ url_for('static', path='js/libs/jquery-3.7.1.min.js') }}"></script>
+<script src="/static/js/season/get_from_season_teams_list.js"></script>
+<script src="/static/js/forms/form_add_team_in_season.js"></script>
+
+
+<script src="/static/js/forms/form_create_new_team.js"></script>
+
+

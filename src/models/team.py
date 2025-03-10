@@ -28,51 +28,26 @@ class Team(RegionRelationMixin, Base):
     city: Mapped[str | None] = mapped_column(String(50))
     foundation_year: Mapped[str | None] = mapped_column(String(20))
     logo: Mapped[str | None] = mapped_column(String(512))
-    description: Mapped[str] = mapped_column(
-        Text, default="", server_default="", nullable=True
-    )
-    clubs_site: Mapped[str] = mapped_column(
-        Text, default="", server_default="", nullable=True
-    )
+    description: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    clubs_site: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    page_facebook: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    page_youtube: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    page_telegram: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    page_instagram: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
 
     # зовнішні ключі
-    stadium_id: Mapped[int | None] = mapped_column(
-        ForeignKey("stadiums.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
-    president_id: Mapped[int | None] = mapped_column(
-        ForeignKey("persons.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
-    coach_id: Mapped[int | None] = mapped_column(
-        ForeignKey("persons.id", onupdate="SET NULL", ondelete="SET NULL"),
-    )
+    stadium_id: Mapped[int | None] = mapped_column(ForeignKey("stadiums.id", onupdate="SET NULL", ondelete="SET NULL"),)
+    president_id: Mapped[int | None] = mapped_column(ForeignKey("persons.id", onupdate="SET NULL", ondelete="SET NULL"),)
+    coach_id: Mapped[int | None] = mapped_column(ForeignKey("persons.id", onupdate="SET NULL", ondelete="SET NULL"),)
 
     # зв'язки з таблицями
-    stadium: Mapped["Stadium"] = relationship(
-        back_populates="teams",
-    )
-    president: Mapped["Person"] = relationship(
-        "Person",
-        foreign_keys=[president_id],
-        back_populates="team_president",
-    )
-    coach: Mapped["Person"] = relationship(
-        "Person",
-        foreign_keys=[coach_id],
-        back_populates="team_coach",
-    )
-    matches_1: Mapped[list["Match"]] = relationship(
-        "Match",
-        foreign_keys="[Match.team1_id]",
-        back_populates="team_1",
-    )
-    matches_2: Mapped[list["Match"]] = relationship(
-        "Match",
-        foreign_keys="[Match.team2_id]",
-        back_populates="team_2",
-    )
-    seasons_won: Mapped[list["Season"]] = relationship(
-        "Season", back_populates="team_winner", foreign_keys="[Season.team_winner_id]"
-    )
+    stadium: Mapped["Stadium"] = relationship(back_populates="teams",)
+    president: Mapped["Person"] = relationship("Person", foreign_keys=[president_id], back_populates="team_president",)
+    coach: Mapped["Person"] = relationship("Person", foreign_keys=[coach_id], back_populates="team_coach",)
+    matches_1: Mapped[list["Match"]] = relationship("Match", foreign_keys="[Match.team1_id]", back_populates="team_1",)
+    matches_2: Mapped[list["Match"]] = relationship("Match", foreign_keys="[Match.team2_id]", back_populates="team_2",)
+    seasons_won: Mapped[list["Season"]] = relationship("Season", back_populates="team_winner", foreign_keys="[Season.team_winner_id]")
+    # seasons_won2: Mapped[list["Season"]] = relationship("Season", back_populates="team_winner2", foreign_keys="[Season.team_winner2_id]")
 
     # many-to-many relationship to Season, bypassing the `TeamSeason`class
     seasons_associations: Mapped[list["Season"]] = relationship(

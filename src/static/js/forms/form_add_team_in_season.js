@@ -1,73 +1,151 @@
-// Функція для пошуку команди (фільтр по значеннях)
-    function filterTeams() {
-        let nameFilter = document.getElementById('team-name-input').value.toLowerCase();
-        let cityFilter = document.getElementById('team-city-input').value.toLowerCase();
-        let regionFilter = document.getElementById('team-region-input').value.toLowerCase();
-        let options = document.querySelectorAll('#team-select option');
+$(document).ready(function () {
+    let teamFullName = $('#team-name-input, #team-city-input, #team-region-input')
 
-        options.forEach(function (option) {
-            let optionText = option.textContent;
-            let teamName = optionText.split(' (')[0].toLowerCase();
-            let cityAndRegion = optionText.split(' (')[1]?.split(')')[0].split(', ');
-            let teamCity = cityAndRegion ? cityAndRegion[0].toLowerCase() : '';
-            let teamRegion = cityAndRegion ? cityAndRegion[1].toLowerCase() : '';
+    // Вибір необхідного регіону при пошуку команди...
+    $("#team-region-input").on("input", function() {
+        let input = $(this).val().toLowerCase();
+        let regionIdField = $("#regionId");
+        let regionNameField = $("#regionName");
+        let regionSlugField = $("#regionSlug");
 
-            if (
-                teamName.includes(nameFilter) &&
-                teamCity.includes(cityFilter) &&
-                teamRegion.includes(regionFilter)
-            ) {
-                option.style.display = '';  // Відобразити
-            } else {
-                option.style.display = 'none';  // Сховати
+        regionIdField.val("");
+        regionSlugField.val("");
+
+        $("#regionsList option").each(function() {
+            if ($(this).val().toLowerCase() === input) {
+                regionIdField.val($(this).data("id"));
+                regionNameField.val($(this).data("name"));
+                regionSlugField.val($(this).data("slug"));
             }
         });
-    }
+    });
 
-    document.getElementById('team-name-input').addEventListener('input', filterTeams);
-    document.getElementById('team-city-input').addEventListener('input', filterTeams);
-    document.getElementById('team-region-input').addEventListener('input', filterTeams);
+    // Пошук команди (або створення її) для заявлення в розіграш
+    function fetchTeamsAddToSeason() {
+        let teamName = $('#team-name-input').val().trim();
+        let cityName = $('#team-city-input').val().trim();
+        let regionName = $('#regionName').val().trim();
+        let regionId = $("#regionId").val();
 
-// Функція яка додає команду в розіграш
-    async function submitForm() {
-        const form = document.getElementById('add-teams-form');
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetch('/seasons/add_teams', {
-                method: 'POST',
-                body: formData,
-            });
-            if (response.ok) {
-                form.reset(); // Очищення форми
-                fetchTeams(); // Якщо запит успішний, оновлюємо список команд
-                const successMessage_add_team = document.getElementById('successMessage_add_team');
-                successMessage_add_team.style.display = 'block'; // Показати повідомлення
-
-                setTimeout(() => {
-                    successMessage_add_team.style.display = 'none'; // Приховати повідомлення через 5 секунд
-                }, 5000);
-
-            } else {
-                console.error('Помилка при додаванні команди');
-                const errorMessage_add_team = document.getElementById('errorMessage_add_team');
-                errorMessage_add_team.style.display = 'block'; // Показати повідомлення
-
-                setTimeout(() => {
-                     errorMessage_add_team.style.display = 'none'; // Приховати повідомлення через 5 секунд
-                }, 5000);
-            }
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Сталася помилка при додаванні команди.');
+        // Якщо всі поля порожні - очищуємо список та не виконуємо запит
+        if (teamName === '' && cityName === '' && regionName === '') {
+            $('.team-results').empty();
+            return;
         }
-    }
 
-// Додаємо обробник подій на кнопку
-    document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
-        event.preventDefault();  // Запобігаємо стандартній відправці форми
-        submitForm();
+        $.ajax({
+            url: "/api/teams/json/teams_list",
+            method: "GET",
+            data: {
+                team_name: teamName.charAt(0).toUpperCase() + teamName.slice(1),
+                team_city: cityName.charAt(0).toUpperCase() + cityName.slice(1),
+                region_name: regionName.charAt(0).toUpperCase() + regionName.slice(1)
+            },
+            dataType: "json",
+            success: function (response) {
+                let found_list = $('.team-results');
+                found_list.empty();
+
+                if (response.length < 0) {
+                    found_list.append('<div class="no-results">За вказаною назвою команду не знайдено' +
+                        `<strong id="btn_create_new_team_in_season">Створити нову команду</strong>` +
+                        '</div>');
+                    return;
+                } else if (response.length >= 1) {
+                    $.each(response, function (index, team) {
+                        let teamLogo = team.logo ? `/static/img/teams/${team.logo}` : '/static/img/techical_image/icon_team.PNG';
+
+                        found_list.append(`
+                            <div class="archive-rows rows-team-list" data-id="${team.id}">
+                                <div class="t-team-add-num"></div>
+                                
+                                <div class="t-team-add-logo">
+                                    <img src="${teamLogo}" alt="${team.name} logo" height="40px">
+                                </div>
+                                <div class="t-new-add-team-name">
+                                    <a class="nav-link" href="/teams/${team.slug}">
+                                        <strong>${team.name}</strong> (${team.city}, ${team.region_name} обл.)
+                                    </a>
+                                </div>
+                                <div class="t-team-add_region">
+                                    <span class="declare-team">Заявити в турнір</span>
+                                </div>
+                            </div>
+                        `);
+                    });
+                };
+            },
+
+            error: function () {
+                $('.team-results')
+                    .html('<div class="archive-rows add-team-error">' +
+                        '<div class="">За вказаною назвою команду не знайдено </div> ' +
+                        '<div id="btn_create_new_team_in_season">Створити нову команду  ' +
+                        '<div class="t-team-add-logo"><img src="/static/img/techical_image/icon_add_team.png"></div></div>' +
+                        '</div>');
+            }
+        });
+    };
+
+
+    // Виконувати пошук із затримкою при введенні тексту
+    let typingTimer;
+    let doneTypingInterval = 500; // Час затримки перед виконанням запиту
+
+    teamFullName.on('input', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(fetchTeamsAddToSeason, doneTypingInterval);
     });
 
 
+    // Додавання команди в розіграш
+    $(document).on('click', '.declare-team', function () {
+        let teamId = $(this).closest('.rows-team-list').data('id');
+
+        $.ajax({
+            url: '/seasons/add_teams',
+            method: 'POST',
+            data: {
+                team_id: teamId,
+                season_id: $('input[name="season_id"]').val(),
+                region_slug: $('input[name="region_slug"]').val(),
+                season_slug: $('input[name="season_slug"]').val(),
+            },
+            success: function () {
+                $('#successMessage_add_team').fadeIn().delay(5000).fadeOut();
+
+                fetchTeamsAddToSeason(); // Оновлення списку команд у формі
+
+                if (typeof window.fetchTeamsInSeason === 'function') {
+                    window.fetchTeamsInSeason(); // Оновлення списку команд у сезоні
+                }
+            },
+            error: function () {
+                $('#errorMessage_add_team').fadeIn().delay(5000).fadeOut();
+            }
+        });
+
+
+        // Очищення списку при натисканні на кнопку "Заявити в турнір"
+        let blockBtnAdd = $('.btn-add-team');
+        let blockInputAdd = $('.btn-input-team');
+
+        $('.team-results').empty();// Очищаємо список
+        $('#team-name-input').val('');
+        $('#team-city-input').val('');
+        $('#team-region-input').val('');
+
+        if (blockInputAdd.is(":visible")) {
+            blockBtnAdd.show();
+            blockInputAdd.hide();
+        }
+    });
+
+    // Відкрити форму створення нової команди
+    $(document).on('click', '.rows-team-list .create-team', function () {
+        let createTeam = $('#teamForm');
+
+        createTeam.show();
+    });
+
+});

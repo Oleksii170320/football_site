@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_season.css">
+
+
+<h6 class="header_page">Зіграні матчі</h6>
+
+
+{% if not matches %}
+    <div id="no-matches-found">
+        <img src="/static/img/techical_image/image_big_ball.png" alt="image_big_ball">
+        <p>Матч не знайдено.</p>
+    </div>
+{% else %}
+
+  <div class="block-info">
+    {% set tournament_seasons = [] %}
+
+    {% for match in matches %}
+    {% set _ = tournament_seasons.append(match.season_id) %}
+
+      <div class="matches-cards">
+        {% if tournament_seasons[-1]  != tournament_seasons[-2] %}
+          <h6 class="title-stage">
+              <div class="links">
+                  <span>{{ match.football_type.value }}:</span>
+                  <div class="region-title">
+                      {% if match.season_logo %}
+                          <img  class="region-title-logo" src="{{ url_for('static', path='/img/seasons/' ~ match.season_logo) }}"
+                               alt="{{ match.tournament_logo }} logo" width="1px">
+                      {% elif match.tournament_logo %}
+                          <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ match.tournament_logo) }}"
+                               alt="{{ match.tournament_logo }} logo">
+                      {% endif %}
+
+                      <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}/main">
+                          {{ match.season_full_name }} {{ match.season_year }}
+                      </a>
+                  </div>
+              </div>
+
+              <span class="match-standing">
+                <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}/standings">
+                    Таблиця
+                </a>
+             </span>
+          </h6>
+        {% endif %}
+
+        <div class="block-info">
+          <div class="round-card">
+            <div class="matches">
+
+
+                  {% include "matches/includes/matches_by_round.html" %}
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% endfor %}
+  </div>
+
+{% endif %}

@@ -6,7 +6,7 @@ from core.templating import render
 from core.database import get_db
 from helpers.authentications import get_current_user_for_button
 from services import stadium as crud_stadium
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from services.stadium import get_stadium_teams
 from validation import stadium as schemas
 

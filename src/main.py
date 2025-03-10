@@ -6,7 +6,7 @@ from core.database import get_db
 from core.templating import templates
 from helpers.authentications import get_current_user_for_button
 from services.news_list import get_news_list
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from controllers import (
     region,
     organization,
@@ -19,7 +19,12 @@ from controllers import (
     person,
     news,
     session,
-    api,
+)
+from controllers.api import (
+    seasons_api,
+    regions_api,
+    matches_api,
+    teams_api,
 )
 
 app = FastAPI(title="Football")
@@ -58,5 +63,8 @@ app.include_router(match.router, prefix="/matches", tags=["Matches"])
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
 app.include_router(person.router, prefix="/persons", tags=["Persons"])
 app.include_router(news.router, prefix="/news", tags=["News"])
-app.include_router(api.router, prefix="/api", tags=["API"])
+app.include_router(seasons_api.router, prefix="/api/seasons", tags=["API"])
+app.include_router(matches_api.router, prefix="/api/matches", tags=["API"])
+app.include_router(regions_api.router, prefix="/api/regions", tags=["API"])
+app.include_router(teams_api.router, prefix="/api/teams", tags=["API"])
 app.include_router(session.router, prefix="/sign-in", tags=["Auth"])

@@ -1,0 +1,35 @@
+.header_page {
+    display: flex;
+    background-color: #2b2f44;
+    color: #d5d8da;
+    text-transform: uppercase;
+    justify-content: center;
+    border-radius: 3px;
+    padding: 3px;
+    margin: 3px 5px 3px 5px;
+}
+
+.block-info-teams,
+.block-info {
+    margin: 0px 5px 0px 5px;
+}
+
+#no-matches-found {
+    display: flex;
+    flex-direction: column; /* Розташовує елементи вертикально */
+    justify-content: center; /* Центрує по вертикалі */
+    align-items: center; /* Центрує по горизонталі */
+    /*height: 100vh; !* Робить блок висотою на весь екран *!*/
+    text-align: center; /* Центрує текст */
+    padding: 10px 0px 0px 0px;
+}
+
+#no-matches-found img {
+    width: 10em; /* Щоб зображення не виходило за межі контейнера */
+    height: auto;
+}
+
+#no-matches-found p {
+    font-weight: bold; /* або значення від 100 до 900 */
+    color: #696767;
+}

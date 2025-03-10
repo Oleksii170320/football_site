@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
+
 {% block style %}
-<link rel="stylesheet" href="/static/css/styles_region.css">
-<link rel="stylesheet" href="/static/css/styles_matches_season.css">
+
 {% endblock %}
 
 
@@ -12,12 +12,13 @@
 
 
 {% block content %}
-
 {% include "news/news_list.html" %}
-
 {% endblock %}
 
 
 {% block aside_right %}
 
 {% endblock %}
+
+    <script src="{{ url_for('static', path='js/libs/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', path='js/home.js') }}"></script>

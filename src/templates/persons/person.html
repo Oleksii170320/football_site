@@ -1,128 +1,25 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/styles_region.css">
-<link rel="stylesheet" href="/static/css/styles_matches_season.css">
-<link rel="stylesheet" href="/static/css/styles_team.css">
+<link rel="stylesheet" href="/css/region/styles_region.css">
+<link rel="stylesheet" href="/css/matches/styles_matches_season.css">
+<link rel="stylesheet" href="/css/teams/styles_team.css">
 {% endblock %}
 
 {% block content %}
 
+{% include "persons/person_header.html" %}
 
-<div class="container" style="border: 1px solid #d6d2d2; width: 100%;">
-    <article style="padding: 1px; width: 100%;">
-        <h3 style="text-align: center;">Досьє гравця</h3>
-        <hr style="border: 2px solid;">
+{% if matches %}
+{% include "persons/includes/person_matches.html" %}
+{% endif %}
 
-        <div class="team-info">
-            <table>
-                <tbody>
-                <tr>
-                    <td>
-                        <div>
-                            <div class="team-logo" style="padding: 20px; border: #cccccc;">
-                                {% if person.photo %}
-                                <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}"
-                                     alt="{{ person.name }} logo" width="200px">
-                                {% else %}
-                                <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
-                                     alt="{{ person.name }} logo" width="200px">
-                                {% endif %}
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="team-details" style="padding: 20px; width: 150%;">
-                            <h3>{{ person.lastname }} {{ person.name }} {{ person.surname }}</h3>
-                            <hr style="border: 1px solid; width: 100%;">
-                            <table class="table table-hover">
-                                <tbody>
-                                <tr>
-                                    <td><strong>Дата народження:</strong></td>
-                                    <td>{{ person.birthday }} ({{ person.age }} р.)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Регіон:</strong></td>
-                                    <td><a href="/region/{{ person.region_slug }}">{{ person.region_name }}</a></td>
-                                </tr>
-                                <!-- Відображення унікальних команд -->
-                                <tr>
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Клуб</th>
-                                            <th scope="col">Амплуа</th>
-                                            <th scope="col">Позиція</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for team in positions_role %}
-                                        <tr class="row-default">
-                                            <td align="left">
-                                                <a href="/teams/{{ team.team_slug }}/application">
-                                                    {{ team.team_name }} ({{ team.team_city }})
-                                                </a>
-                                            </td>
-                                            <td align="left"> {{ team.position }}</td>
-                                            <td align="left">
-                                                {% if team.player_role_id %}
-                                                {{ team.full_name }}
-                                                {% else %}
-                                                -
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <hr style="border: 2px solid;">
+{% if club_career %}
+{% include "persons/includes/person_club_career.html" %}
+{% endif %}
 
-        <div class="card text-center">
-            <div class="card-header">
-                <ul class="nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/persons/{{ person.id }}/matches">
-                            <button type="button" class="btn btn-outline-dark">Матчі</button>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/persons/{{ person.id }}/club_career">
-                            <button type="button" class="btn btn-outline-dark">Клубна кар'єра</button>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/persons/{{ person.id }}/tournaments">
-                            <button type="button" class="btn btn-outline-dark">Турніри</button>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        {% if matches %}
-        {% include "persons/includes/matches.html" %}
-        {% endif %}
-
-        {% if club_career %}
-        {% include "persons/includes/club_career.html" %}
-        {% endif %}
-
-        {% if tournaments %}
-        {% include "persons/includes/tournaments.html" %}
-        {% endif %}
-
-
-    </article>
-</div>
-
+{% if tournaments %}
+{% include "persons/includes/person_tournaments.html" %}
+{% endif %}
 
 {% endblock %}

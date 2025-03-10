@@ -1,74 +1,71 @@
-<div class="container" style="width: 100%;">
-    {% set unique_rounds = [] %}
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_season.css">
 
 
-    <div class="container" style="width: 100%;">
-        {% for match in matches if match.round_name not in unique_rounds %}
-        <div class="card mb-3" style="width: 99%;">
+
+{% if results %}
+  <h6 class="header_page">Зіграні матчі</h6>
+{% elif upcoming %}
+  <h6 class="header_page">Заплановані матчі</h6>
+{% endif %}
 
 
-            <h4 style="background-color: #c5c2c2; padding: 5px;">
-                {{ match.season_name }} {{ match.season_year }}
-                {% if match.stage_name %}
-                , {{ match.stage_name }}
-                {% endif %}
-                {% if match.group_name %}
-                , {{ match.group_name }}
-                {% endif %}
-            </h4><br>
 
-            <h4>{{ match.round_name }}, {{ match.event }}</h4>
-
-
-            <table class="table table-striped table-hover" style="width: 100%;">
-                <tbody>
-
-                <tr class="row-default">
-                    <td style="width: 35%;">
-                        <a href="/teams/{{ match.team1_slug }}">
-                            <h5><strong>{{ match.team1_name }}</strong> ({{ match.team1_city}})</h5>
-                        </a>
-                    </td>
-                    <td style="width: 10%;">
-                        <img src="{{ url_for('static', path='/img/teams/' ~ match.team1_logo) }}"
-                             alt="{{ match.team1_name }} logo" style="height: 60px">
-                    </td>
-                    <td style="width: 10%;" align="center">
-                        <a href="/matches/{{ match.match_id }}/review" target="_blank">
-                            {% if match.status == "Тех. поразка" %}
-                            <strong style="color: red; text-align: center;">
-                                <h3>
-                                    {{ match.team1_goals }} : {{ match.team2_goals }}
-                                </h3>
-                            </strong><br>
-                            {% else %}
-                            <strong style="text-align: center;">
-                                <h3>{{ match.team1_goals }} : {{ match.team2_goals }}</h3>
-                            </strong><br>
-                            {% if match.team1_penalty %}
-                            <p style="text-align: center;">(п. {{ match.team1_penalty }} : {{ match.team2_penalty
-                                }})</p>
-                            {% endif %}
-                            {% endif %}
-                        </a>
-                    </td>
-                    <td style="width: 10%;">
-                        <img src="{{ url_for('static', path='/img/teams/' ~ match.team2_logo) }}"
-                             alt="{{ match.team2_name }} logo" style="height: 60px">
-                    </td>
-                    <td style="width: 35%;">
-                        <a href="/teams/{{ match.team2_slug }}">
-                            <h5><strong>{{ match.team2_name }}</strong> ({{ match.team2_city}})</h5>
-                        </a>
-                    </td>
-                </tr>
-
-                </tbody>
-            </table>
-
-        </div>
-        {% set _ = unique_rounds.append(match.round_name) %}
-        {% endfor %}
+{% if not matches %}
+    <div id="no-matches-found">
+        <img src="/static/img/techical_image/image_big_ball.png" alt="image_big_ball">
+        <p>Матч не знайдено.</p>
     </div>
+{% else %}
 
-</div>
+  <div class="block-info">
+    {% set tournament_seasons = [] %}
+
+    {% for match in matches%}
+    {% set _ = tournament_seasons.append(match.season_id) %}
+
+      <div class="matches-cards">
+        {% if tournament_seasons[-1]  != tournament_seasons[-2] %}
+          <h6 class="title-stage">
+              <div class="links">
+                  <span>{{ match.football_type.value }}:</span>
+                  <div class="region-title">
+                      {% if match.season_logo %}
+                          <img  class="region-title-logo" src="{{ url_for('static', path='/img/seasons/' ~ match.season_logo) }}"
+                               alt="{{ match.tournament_logo }} logo" width="1px">
+                      {% elif match.tournament_logo %}
+                          <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ match.tournament_logo) }}"
+                               alt="{{ match.tournament_logo }} logo">
+                      {% endif %}
+
+                      <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}/main">
+                          {{ match.season_full_name }} {{ match.season_year }}
+                      </a>
+                  </div>
+              </div>
+
+              <span class="match-standing">
+                <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}/standings">
+                    Таблиця
+                </a>
+             </span>
+          </h6>
+        {% endif %}
+
+        <div class="block-info">
+          <div class="round-card">
+            <div class="matches">
+
+
+                  {% include "matches/includes/matches_by_round.html" %}
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% endfor %}
+  </div>
+
+{% endif %}

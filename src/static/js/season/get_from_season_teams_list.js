@@ -1,76 +1,86 @@
-let slug = document.querySelector('input').value
-console.log(slug)
+$(document).ready(function () {
+    let slug = $('input').val();
 
+    async function fetchTeamsInSeason() {
+        try {
+            let response = await $.ajax({
+                url: `/api/seasons/json/teams_in_season/${slug}`,
+                method: 'GET',
+                dataType: 'json'
+            });
 
-    async function fetchTeams() {
-        let response = await fetch(`/api/json/teams_in_season/${slug}`,{
-            method: 'GET',
-        });
-        let content = await response.json()
-        let list = document.querySelector('.posts')
+            let list = $('.btn-team-list');
+            list.empty(); // Очищаємо список перед оновленням
 
-        list.innerHTML = '';  // Очищаємо список перед оновленням
+            $.each(response, function (index, team) {
+                let num = index + 1;
+                let teamLogo = team.logo ? `/static/img/teams/${team.logo}` : '/static/img/techical_image/icon_team.PNG';
 
-        content.forEach((team, index) => {
-            let num = index + 1;
-            list.innerHTML += `
-                <tr class="row-default">
-                    <th scope="row" style="width: 5%;">${num}</th>
-                    <td>
-                        <img src="/static/img/teams/${team.logo}" alt="${team.name} logo" height="40px">
-                    </td>
-                    <td align="center" style="width: 60%;">
-                        <a class="nav-link" href="/teams/${team.slug}">
-                            <strong>${team.name}</strong> (${team.city}, ${team.region_name})
-                        </a>    
-                    </td>
-                    <td align="center" style="width: 15%;">заявлено в турнір</td>
-                    <td align="center" style="width: 10%;">
-                        <button type="button" class="btn btn-outline-danger"
-                                data-season-id="${team.season_id}" data-team-id="${team.id}"
-                                onclick="deleteTeamFromSeason(this)">
-                            Відзаявити
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
+                list.append(`
+                    <div class="archive-rows">
+                        <div class="t-team-num">${num}</div>
+                        <div class="t-team-logo">
+                            <img src="${teamLogo}" alt="${team.name} logo" height="40px">
+                        </div>
+                        <div class="t-team-name">
+                            <a class="nav-link" href="/teams/${team.slug}"> 
+                                <strong>${team.name}</strong> (${team.city}, ${team.region_name} обл.)
+                            </a>    
+                        </div>
+                        <div class="t-team-status">заявлено в турнір</div>
+                        <div class="t-team-btn">
+                            <span class="delete-team-btn" data-season-id="${team.season_id}" data-team-id="${team.id}">
+                                Відзаявити
+                            </span>
+                        </div>
+                    </div>
+                `);
+            });
 
-        console.log(content);
-    }
-    fetchTeams();
-
-
-
-// Функція яка видаляє команду зі розіграшу (кнопка "Видалити")
-    async function deleteTeamFromSeason(button) {
-        const seasonId = button.getAttribute('data-season-id');
-        const teamId = button.getAttribute('data-team-id');
-
-        if (confirm("Ви впевнені, що хочете відзаявити команду?")) {
-            try {
-                const response = await fetch(`/seasons/del_teams/${seasonId}/${teamId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-
-                // Оновлюємо список команд після успішного видалення
-                fetchTeams();
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Сталася помилка при видаленні команди');
-            }
+        } catch (error) {
+            console.error('Помилка отримання даних:', error);
         }
     }
 
+    // Робимо функцію глобальною
+    window.fetchTeamsInSeason = fetchTeamsInSeason;
 
+    $(document).ready(function () {
+        fetchTeamsInSeason();
+    });
 
+    // Видалення команди (делегування події)
+    $(document).on('click', '.delete-team-btn', async function () {
+        let button = $(this);
+        let seasonId = button.data('season-id');
+        let teamId = button.data('team-id');
+
+        if (confirm("Ви впевнені, що хочете відзаявити команду?")) {
+            try {
+                let response = await $.ajax({
+                    url: `/seasons/del_teams/${seasonId}/${teamId}`,
+                    method: 'DELETE',
+                    contentType: 'application/json'
+                });
+
+                // Оновлення списку після видалення
+                fetchTeamsInSeason();
+            } catch (error) {
+                console.error('Помилка при видаленні:', error);
+                alert('Сталася помилка при видаленні команди');
+            }
+        }
+    });
+});
+
+$(function () {
+    $('.btn-add-team').click(function(e) {
+        let blockBtnAdd = $('.btn-add-team');
+        let blockInputAdd = $('.btn-input-team');
+
+        if (blockBtnAdd.is(":visible")) {
+            blockBtnAdd.hide();
+            blockInputAdd.show();
+        }
+    });
+});

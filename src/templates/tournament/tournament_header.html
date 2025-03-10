@@ -1,0 +1,69 @@
+<link rel="stylesheet" href="/static/css/tournament/stl_tournament.css">
+
+<div class="tournament-info">
+    <div class="container">
+
+        <div class="tournament-name">
+          <h5>{{ tournaments.full_name }}</h5>
+        </div>
+
+        <div class="tournament-attributes">
+
+            <div class="tournament-logo">
+                {% if tournaments.logo %}
+                <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ tournaments.logo) }}"
+                     alt="{{ tournaments.name }} logo" width="300px">
+                {% else %}
+                <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+                     alt="{{ tournaments.name }} logo" width="200px">
+                {% endif %}
+            </div>
+
+            <div class="tournament-details">
+                <table class="table table-hover">
+                <tbody>
+                <tr>
+                    <td><strong>Проводиться з:</strong></td>
+                    {% if tournaments.create_year %}
+                    <td>{{ tournaments.create_year }}</td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td><strong>Рівень в ієрархії:</strong></td>
+                    <td>
+                        {{ tournaments.level_int }}
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Підвищення в класі:</strong></td>
+                    {% if tournaments.level_up %}
+                    <td>{{ tournaments.level_up }}</td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td><strong>Пониження в класі:</strong></td>
+                    {% if tournaments.level_down %}
+                    <td>{{ tournaments.level_down }}</td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td><strong>Сайт:</strong></td>
+                    <td>
+                        <a href="{{ tournaments.website }}" target="_blank">
+                            {{ tournaments.website }}
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+
+        </div>
+    </div>
+</div>

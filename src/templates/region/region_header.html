@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="/static/css/region/stl_region_nav_block.css">
+
+
+<div class="region-header">
+
+    <div class="region-main-info">
+
+        <div class="region-logo">
+            <img class="logo_redion_in_season"
+                 src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}"
+                 alt="logo {{ region.name }}">
+        </div>
+
+        <div class="region-name">
+
+            {% if 1< region.id < 26 %}
+                <h5>{{ region.name }} область</h5>
+            {% else %}
+                <h5>{{ region.name }}</h5>
+            {% endif %}
+
+            {% if region.info %}<p>{{ region.info }}</p>{% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="nav-buttons">
+        <a href="/region/{{ region.slug }}">Матчі</a>
+        <a href="/region/{{ region.slug }}/news">Новини</a>
+        <a href="/region/{{ region.slug }}/tournaments">Турніри</a>
+        <a href="/region/{{ region.slug }}/teams">Команди</a>
+        <a href="/region/{{ region.slug }}/persons">Дійові особи</a>
+        <a href="/region/{{ region.slug }}/contacts">Контакти</a>
+    </div>
+
+</div>
+
+
+<script src="{{ url_for('static', path='js/regions/js-region-navblock.js') }}"></script>

@@ -1,0 +1,152 @@
+.info-article {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.feed-header {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.info-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.info-intro h3 {
+  text-align: center;
+  color: #555;
+}
+
+.info-page-table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+}
+
+.info-page-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.info-page-table td:first-child {
+  font-weight: bold;
+  color: #333;
+}
+
+.tabs-headers {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+}
+
+.tabs-headers li {
+  flex: 1;
+  text-align: center;
+  background-color: #eee;
+  margin: 0 5px;
+  border-radius: 4px;
+}
+
+.tabs-headers li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+}
+
+.tabs-headers .ui-tabs-active {
+  background-color: #ddd;
+}
+    ul.horizontal-list {
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      list-style: none;
+    }
+
+    ul.horizontal-list li {
+      margin: 0 10px;
+    }
+
+    ul.horizontal-list li a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    ul.horizontal-list li a:hover {
+      background-color: #0056b3;
+    }
+
+        .team-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .team-logo1 {
+      margin-right: 20px;
+
+    }
+
+    .team-details {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .team-details h3 {
+      margin: 0;
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    .team-details h3::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background-color: #000; /* Чорний колір лінії */
+    }
+
+    .team-details table {
+      margin-top: 10px;
+    }
+
+    .button-list {
+      display: flex;
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      margin-top: 20px;
+    }
+
+    .button-list li {
+      margin-right: 15px;
+    }
+
+    .button-list a {
+      text-decoration: none;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .button-list a:hover {
+      background-color: #0056b3;
+    }

@@ -37,6 +37,7 @@ async def get_persons_position_team(db: AsyncSession, person_id: int):
             Team.slug.label("team_slug"),
             Team.name.label("team_name"),
             Team.city.label("team_city"),
+            Team.logo.label("team_logo"),
         )
         .join(Position, Position.id == PositionRole.position_id)
         .join(TeamPerson, TeamPerson.id == PositionRole.team_person_id)

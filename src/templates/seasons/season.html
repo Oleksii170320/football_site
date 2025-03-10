@@ -1,19 +1,10 @@
 {% extends "base.html" %}
 
 {% block style %}
-<link rel="stylesheet" href="/static/css/styles_region.css">
-<link rel="stylesheet" href="/static/css/styles_matches_season.css">
-
-<style>
-    .header_page {
-        margin: 0px;
-        padding: 10px;
-        background-color: #353535;
-        text-align: center;
-        color: white;
-        border-top: 1px solid #faf7f7;
-    }
-</style>
+<!--<link rel="stylesheet" href="/css/region/styles_region.css">-->
+<!--<link rel="stylesheet" href="/css/matches/styles_matches_season.css">-->
+<!--<link rel="stylesheet" href="{{ url_for('static', path='css/styles_season.css') }}">-->
+<link rel="stylesheet" href="/static/css/stl_content.css">
 {% endblock %}
 
 
@@ -25,51 +16,42 @@
 
 
 <!--Додано блок меню -->
-{% include "includes/season_nav_block.html" %}
-
+{% include "seasons/season_header.html" %}
 
 <!--Головна сторінка розіграшу (+/- 7 днів) -->
 {% if main %}
-{% include "tournament/includes/tournament_info.html" %}
-
-<h3 class="header_page">НАЙБЛИЖЧІ МАТЧІ (+/- 7 ДНІВ)</h3>
-
-{% include "matches/matches_by_round.html" %}
-
+    {% include "matches/matches_by_season.html" %}
 
 <!--Зіграні матчі розіграшу -->
 {% elif results %}
-<h3 class="header_page">Зіграні матчі розіграшу</h3>
-{% include "matches/matches_by_round.html" %}
+    {% include "matches/matches_by_season_result.html" %}
 
-<!--Майбутні матчірозіграшу -->
+<!--Майбутні матчірозіграшу та повний календар матчів турніру-->
 {% elif upcoming %}
-<h3 class="header_page">Майбутні матчі розіграшу</h3>
-{% include "matches/matches_by_round.html" %}
+    {% include "matches/matches_by_season.html" %}
 
 <!--Турнірна таблиця -->
 {% elif standings %}
-<h3 class="header_page">ТУРНІРНА ТАБЛИЦЯ</h3>
-{% include "seasons/standings.html" %}
+    {% include "seasons/standing/standings.html" %}
 
 <!--Архів сезонів -->
 {% elif seasons_archive %}
-<h3 class="header_page">ІСТОРІЯ РОЗІГРАШІВ</h3>
-{% include "seasons/season_archive.html" %}
+    {% include "seasons/season_archive.html" %}
+
+<!--Головна сторінка турніру/сезону -->
+{% elif information %}
+    {% include "seasons/season_tournament.html" %}
 
 <!--Команди, які заявлені в розіграш (Додавання команди в розіграш) -->
 {% elif seasons_clubs %}
-<h3 class="header_page">КОМАНДИ УЧАСНИЦІ РОЗІГРАШУ</h3>
-{% include "seasons/include/season_teams.html" %}  <!--Teams list from season -->
-{% include "forms/form_teams_in_season.html" %}    <!--Form for add team in season -->
-{% include "forms/form_new_team.html" %}           <!--Form for create new team in Database -->
+{% include "seasons/season_teams.html" %}  <!--Teams list from season -->
 
 
 <!--Календар матчів (Додавання матчів у розіграш) -->
 {% elif seasons_schedule %}
 {% include "forms/form_add_new_match.html" %}
-<h3 class="header_page">КАЛЕНДАР МАЧТІВ</h3>
-{% include "matches/matches_by_round.html" %}
+<h6 class="header_page">КАЛЕНДАР МАЧТІВ</h6>
+{% include "matches/matches_by_season.html" %}
 
 {% endif %}
 

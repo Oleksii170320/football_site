@@ -18,41 +18,28 @@ class Season(Base):
 
     id: Mapped[intpk]
     name: Mapped[str] = mapped_column(String(70), nullable=False)
+    full_name: Mapped[str] = mapped_column(String(250), nullable=True)
     start_date: Mapped[BigInteger | None] = mapped_column(BigInteger)
     end_date: Mapped[BigInteger | None] = mapped_column(BigInteger)
     year: Mapped[str | None] = mapped_column(String(20))
-    standing: Mapped[bool] = mapped_column(
-        default=1, server_default="1", nullable=False
-    )
+    logo: Mapped[str | None] = mapped_column(String(256))
+    standing: Mapped[bool] = mapped_column(default=1, server_default="1", nullable=False )
     slug: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     # зовнішні ключі
-    tournament_id: Mapped[int] = mapped_column(
-        ForeignKey("tournaments.id", ondelete="CASCADE"),
-    )
-    team_winner_id: Mapped[int | None] = mapped_column(
-        ForeignKey("teams.id", onupdate="SET NULL", ondelete="SET NULL"), nullable=True
-    )
+    tournament_id: Mapped[int] = mapped_column(ForeignKey("tournaments.id", ondelete="CASCADE"),)
+    team_winner_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id", onupdate="SET NULL", ondelete="SET NULL"), nullable=True)
+    # team_winner2_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id", onupdate="SET NULL", ondelete="SET NULL"), nullable=True)
 
     # зв'язки з таблицями
-    tournament: Mapped["Tournament"] = relationship(
-        back_populates="seasons",
-    )
-    team_winner: Mapped["Team"] = relationship(
-        "Team", back_populates="seasons_won", foreign_keys=[team_winner_id]
-    )
-    matches: Mapped["Match"] = relationship(
-        back_populates="season",
-    )
-    # groups: Mapped[Optional[list["Group"]]] = relationship(
-    #     back_populates="season", lazy="selectin"
-    # )
+    tournament: Mapped["Tournament"] = relationship(back_populates="seasons",)
+    team_winner: Mapped["Team"] = relationship("Team", back_populates="seasons_won", foreign_keys=[team_winner_id])
+    # team_winner2: Mapped["Team"] = relationship("Team", back_populates="seasons_won2", foreign_keys=[team_winner2_id])
+    matches: Mapped["Match"] = relationship(back_populates="season",)
+    # groups: Mapped[Optional[list["Group"]]] = relationship(back_populates="season", lazy="selectin")
 
     # many-to-many relationship to Team, bypassing the TeamSeason class
-    teams_associations: Mapped[list["Team"]] = relationship(
-        secondary="team_seasons_association",
-        back_populates="seasons_associations",
-    )
+    teams_associations: Mapped[list["Team"]] = relationship(secondary="team_seasons_association", back_populates="seasons_associations",)
 
     @declared_attr
     def __mapper_args__(cls):

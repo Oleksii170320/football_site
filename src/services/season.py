@@ -1,12 +1,11 @@
-import logging
 from datetime import datetime
 
 from fastapi import HTTPException
-from sqlalchemy import desc, func, select, insert
+from sqlalchemy import desc, func, select, and_, or_
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, selectinload
-from starlette.responses import JSONResponse
+
 
 from models import (
     Season,
@@ -17,7 +16,6 @@ from models import (
     Region,
     TeamSeason,
 )
-from services.team import get_team_for_id
 from validation import season as schemas
 from validation.team import TeamSchemas
 
@@ -62,8 +60,11 @@ async def get_seasons_winner(db: AsyncSession, team_slug: str):
         select(
             Season.slug.label("season_slug"),
             Season.name.label("season_name"),
+            Season.full_name.label("season_full_name"),
             Season.year.label("season_year"),
+            Season.logo.label("season_logo"),
             Region.slug.label("region_slug"),
+            Tournament.logo.label("tournament_logo"),
         )
         .join(Team, Team.id == Season.team_winner_id)
         .join(Tournament, Tournament.id == Season.tournament_id)
@@ -83,10 +84,13 @@ async def get_seasons_teams_history(db: AsyncSession, team_slug: str):
         select(
             Season.slug.label("season_slug"),
             Season.name.label("season_name"),
+            Season.full_name.label("season_full_name"),
+            Season.logo.label("season_logo"),
             Season.year.label("season_year"),
             Region.slug.label("region_slug"),
             Association.name.label("association_name"),
             Organization.name.label("organization_name"),
+            Tournament.logo.label("tournament_logo"),
         )
         .join(TeamSeason, TeamSeason.season_id == Season.id)
         .join(Team, Team.id == TeamSeason.team_id)
@@ -106,25 +110,119 @@ async def get_season_for_id(db: AsyncSession, season_id: int):
     return await db.get(Season, season_id)
 
 
-async def get_season_by_id_or_slug(
-    db: AsyncSession, season_id: int = None, season_slug: str = None, **kwargs
-):
+async def get_season_by_id_or_slug(db: AsyncSession, season_id: int = None, season_slug: str = None, **kwargs):
     """Отримує сезон за ідентифікатором або slug (асинхронно)"""
-    stmt = select(
+
+    stmt = (select(
         Season.id.label("season_id"),
         Season.slug.label("season_slug"),
         Season.name.label("season_name"),
+        Season.full_name.label("full_name"),
         Season.year.label("season_year"),
+        Season.logo.label("season_logo"),
+        func.strftime("%d.%m.%Y", func.datetime(Season.start_date, "unixepoch", "localtime")).label("start_date"),
+        func.strftime("%d.%m.%Y", func.datetime(Season.end_date, "unixepoch", "localtime")).label("end_date"),
         Season.standing,
-        Tournament.logo.label("tournament_logo"),
+        Season.team_winner_id.label("season_winner_id"),
+        Tournament.full_name.label("tournament_full_name"),
         Tournament.slug.label("tournament_slug"),
-    ).join(Tournament, Tournament.id == Season.tournament_id)
+        Tournament.logo.label("tournament_logo"),
+        Tournament.level_int.label("tournament_level_int"),
+        Tournament.level.label("tournament_level"),
+        Tournament.level_up.label("tournament_level_up"),
+        Tournament.level_down.label("tournament_level_down"),
+        Tournament.website.label("tournament_website"),
+        Tournament.description.label("tournament_description"),
+        Tournament.football_type.label("football_type"),
+        Tournament.page_youtube.label("page_youtube"),
+        Tournament.page_facebook.label("page_facebook"),
+        Tournament.page_instagram.label("page_instagram"),
+        Tournament.page_telegram.label("page_telegram"),
+        Organization.tournament_level.label("organization_level"),
+        Organization.name.label("organization_name"),
+        Organization.slug.label("organization_slug"),
+        Region.name.label("region_name"),
+        Region.slug.label("region_slug"),
+        Region.status.label("region_status"),
+        Team.name.label("season_winner_name"),
+        Team.city.label("season_winner_city"),
+        Team.slug.label("season_winner_slug"),
+        Team.logo.label("season_winner_logo"),
+    )
+        .join(Tournament, Tournament.id == Season.tournament_id)
+        .join(Organization, Organization.id == Tournament.organization_id)
+        .join(Region, Organization.region_id == Region.id)
+        .outerjoin(Team, Team.id == Season.team_winner_id)
+    )
+
     if season_id is not None:
         stmt = stmt.filter(Season.id == season_id)
     elif season_slug is not None:
         stmt = stmt.filter(Season.slug == season_slug)
     else:
         return None  # або викликати виключення, якщо обидва параметри None
+
+    result = await db.execute(stmt)
+    return result.first()
+
+
+async def get_season_previous_winner(db: AsyncSession, season_id: int = None, season_slug: str = None, **kwargs):
+    """Отримати попереднього переможця розіграшу"""
+
+    # Отримуємо tournament_id та start_date для поточного сезону
+    tournament_query = (
+        select(Season.tournament_id, Season.start_date)
+        .filter(or_(Season.id == season_id, Season.slug == season_slug))
+        .limit(1)
+    )
+
+    tournament_result = await db.execute(tournament_query)
+    tournament_data = tournament_result.first()
+
+    if not tournament_data:
+        return None  # Якщо не знайшли турнір, повертаємо None
+
+    tournament_id, current_start_date = tournament_data
+
+    # Отримуємо id поточного сезону
+    current_season_query = (
+        select(Season.id)
+        .filter(and_(
+            Season.tournament_id == tournament_id,
+            or_(Season.id == season_id, Season.slug == season_slug),
+        ))
+        .limit(1)
+    )
+
+    current_season_result = await db.execute(current_season_query)
+    current_season_id = current_season_result.scalar()
+
+    if not current_season_id:
+        return None
+
+    # Основний запит для пошуку попереднього переможця
+    stmt = (
+        select(
+            Season.id.label("season_id"),
+            Season.team_winner_id.label("season_winner_id"),
+            Season.year.label("season_year"),
+            Team.name.label("season_winner_name"),
+            Team.city.label("season_winner_city"),
+            Team.slug.label("season_winner_slug"),
+            Team.logo.label("season_winner_logo"),
+        )
+        .join(Team, Team.id == Season.team_winner_id)
+        .filter(
+            and_(
+                Season.tournament_id == tournament_id,  # Фільтр по турніру
+                Season.team_winner_id.isnot(None),  # Тільки сезони з переможцем
+                Season.id != current_season_id,  # Виключаємо поточний сезон
+                Season.end_date < current_start_date,  # Тільки попередні сезони
+            )
+        )
+        .order_by(desc(Season.end_date))  # Останній завершений сезон
+        .limit(1)
+    )
 
     result = await db.execute(stmt)
     return result.first()
@@ -144,9 +242,7 @@ async def link_season_team(db: AsyncSession, season_id: int, team_id: int):
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
 
-    # Логіка для прив'язки команди до сезону
-    # Наприклад, якщо у вас є таблиця для зв'язків, ви можете створити запис тут
-    # Пряме прив'язування до сезону
+
     season.teams.append(team)  # Додайте команду до списку команд сезону
 
     # Збережіть зміни в базі даних
@@ -161,23 +257,23 @@ async def link_season_team(db: AsyncSession, season_id: int, team_id: int):
     return team_schema
 
 
-async def get_seasons_region(
-    db: AsyncSession, region_slug: str, season_slug: str = None, **kwargs
-):
+async def get_seasons_region(db: AsyncSession, region_slug: str, season_slug: str = None, **kwargs):
+
     current_year = datetime.now().year
 
     stmt = (
         select(
             Region.slug.label("region_slug"),
+            Region.emblem.label("region_logo"),
             Season.id.label("season_id"),
             Season.slug.label("season_slug"),
             Season.name.label("season_name"),
-            func.strftime(
-                "%Y", func.date(func.datetime(Season.start_date, "unixepoch"))
-            ).label("start_date"),
-            func.strftime(
-                "%Y", func.date(func.datetime(Season.end_date, "unixepoch"))
-            ).label("end_date"),
+            Season.full_name.label("season_full_name"),
+            func.strftime("%Y", func.date(func.datetime(Season.start_date, "unixepoch"))).label("start_date"),
+            func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch"))).label("end_date"),
+            Tournament.football_type.label("football_type"),
+            Tournament.slug.label("tournament_slug"),
+            Organization.tournament_level.label("tournament_level"),
         )
         .join(Tournament, Tournament.id == Season.tournament_id)
         .join(Organization, Organization.id == Tournament.organization_id)
@@ -191,7 +287,7 @@ async def get_seasons_region(
             func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch")))
             >= str(current_year),
         )
-        .order_by(desc(Season.end_date))
+        .order_by(Tournament.level_int, desc(Season.end_date))
     )
 
     result = await db.execute(stmt)
@@ -211,6 +307,7 @@ def get_seasons_region_id(db: Session, region_id: int):
 
 
 async def create_season(db: AsyncSession, season: schemas.SeasonCreateSchemas):
+
     db_season = Season(**season.dict())
     async with db.begin():
         db.add(db_season)
@@ -219,9 +316,7 @@ async def create_season(db: AsyncSession, season: schemas.SeasonCreateSchemas):
     return db_season
 
 
-async def update_season(
-    db: AsyncSession, season_id: int, season: schemas.SeasonUpdateSchemas
-):
+async def update_season( db: AsyncSession, season_id: int, season: schemas.SeasonUpdateSchemas):
     async with db() as session:
         result = await session.execute(
             stmt=select(Season).filter(Season.id == season_id)
@@ -251,59 +346,6 @@ async def delete_season(db: AsyncSession, season_id: int):
         await session.delete(db_season)
         await session.commit()
         return db_season
-
-
-# def link_season_team(db: Session, season_id: int, team_id: int):
-#     """Створення запису в таблиці-медіаторі (m2m) Сезон-кКоманда"""
-#
-#     season = db.query(Season).filter(Season.id == season_id).first()
-#     team = db.query(Team).filter(Team.id == team_id).first()
-#     season.teams_associations.append(team)
-#     db.commit()
-#     return season
-
-
-# async def link_season_team(db: AsyncSession, season_id: int, team_id: int):
-#     # Створюємо транзакцію
-#     async with db.begin():
-#         season_result = await db.execute(select(Season).filter(Season.id == season_id))
-#         # team_result = await db.execute(select(Team).filter(Team.id == team_id))
-#
-#         season = season_result.scalars().first()
-#         team = await get_team_for_id(db, team_id=team_id)
-#
-#         if not season:
-#             raise HTTPException(status_code=404, detail="Сезон не знайдений")
-#         if not team:
-#             raise HTTPException(status_code=404, detail="Команда не знайдена")
-#
-#         # Додаємо команду до сезону
-#         await db.execute(
-#             insert(TeamSeason).values(season_id=season.id, team_id=team.id)
-#         )
-#         await db.commit()
-#
-#         # Перетворюємо об'єкт команди у схему Pydantic
-#         teams = [TeamSchemas.from_orm(team).dict()]
-#
-#         return JSONResponse(content={"status": "success", "teams": teams})
-
-
-# async def link_season_team(db: AsyncSession, season_id: int, team_id: int):
-#     async with db.begin():
-#         season = await get_season_for_id(db, season_id=season_id)
-#         team = await get_team_for_id(db, team_id=team_id)
-#
-#         if not season:
-#             raise HTTPException(status_code=404, detail="Сезон не знайдений")
-#         if not team:
-#             raise HTTPException(status_code=404, detail="Команда не знайдена")
-#
-#         # Додаємо команду до сезону
-#         season.teams_associations.append(team)  # не потрібно використовувати await
-#         await db.commit()
-#
-#         return JSONResponse(content={"status": "success", "teams": team.name})
 
 
 async def link_season_team(db: AsyncSession, season_id: int, team_id: int):

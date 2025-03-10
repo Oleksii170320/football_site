@@ -16,7 +16,10 @@ async def get_distinct_stages_with_groups(
     """Отримує унікальні stage_id з групами для певного сезону асинхронно."""
 
     stmt = (
-        select(Stage.id)
+        select(
+            Stage.id,
+            Stage.name
+        )
         .join(Match, Match.stage_id == Stage.id)
         .join(Season, Season.id == Match.season_id)
         .distinct()

@@ -1,5 +1,7 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+
 <style>
-    .person-photo {
+   .person-photo {
         width: 100%; /* Зображення заповнює ширину батьківського контейнера */
         height: 200px; /* Висота зображення */
         object-fit: cover; /* Обрізає частини зображення, якщо потрібно */
@@ -11,9 +13,9 @@
 </style>
 
 
-<h2 class="header_page">Гравці та дійові особи</h2>
+<h6 class="header_page">Гравці та дійові особи</h6>
 
-<div class="container" style="width: 100%;">
+<div class="block-info">
     <div class="container my-5">
         <div class="row">
             {% for person in persons %}

@@ -8,7 +8,7 @@ from helpers.authentications import (
 )
 from services import tournament as crud
 from services.news_list import get_news_list
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from services.tournament import get_tournament_slug, get_tournament_archive
 from validation import tournament as schemas
 

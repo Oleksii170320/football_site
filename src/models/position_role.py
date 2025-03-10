@@ -68,10 +68,7 @@ class PositionRole(Base):
         default=1,  # Значення за замовчуванням на рівні Python-коду
         server_default="1",  # Значення за замовчуванням на рівні бази даних
     )
-    position_id: Mapped[int] = mapped_column(
-        ForeignKey("positions.id", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False,
-    )
+    position_id: Mapped[int] = mapped_column(ForeignKey("positions.id", onupdate="CASCADE", ondelete="CASCADE"),nullable=False,)
     team_person_id: Mapped[int] = mapped_column(
         ForeignKey(
             "team_person_association.id", onupdate="CASCADE", ondelete="CASCADE"

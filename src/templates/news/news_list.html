@@ -1,35 +1,39 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/news/stl_news_list.css">
 
 
-<h2 class="header_page">Стрічка новин</h2>
+<h6 class="header_page">Стрічка новин</h6>
 
-<div>
+<div class="block-info">
 
     {% for news in news_list %}
-        <div class="card mb-3" style="max-width: 100%;">
-            <a href="/news/{{ news.id }}" style="text-decoration: none; color: inherit;">
-                <div class="row g-0">
+        <div class="card card-news mb-3">
+          <a href="/news/{{ news.id }}" style="text-decoration: none; color: inherit;">
+            <div class="row g-0">
 
-                    <div class="col-md-4">
-                        <img
-                            src="{{ news.photo }}"
-                            class="img-fluid rounded-start"
-                            alt="{{ news.topic }}"
-                            style="margin: 10px"
-                        >
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h3>{{ news.topic }}</h3>
-                            <h6 class="card-title">{{ news.brief }}</h6>
-                            <p class="card-text"><small class="text-muted">{{ news.date }}</small></p>
-                            <p class="card-text"><small class="text-muted">{{ news.region_name}}</small></p>
-                        </div>
-                    </div>
-
+                <div class="news-photo-container col-md-4">
+                    {% if news.photo %}
+                      <img src="{{ news.photo }}"
+                           class="img-fluid rounded-start"
+                           alt="{{ news.topic }}"
+                           style="margin: 10px">
+                    {% else %}
+                      <img src="{{ url_for('static', path='/img/regions/' ~ news.region_logo) }}"
+                           class="card-img-top team-logo"
+                           alt="{{ news.region_logo }} logo">
+                    {% endif %}
                 </div>
-            </a>
-        </div>
 
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5>{{ news.topic }}</h5>
+                        <h6 class="card-title">{{ news.brief }}</h6>
+                        <p class="card-text"><small class="text-muted">{{ news.date }}</small></p>
+                        <p class="card-text"><small class="text-muted">{{ news.region_name}}</small></p>
+                    </div>
+                </div>
+            </div>
+          </a>
+        </div>
     {% endfor %}
 </div>

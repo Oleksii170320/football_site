@@ -35,15 +35,14 @@ async def get_news_list_region(db: Session, region_slug: str):
         select(
             News.id,
             News.event,
-            func.strftime("%d-%m-%Y", func.datetime(News.event, "unixepoch")).label(
-                "date"
-            ),
+            func.strftime("%d-%m-%Y", func.datetime(News.event, "unixepoch")).label("date"),
             News.brief,
             News.topic,
             News.photo,
             News.description,
             News.region_id,
             Region.name.label("region_name"),
+            Region.emblem.label("region_logo"),
         )
         .join(Region, Region.id == News.region_id)
         .filter(Region.slug == region_slug)

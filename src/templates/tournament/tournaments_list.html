@@ -1,31 +1,68 @@
-<style>
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/tournament/stl_tournament_list.css">
 
-</style>
+<h6 class="header_page">Футбольні та футзальні турніри області</h6>
 
+<div class="block-info">
 
-<h2 class="header_page">Футбольні та футзальні турніри області</h2>
+    {% set unique_types = [] %}
+    {% for type in tournaments if type.football_type.value not in unique_types %}
+    {% set _ = unique_types.append(type.football_type.value) %}
 
+        <div class="level">
 
-<!--<div class="list-group card" style="border: 1px solid #d6d2d2; width: 100%;">-->
-<div class="container" style="width: 100%;">
+          {% set unique_ranks = [] %}
+          {% for rank in tournaments if rank.organization_level not in unique_ranks %}
+          {% set _ = unique_ranks.append(rank.organization_level) %}
 
-    {% for organization in organizations %}
-    <div class="card mb-3" style="width: 99%;">
-        <div class="list-group-item list-group-item-action" style="margin: 5px;">
-            <h4 style="padding: 10px;">{{ organization.full_name }}:</h4>
-            <ol>
-                {% for tournament in tournaments if tournament.organization_id == organization.organization_id %}
-                <h5>
-                    <li>
-                        <a href="/tournaments/{{ tournament.slug }}">
-                            {{ tournament.full_name }}
-                        </a>
-                    </li>
-                </h5>
-                {% endfor %}
-            </ol>
+              <div class="level-type">
+
+                  <h6>
+                      <span>{{ type.football_type.value }}</span> >
+                      <span>{{ rank.organization_level.value }} турніри</span>
+                  </h6>
+
+                  {% set unique_organizations = [] %}
+                  {% for organization  in tournaments
+                      if organization.organization_name not in unique_organizations
+                      and organization.football_type.value  == type.football_type.value
+                      and organization.organization_level  == rank.organization_level
+                  %}
+                  {% set _ = unique_organizations.append(organization.organization_name) %}
+
+                      {% set unique_tournaments = [] %}
+                      {% for tournament in tournaments
+                          if tournament.tournament_full_name not in unique_tournaments
+                          and tournament.organization_level   == rank.organization_level
+                          and tournament.football_type.value   == type.football_type.value
+                          and tournament.organization_name   == organization.organization_name
+                      %}
+                      {% set _ = unique_tournaments.append(tournament.tournament_full_name) %}
+
+                          <div class="tournament-logo">
+                              {% if tournament.tournament_logo %}
+                                  <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ tournament.tournament_logo) }}"
+                                       alt="{{ tournament.tournament_logo }} logo">
+                              {% else %}
+                                  <img src="{{ url_for('static', path='/img/techical_image/icon_cupNow.jpg') }}"
+                                       alt="Default tournament logo">
+                              {% endif %}
+
+                               <a href="/organizations/{{ tournament.organization_slug }}">
+                                  <p>{{ tournament.organization_name }}</p>
+                               </a>
+
+                               <p>-</p>
+
+                               <a href="/tournaments/{{ tournament.tournament_slug }}">
+                                   <p>{{ tournament.tournament_full_name }}</p>
+                               </a>
+                          </div>
+                      {% endfor %}
+                  {% endfor %}
+              </div>
+          {% endfor %}
         </div>
-    </div>
     {% endfor %}
 </div>
 

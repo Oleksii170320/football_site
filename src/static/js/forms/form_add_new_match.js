@@ -1,4 +1,5 @@
-    document.getElementById('matchForm').addEventListener('submit', async function (event) {
+document.getElementById('matchForm')
+    .addEventListener('submit', async function (event) {
         event.preventDefault();  // Зупиняємо стандартну відправку форми
 
         const stageId = document.getElementById('round_id').value;
@@ -11,10 +12,13 @@
             standingField.value = "true";   // Інакше передаємо true
         }
 
-        const date = document.getElementById('startDate').value;
+        let date = document.getElementById('startDate').value;
+        if (!date) {
+            date = "2100-01-01";
+        }
         let time = document.getElementById('startTime').value;
         if (!time) {
-            time = "04:00";
+            time = "01:00";
         }
 
         const team1Id = document.getElementById('team1_id').value;
@@ -27,9 +31,14 @@
             return;
         }
 
-        const datetime = date && time ? new Date(`${date}T${time}`) : null;
-        const epochTime = datetime ? Math.floor(datetime.getTime() / 1000) : null;
+        const datetimeString = `${date}T${time}`;
+        const datetime = new Date(datetimeString);
+        const epochTime = isNaN(datetime.getTime()) ? null : Math.floor(datetime.getTime() / 1000);
         document.getElementById('event_epoch').value = epochTime;
+        // const datetime = date && time ? new Date(`${date}T${time}`) : null;
+        // const epochTime = datetime ? Math.floor(datetime.getTime() / 1000) : null;
+        // document.getElementById('event_epoch').value = epochTime;
+
 
         const formData = new FormData(this);
 

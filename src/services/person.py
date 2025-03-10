@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import desc, extract, and_, func, Integer, case, select
+from sqlalchemy import desc, extract, and_, func, Integer, case, select, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, aliased
 
@@ -22,8 +22,9 @@ from models import (
     MatchProperties,
     Match,
     RefEvent,
-    MatchEvent,
+    MatchEvent, Round, Stage, Group,
 )
+from services.matches.match import get_region_matches
 from validation import person as schemas
 
 
@@ -38,19 +39,12 @@ async def get_person(db: AsyncSession, person_id: int):
             Person.name,
             Person.lastname,
             Person.surname,
-            func.strftime(
-                "%d-%m-%Y", func.date(func.datetime(Person.birthday, "unixepoch"))
-            ).label("birthday"),
+            func.strftime("%d-%m-%Y", func.date(func.datetime(Person.birthday, "unixepoch"))).label("birthday"),
             Person.region_id,
             Region.slug.label("region_slug"),
             Region.name.label("region_name"),
             # Додавання поля для обчислення віку
-            (
-                current_year
-                - func.strftime("%Y", func.datetime(Person.birthday, "unixepoch")).cast(
-                    Integer
-                )
-            ).label("age"),
+            (current_year-func.strftime("%Y", func.datetime(Person.birthday, "unixepoch")).cast( Integer)).label("age"),
         )
         .join(Region, Region.id == Person.region_id)
         .filter(Person.id == person_id)
@@ -88,48 +82,74 @@ def get_person_team(db: Session, person_id: int):
     )
 
 
-async def get_person_matches(db: AsyncSession, person_id: int):
+async def get_person_matches(db: AsyncSession, person_id: int = None):
     """Команди та періоди, в якіх грав гравець"""
 
-    Team1 = aliased(Team)
-    Team2 = aliased(Team)
+    Team1, Team2 = aliased(Team), aliased(Team)
 
     stmt = (
         select(
-            Person.id.label("person_id"),
             Match.id.label("match_id"),
-            func.strftime("%d-%m-%Y", func.datetime(Match.event, "unixepoch")).label(
-                "event"
-            ),
+            Match.event.label("match_datatime"),
+            func.strftime("%d.%m.%Y", func.datetime(Match.event, "unixepoch", "localtime")).label("event"),
+            func.strftime("%H:%M", func.datetime(Match.event, "unixepoch", "localtime")).label("event_time"),
+            Match.round_id,
+            Match.stage_id,
+            Match.group_id,
+            Match.team1_penalty,
+            Match.team1_goals,
+            Match.extra_time,
+            Match.team2_penalty,
+            Match.team2_goals,
+            Match.status,
+            Match.match_info,
+            Match.match_video,
             Team1.id.label("team1_id"),
             Team1.slug.label("team1_slug"),
             Team1.logo.label("team1_logo"),
             Team1.name.label("team1_name"),
             Team1.city.label("team1_city"),
-            Match.team1_penalty,
-            Match.team1_goals,
-            Match.team2_penalty,
-            Match.team2_goals,
             Team2.id.label("team2_id"),
             Team2.slug.label("team2_slug"),
             Team2.logo.label("team2_logo"),
             Team2.name.label("team2_name"),
             Team2.city.label("team2_city"),
-            Season.name.label("season_name"),
+            Round.name.label("round_name"),
+            Stage.name.label("stage_name"),
+            Group.name.label("group_name"),
+            Season.id.label("season_id"),
+            Season.slug.label("season_slug"),
+            Season.logo.label("season_logo"),
+            Season.full_name.label("season_full_name"),
             Season.year.label("season_year"),
+            Region.slug.label("region_slug"),
+            Region.status.label("region_status"),
+            Region.name.label("region_name"),
+            Tournament.football_type.label("football_type"),
+            Tournament.logo.label("tournament_logo"),
+            Person.id.label("person_id"),
         )
+        .join(Season, Season.id == Match.season_id)
+        .join(Person, Person.id == TeamPerson.person_id)
+        .join(Tournament, Tournament.id == Season.tournament_id)
+        .join(Organization, Organization.id == Tournament.organization_id)
+        .join(Region, Region.id == Organization.region_id)
         .join(Team1, Team1.id == Match.team1_id)
         .join(Team2, Team2.id == Match.team2_id)
+        .join(Round, Round.id == Match.round_id)
+        .outerjoin(Stage, Stage.id == Match.stage_id)
+        .outerjoin(Group, Group.id == Match.group_id)
         .join(MatchProperties, MatchProperties.match_id == Match.id)
         .join(PositionRole, PositionRole.id == MatchProperties.player_id)
         .join(TeamPerson, TeamPerson.id == PositionRole.team_person_id)
-        .join(Person, Person.id == TeamPerson.person_id)
-        .join(Season, Season.id == Match.season_id)
+
         .filter(Person.id == person_id)
         .order_by(desc(Match.event))
     )
     result = await db.execute(stmt)
     return result.all()
+
+
 
 
 async def get_person_team_career(db: AsyncSession, person_id: int):

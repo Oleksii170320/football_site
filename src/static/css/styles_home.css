@@ -5,19 +5,19 @@
     margin: 0 auto; /* Центруйте контейнер */
   }
 
-  .card {
-    width: 100%; /* Картка заповнює 100% ширини контейнера */
-    max-width: 600px; /* Максимальна ширина картки */
-    margin: 0 auto; /* Центруйте картки */
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s;
-  }
+  /*.card {*/
+  /*  width: 100%; !* Картка заповнює 100% ширини контейнера *!*/
+  /*  max-width: 600px; !* Максимальна ширина картки *!*/
+  /*  margin: 0 auto; !* Центруйте картки *!*/
+  /*  border-radius: 10px;*/
+  /*  overflow: hidden;*/
+  /*  transition: transform 0.2s;*/
+  /*}*/
 
-  .card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+  /*.card:hover {*/
+  /*  transform: scale(1.05);*/
+  /*  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+  /*}*/
 
   .card-img-top {
     width: 100%; /* Зображення заповнює всю ширину картки */

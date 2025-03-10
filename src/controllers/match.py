@@ -6,15 +6,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.templating import render
 
 from core.database import get_db
-from services import match as crud
-from services.match import (
+from services.matches import matches_crud as crud
+from services.matches.match import (
+    get_match,
+    get_matches_all_information,
     get_match_statistics,
     get_match_event,
-    get_match_replacement,
     get_replacement,
 )
 from services.news_list import get_news_list
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from validation import match as schemas
 
 
@@ -31,7 +32,7 @@ async def all_matches_list(request: Request, db: AsyncSession = Depends(get_db))
         {
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "matches": await crud.get_matches(db),
+            "matches": await get_matches_all_information(db),
         },
     )
 
@@ -47,7 +48,7 @@ async def read_match(
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": await crud.get_match(db, match_id=match_id),
+            "match": await get_match(db, match_id=match_id),
         },
     )
 
@@ -63,9 +64,8 @@ async def match_summary_review(
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": await crud.get_match(db, match_id=match_id),
+            "match": await get_match(db, match_id=match_id),
             "events": await get_match_event(db, match_id=match_id),
-            "replacement": await get_match_replacement(db, match_id=match_id),
         },
     )
 
@@ -81,7 +81,7 @@ async def match_summary_lineups(
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "match": await crud.get_match(db, match_id=match_id),
+            "match": await get_match(db, match_id=match_id),
             "lineups": await get_match_statistics(db, match_id=match_id),
             "replacements": await get_replacement(db, match_id=match_id),
         },
@@ -186,7 +186,7 @@ async def create_match(
 async def read_matches_test(
     skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
 ):
-    matches = await crud.get_matches(db, skip=skip, limit=limit)
+    matches = await get_matches_all_information(db, skip=skip, limit=limit)
     return matches
 
 
