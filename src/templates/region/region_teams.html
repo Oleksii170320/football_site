@@ -1,0 +1,44 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/region/styles_region_cards.css">
+
+
+<h5 class="header_page">Футбольні та футзальні колективи області</h5>
+
+<div class="block-info">
+
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="teams-container">
+
+        {% for team in teams %}
+
+            <div class="col">
+                <div class="teams-card">
+                  <a href="/teams/{{ team.slug }}/results">
+
+                    <div class="team-logo-container">
+                        {% if team.logo %}
+                          <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}"
+                               class="card-img-top team-logo"
+                               alt="{{ team.name }} logo">
+                        {% else %}
+                          <img src="/static/img/techical_image/icon_team.PNG"
+                               class="card-img-top team-logo"
+                               alt="{{ team.name }} logo">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+
+                        <h6 class="card-title">{{ team.name }}</h6>
+                        <p>({{ team.city }})</p>
+                        <p class="card-text">{{ team.region.name }} область</p>
+
+                    </div>
+
+                  </a>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</div>

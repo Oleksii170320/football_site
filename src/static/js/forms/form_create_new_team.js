@@ -1,31 +1,58 @@
 $(document).ready(function () {
+
     // Встановлення обробників подій для вводу
     $('#teamName, #cityName, #regionName').on('input change', updateFullNameAndSlug);
 
     function updateFullNameAndSlug() {
-        const teamName = $('#teamName').val();
-        const cityName = $('#cityName').val();
-        const regionName = $('#regionName option:selected').text() || '';
+        let teamName = $('#teamName').val().trim();
+        let cityName = $('#cityName').val().trim();
+        let regionName = $('#regionName').find(':selected').text().trim();
+        let regionSlug = $('#regionName').find(':selected').attr('data-slug');
 
-        // Формуємо повну назву команди
-        const fullName = `${teamName} (${cityName}, ${regionName} обл.)`;
+
+        if (!teamName || !cityName || regionName === "Оберіть область") {
+            $('#full-name-input').val('');
+            $('#team_slug, #teamSlugInput').val('');
+            $('#regionSlugInput').val('');
+            return;
+        }
+
+        let fullName = `${teamName} (${cityName}, ${regionName} обл.)`;
         $('#full-name-input').val(fullName);
 
-        // Формуємо slug без пробілів
-        const slug = convertToSlug(`${teamName} (${cityName})`);
-
+        let slug = convertToSlug(`${teamName}-${cityName}`);
         $('#team_slug, #teamSlugInput').val(slug);
+        $('#regionSlugInput').val(regionSlug); // Оновлюємо слаг
+
     }
+
+    // Додаємо обробник події для випадаючого списку областей
+
+
+$('#regionName').change(function () {
+    let selectedOption = $(this).find(':selected');
+    console.log("Змінилось значення!");
+    console.log("Область:", selectedOption.text());
+    console.log("Slug області:", selectedOption.attr('data-slug'));
+});
+
+
 
     function convertToSlug(text) {
         const cyrillicToLatinMap = {
             'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'є': 'ye', 'э': 'e',
-            'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'ы': 'y', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+            'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
             'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-            'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ю': 'yu', 'я': 'ya', 'ь': '.', 'ъ': '', ' ': '-',
-            '"': '', ',': '', '.': '', '—': '-', '’': ''
+            'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ю': 'yu', 'я': 'ya', 'ь': '', 'ъ': '', ' ': '-',
+            '"': '', ',': '', '.': '', '—': '-', '’': '', "'": ''
         };
-        return text.toLowerCase().split('').map(char => cyrillicToLatinMap[char] || char).join('');
+
+        return text.toLowerCase()
+            .split('')
+            .map(char => cyrillicToLatinMap[char] || char)
+            .join('')
+            .replace(/[^a-z0-9-]/g, '')  // Видаляємо всі не-латинські символи, цифри та дефіси
+            .replace(/-+/g, '-'); // Замінюємо кілька дефісів на один
     }
 
     // Динамічний пошук стадіонів
@@ -59,6 +86,7 @@ $(document).ready(function () {
         const selectedSlug = $(this).find(':selected').data('slug');
         $('#regionSlugInput').val(selectedSlug);
         $('#selectedRegionSlug').text(selectedSlug);
+        updateFullNameAndSlug(); // Додано виклик функції оновлення
     });
 
     // Обробка форми створення команди
@@ -130,3 +158,4 @@ $(document).ready(function () {
         $('#uploadFormModal').hide();
     });
 });
+

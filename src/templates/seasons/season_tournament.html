@@ -1,0 +1,141 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_season_tournament.css">
+
+
+<h6 class="header_page">ІНФОРМАЦІЯ ПРО ТУРНІР</h6>
+
+<div class="block-info">
+
+    <h6 class="season-titles">ПРО ТУРНІР</h6>
+
+    <div class="season-block-info">
+        <div class="season-full-name">
+            <img src="/static/img/techical_image/tournament_icons/icon_team_name.PNG" alt="logo"/>
+            <span>Повна назва:</span> {{ season.tournament_full_name }}
+        </div>
+        <div class="season-period">
+            <img src="/static/img/techical_image/tournament_icons/icon_calendar.png" alt="logo"/>
+            <span>Сезон проводиться з</span> {{ season.start_date }} по {{ season.end_date }}
+        </div>
+        <div class="season-site">
+            <img src="/static/img/techical_image/tournament_icons/icon_site.png" alt="logo"/>
+            <span>Офіційний сайт:</span>
+            {% if season.tournament_website %}
+                <a href="http://{{ season.tournament_website }}/" target="_blank">{{ season.tournament_website }}</a>
+            {% else %}-{% endif %}
+        </div>
+        <div class="season-level">
+            <img src="/static/img/techical_image/tournament_icons/icon_level.png" alt="logo"/>
+            <span>Рівень турніру в ієрархії:</span>
+              {% if season.tournament_level or season.tournament_level_int %}
+                {{ season.tournament_level_int }}({{ season.tournament_level }}) - {{ season.organization_level.value }} змагання під егідою
+                <a href="/organizations/{{ season.organization_slug }}">{{ season.organization_name }}</a>
+              {% else %}-{% endif %}
+        </div>
+        <div class="season-level-up">
+            <img src="/static/img/techical_image/tournament_icons/icon_arrowUp.png" alt="logo"/>
+            <span>Підвищення в класі:</span>
+
+            {% if season.tournament_level_up %}
+              <a href="#">{{ season.tournament_level_up }}</a>
+            {% else %}-{% endif %}
+
+        </div>
+        <div class="season-level-down">
+            <img src="/static/img/techical_image/tournament_icons/icon_arrowDown.png" alt="logo"/>
+            <span>Пониження в класі:</span>
+
+            {% if season.tournament_level_down %}
+              <a href="#">{{ season.tournament_level_down }}</a>
+            {% else %}-{% endif %}
+
+        </div>
+        <div class="season-winner">
+            <img src="/static/img/techical_image/tournament_icons/icon_cupNow.jpg" alt="logo"/>
+            <span>Чемпіон сезону:</span>
+
+            {% if season.season_winner_id %}
+
+              {% if season.season_winner_logo %}
+                <img src="{{ url_for('static', path='/img/teams/' ~ season.season_winner_logo) }}"
+                     alt="{{ season.season_winner_name }} logo"
+                >
+              {% endif %}
+
+              <a href="/teams/{{ season.season_winner_slug }}/results">
+                  {{ season.season_winner_name }} ({{ season.season_winner_city }})
+              </a>
+
+            {% else %}-{% endif %}
+
+        </div>
+        <div class="season-previous-winner">
+
+            <img src="/static/img/techical_image/tournament_icons/icon_cup.png" alt="logo"/>
+            <span>Попередній переможець:</span>
+
+            {% if previous_winner %}
+
+              {% if previous_winner.season_winner_logo %}
+                <img src="{{ url_for('static', path='/img/teams/' ~ previous_winner.season_winner_logo) }}"
+                     alt="{{ previous_winner.season_winner_name }} logo">
+              {% endif %}
+
+              <a href="/teams/{{ previous_winner.season_winner_slug }}/results">
+                {{ previous_winner.season_winner_name }} ({{ previous_winner.season_winner_city }})
+              </a>
+            {% else %}-{% endif %}
+        </div>
+        <div class="season-bombardier">
+            <img src="/static/img/techical_image/tournament_icons/icon_bombardier.png" alt="logo"/>
+            <span>Кращий бомбардир:</span> <a href="#">-</a>
+        </div>
+    </div>
+
+    <h6 class="season-titles">ЛОКАЦІЯ</h6>
+
+    <div class="season-block-info">
+
+        {% if season.region_name %}
+
+          <div class="season-geography">
+            <img src="/static/img/techical_image/tournament_icons/icon_location.jpg" alt="logo"/>
+            Україна,
+
+            <a href="/region/{{ region.slug }}" title="Перейти до головної сторінки: {{ region.name }} область">
+              {% if season.region_status == false %}
+                {{ season.region_name }} область,
+              {% else %}
+                {{ season.region_name }},
+              {% endif %}
+            </a>
+
+            {% if season.organization_level.value == 'районні' %}
+              <span>Районний турнір</span>
+            {% elif season.organization_level == 'обласні' %}
+              <span>Обласний турнір</span>
+            {% elif season.organization_level == 'республ.' %}
+              <span>Україна</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if season.tournament_city %}
+            <div class="season-geography">
+            <img src="/static/img/techical_image/tournament_icons/icon_city.jpg" alt="logo"/>
+            <span>Місто:</span> {{ season.tournament_city }} </div>
+        {% endif %}
+    </div>
+
+
+    {% if season.tournament_description %}
+        <h6 class="season-titles">ОПИС ТУРНІРУ</h6>
+        <div class="season-block-info" style="padding: 0px 10px">
+            {{ season.tournament_description }}
+            <p id="tournament_desc">
+        </div>
+    {% endif %}
+</div>
+
+
+

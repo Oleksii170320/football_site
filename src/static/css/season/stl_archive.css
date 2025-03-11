@@ -1,0 +1,224 @@
+.archive-rows {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розподіляє рівномірно */
+    gap: 2px;
+    color: #323232;
+    padding: 5px 10px; /* Зроблено трохи більше для кращого вигляду */
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.archive-header div, .archive-rows div {
+    /*flex: 1; !* Робить ширину кожного елемента однаковою *!*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.archive-header {
+    background-color: #ededed;
+    font-weight: bold;
+}
+
+.archive-header:hover {
+    background-color: #ececec;
+}
+
+
+.archive-header div {
+    text-transform: uppercase;
+    font-size: 0.7em;
+}
+
+
+.archive-rows:hover { background-color: #f6f1f1; }
+
+/* Центруємо логотип */
+.t-team-logo,
+.table-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.t-team-logo img,
+.table-logo img {
+    max-height: 25px;
+    width: auto;
+}
+
+/* Встановлення однакових розмірів для колонок */
+.table-season { width: 60%; }
+.table-logo { width: 5%; }
+.table-team { width: 35%; }
+
+.t-team-num { width: 2%; }
+.t-team-logo { width: 6%; }
+.t-team-name { width: 52%; }
+.t-team-status { width: 20%; }
+.t-team-btn { width: 20%; }
+
+.t-team-name a,
+.table-season a,
+.table-team a {
+    text-decoration: none;
+    color: #2c232c;
+}
+
+.t-team-name a:hover,
+.table-season:hover,
+.table-team:hover {
+    text-decoration: underline;
+}
+
+.archive-rows .t-new-add-team-name,
+.static-entry .t-team-add-name,
+.archive-rows >.t-team-name,
+.archive-rows >.table-season,
+.archive-rows >.table-team {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Вирівнює вміст по лівому краю */
+    text-align: left; /* Текст теж вирівнюється вліво */
+    padding-left: 2px; /* Додає трохи відступу для кращого вигляду */
+}
+
+.archive-header .t-team-name,
+.archive-header .table-team {
+    text-align: right;
+}
+
+.t-team-status { color: green; }
+.t-team-btn { color: red; }
+.t-team-btn:hover {
+    text-decoration:underline;
+    font-weight: 500;
+}
+
+
+.block-info-add {margin-bottom: 5px;}
+.t-team-add-num { width: 2%; }
+.t-team-add-logo { width: 6%; }
+.t-team-add-name { width: 42%;}
+.t-new-add-team-name { width: 67%; }
+.t-team-add_city { width: 25%; }
+.t-team-add_region { width: 25%; }
+
+.t-team-add-logo img {
+    max-height: 25px;
+    width: auto;
+}
+.t-team-add-name span {font-weight: 400; padding-left: 3px;}
+.t-team-add-name:hover {color: #41ac50}
+
+.rows-team-create .t-team-add-name {
+    display: flex;
+    justify-content: flex-start; /* Вирівнює контент вліво */
+    text-align: left; /* Додатково вирівнює текст */
+    color: #5fab54;
+}
+
+.rows-team-create .t-team-add-name:hover {
+    color: #2c232c;
+    text-decoration: underline;
+
+}
+
+
+.btn-add-team, .btn-input-team { border-top: 1px solid #41ac50; }
+
+.static-entry { border-bottom: 1px solid #41ac50;}
+
+.rows-team-list .form-create-team,
+.rows-team-list { background-color: #f4f4f4; }
+.rows-team-list:hover {background-color: #ececec;}
+
+.archive-rows .t-new-add-team-name {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Вирівнює вміст по лівому краю */
+    text-align: left; /* Текст теж вирівнюється вліво */
+    padding-left: 2px; /* Додає трохи відступу для кращого вигляду */
+}
+
+.t-new-add-team-name {
+    font-weight: normal;
+}
+
+.t-new-add-team-name span {
+    color: #050505;
+    font-weight: 500;
+    margin-right: 3px;
+}
+
+.t-new-add-team-name a:hover {
+    text-decoration: underline;
+}
+
+.t-team-name a strong:hover,
+.t-new-add-team-name a strong:hover {color: #41ac50}
+
+.t-team-add_region span{
+    font-weight: bold;
+    color: #41ac50;
+    border-bottom: 1px dashed #41ac50;
+}
+
+.t-team-add_region span:hover {
+    color: #2ec727;
+    border-bottom: 1px solid #ea0202;
+}
+
+.btn-input-team p {
+    text-align: center;
+    color: #535556;
+    font-size: 0.8em;
+    background-color: #f4f4f4;
+    padding: 5px;
+    margin: 0px;
+}
+.add-team-error {
+    color: #535556;
+    font-size: 0.8em;
+    background-color: #f4f4f4;
+    padding-left: 25px;
+}
+
+#btn_create_new_team_in_season {
+    color: #2ec627;
+    font-weight: 500;
+    gap: 15px;
+}
+
+#btn_create_new_team_in_season:hover {
+    color: #12650d;
+    text-decoration: underline;
+}
+
+.form-input {
+    width: 100%;
+    border: 1px solid #ececec;
+    padding: 3px 0px 3px 0px;
+}
+
+.form-input:not(:placeholder-shown) {
+    padding-left: 10px
+}
+
+.form-input::placeholder{
+    color: #808283;
+    padding-left: 10px;
+}
+
+
+/*#teamForm,*/
+.write-true { display: none; }
+
+#teamForm {
+    background-color: #ececec;
+    padding: 5px;
+}

@@ -1,0 +1,13 @@
+/* Встановлення однакових розмірів для колонок */
+
+.career-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.career-logo img {
+    max-height: 1.5em;
+    max-width: 1.5em;
+    width: auto;
+}

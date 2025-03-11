@@ -1,0 +1,182 @@
+.match-statistic-headers {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #cbc9c9;
+    width: 100%;
+    margin: 0px;
+    background-color: #eeeeee;
+}
+
+
+.match-statistic-headers-team1,
+.match-statistic-headers-team2 {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.match-statistic-headers-team2 {
+    border-left: 1px solid #cccccc;
+}
+
+.match-statistic-content-team1 {
+    display: flex;
+    justify-content: left;
+    gap: 3px;
+}
+
+.match-statistic-content-team2 {
+    display: flex;
+    justify-content: right;
+    gap: 3px;
+}
+
+.match-statistic-content-team1,
+.match-statistic-content-team2 {
+    border-bottom: 1px solid #dedcdc;
+    height: 1.8em;
+
+}
+
+.match-statistic-content-team1:hover,
+.match-statistic-content-team2:hover {
+    background-color: #eeeeee;
+}
+
+.match-statistic-minute {
+    width: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #5c636a;
+}
+
+.match-statistic-img {
+    width: 4%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.match-statistic-img img {
+    height: 1.2em;
+    border: 1px solid #dedcdc;
+    border-radius: 5px;
+    padding: 1px;
+    margin: 0px;
+}
+
+.match-statistic-name  { width: 43%;}
+.match-player-name {
+    display: flex;
+    justify-content: right;
+    gap: 3px;
+}
+
+.match-statistic-name a {
+    text-decoration: none;
+    color: #383737;
+    font-size: 0.8em;
+}
+
+.match-informations-icon-row-1,
+.match-informations-icon-row-2 {
+    display: flex;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin: 2px;
+
+}
+
+.match-informations-icon-row-1 div,
+.match-informations-icon-row-2 div {
+    width: 25%;
+}
+
+.match-informations-icon-row-1 img,
+.match-informations-icon-row-2 img {
+    max-height: 1.5em;
+    max-width: 1.5em;
+}
+
+
+.match-composition {
+    padding: 3px 3px 10px 3px;
+    border-bottom: 2px solid #ececec;
+}
+
+.match-composition-header,
+.match-composition-content {
+    display: flex;
+    gap: 5px;
+}
+
+.match-composition-header {
+    background-color: #ececec;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+
+
+.match-composition-team {
+    padding-bottom: 10px;
+}
+.match-composition-team-name {
+    background-color: #ecf5fd;
+    border-bottom: 1px solid #dedcdc;
+    padding-left: 20px;
+}
+
+.match-composition-content:hover {
+    background-color: #ececec;
+}
+
+.match-num { width: 3%; padding-left: 3px;}
+.match-position { width: 3%; }
+.match-player { width: 51%; }
+.match-minute { width: 5%; }
+.match-substitution { width: 7%; }
+.match-goal { width: 10%; }
+.match-autogoal { width: 7%; }
+.match-yellow-card { width: 7%; }
+.match-red-card { width: 7%; }
+
+.match-composition-content .match-num {
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.match-composition-content .match-position {
+    font-size: 1em;
+    color: #5c636a;
+}
+
+.match-composition-content .match-player a {
+    font-size: 1em;
+    font-weight: 500;
+    color: #3b3b3b;
+    text-decoration: none;
+}
+
+.match-composition-content .match-player a:hover {
+    text-decoration: underline;
+}
+
+.match-composition-content .match-minute,
+.match-composition-content .match-goal,
+.match-composition-content .match-autogoal {
+    font-size: 0.9em;
+    color: #5c636a;
+    font-weight: 500;
+}
+
+.match-composition-content .match-substitution img,
+.match-composition-content .match-yellow-card img,
+.match-composition-content .match-red-card  img {
+    max-height: 1em;
+    max-width: 1em;
+}

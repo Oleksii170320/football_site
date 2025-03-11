@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/region/styles_region_cards.css">
+
+
+<h6 class="header_page">Гравці та дійові особи</h6>
+
+<div class="block-info">
+
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="teams-container">
+
+        {% for person in persons %}
+
+            <div class="col">
+                <div class="person-card">
+                  <a href="/persons/{{ person.id }}">
+
+                    <div class="person-logo-container">
+                        {% if person.photo %}
+                        <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}"
+                             alt="{{ person.lastname }}-{{ person.name }}">
+                        {% else %}
+                        <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+                             alt="{{ person.lastname }}-{{ person.name }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+                            <h6 class="card-title">{{ person.lastname }}</h6>
+                            <p class="card-text">{{ person.name }}</p>
+                            <p class="card-text">{{ person.surname }}</p>
+                    </div>
+
+                  </a>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+

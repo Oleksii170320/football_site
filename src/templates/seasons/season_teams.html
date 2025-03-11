@@ -3,13 +3,16 @@
 
 
 <input type="hidden" name="season-slug" value="{{ season.season_slug }}">
+<input type="hidden" name="season_id" value="{{ season.season_id }}">
 
 <h6 class="header_page">КОМАНДИ УЧАСНИЦІ РОЗІГРАШУ</h6>
 
 <div class="block-info">
 
-  <div class="btn-team-list"><!--   This is teams list --></div>
+  <!--   This is teams list -->
+  <div class="btn-team-list"></div>
 
+  <!--   This block contains a search button for commands -->
   <div class="btn-add-team">
       <div class="archive-rows static-entry">
           <div class="t-team-add-num"> </div>
@@ -26,15 +29,9 @@
   </div>
 
 
-  <form class="block-info-add btn-input-team write-true"
-     method="post"
-     action="/seasons/add_teams"
-     id="add-teams-form">
+  <div class="block-info-add btn-input-team write-true">
 
-     <input type="hidden" name="season_id" value="{{ season.season_id }}">
-     <input type="hidden" name="region_slug" value="{{ region.slug }}">
-     <input type="hidden" name="season_slug" value="{{ season.season_slug }}">
-
+    <!--   This block is for entering the necessary team data   -->
     <div class="archive-rows static-entry">
         <div class="t-team-add-num"></div>
         <div class="t-team-add-logo">
@@ -48,13 +45,12 @@
         </div>
         <div class="t-team-add_region">
 
-
         <input type="text"
                id="team-region-input"
                name="region_id"
                class="form-input"
                list="regionsList"
-               required oninput="updateRegionSlug()">
+               required oninput="updateRegionSlug()"> <!-- Поле вибору регіону команди -->
 
         <datalist id="regionsList">
             {% for region in regions_list %}
@@ -75,33 +71,27 @@
 
       <p>Найдіть команду в списку нижче. Не знайшли - створіть нову!</p>
 
-    <div class="archive-rows rows-team-create"
-         id="teamCreateForm"
-         method="post"
-         action="/teams/new_team"
-         enctype="multipart/form-data"
-         >
-
-         <input type="hidden" name="season_id" value="{{ season.season_id }}">
-         <input type="hidden" name="region_slug" id="regionSlugPage" value="{{ region.slug }}">
-         <input type="hidden" name="season_slug" id="seasonSlugPage" value="{{ season.season_slug }}">
+    {% include "forms/form_new_team.html" %}
 
 
-    </div>
+
 
     <div class="archive-rows rows-team-list"></div>
 
     <div class="team-results"><!--   This is a list of found commands --></div>
 
-  </form>
+    <div class="archive-rows rows-team-list">
+
+    </div>
+
+  </div>
+
 
 </div>
 
 <script src="{{ url_for('static', path='js/libs/jquery-3.7.1.min.js') }}"></script>
 <script src="/static/js/season/get_from_season_teams_list.js"></script>
 <script src="/static/js/forms/form_add_team_in_season.js"></script>
-
-
 <script src="/static/js/forms/form_create_new_team.js"></script>
 
 

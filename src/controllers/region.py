@@ -330,7 +330,6 @@ async def season_standings(
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "region": await get_regions(db, region_slug=region_slug),
             "season": await get_season_by_id_or_slug(db, season_slug=season_slug),
-
             "standings": await get_calculate_standings(db, season_slug=season_slug),
             "groups": await get_group_in_season(db, season_slug=season_slug),
             "stages": await get_distinct_stages_with_groups(db, season_slug=season_slug),

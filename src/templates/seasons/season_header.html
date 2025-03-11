@@ -1,0 +1,140 @@
+<link rel="stylesheet" href="/static/css/region/stl_region_nav_block.css">
+
+<div class="navigation">
+    <p>
+        {% if season.football_type.value == 'Футбол' or season.football_type.value == 'Вуличний футбол' %}
+            <img src="/static/img/techical_image/football_type/icon_football.PNG"
+                 alt="{{ season.tournament_name }} logo">
+        {% elif season.football_type.value == 'Футзал' or season.football_type.value == 'Міні-футбол' %}
+            <img src="/static/img/techical_image/football_type/icon_futsal.PNG"
+                 alt="{{season.tournament_name }} logo">
+        {% else %}
+            <img src="/static/img/techical_image/icon_beach_socer.PNG.PNG"
+                 alt="{{ season.tournament_name }} logo">
+        {% endif %}
+
+        {{ season.football_type.value }} >
+
+
+        <img src="{{ url_for('static', path='/img/regions/' ~  region.emblem ) }}"
+             alt="{{ region.name }} gerb">
+
+        <a href="/region/{{ region.slug }}"
+           title="Перейти до головної сторінки: {{ region.name }} область">
+            {% if season.region_status == false %}
+                {{ season.region_name }} область
+            {% else %}
+                {{ season.region_name }}
+            {% endif %}
+        </a>
+
+        {% if season.organization_level.value == 'районні' %}
+          > <span>Районний турнір</span>
+        {% elif season.organization_level == 'обласні' %}
+          > <span>Обласний турнір</span>
+        {% elif season.organization_level == 'республ.' %}
+          > <span>Україна</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="season-header">
+
+    <div class="season-main-info">
+
+        <div class="season-logo">
+            {% if season.season_logo %}
+              <img class="logo_redion_in_season"
+                   src="{{ url_for('static', path='/img/seasons/' ~ season.season_logo ) }}"
+                   alt="logo {{ season.season_name }}">
+            {% else %}
+              <img class="logo_redion_in_season"
+                   src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo ) }}"
+                   alt="logo {{ season.season_name }}">
+            {% endif %}
+        </div>
+
+        <div class="season-name">
+
+            {% if season.full_name %}
+              <h5>{{ season.full_name }}</h5>
+            {% else %}
+              <h5>{{ season.season_name }}</h5>
+            {% endif %}
+
+            <div class="season-social-media">
+
+                <span>СЕЗОН {{ season.season_year }}</span>
+
+                <div class="social-icons">
+
+                  {% if season.page_telegram %}
+                    <a target="_blank"
+                       href="{{ season.page_telegram }}"
+                       title="перейти в Telegram канал"
+                    >
+                        <img src="/static/img/techical_image/social_media/icon_tg.png" alt="logo" />
+                    </a>
+                  {% endif %}
+
+                  {% if season.page_facebook %}
+                    <a target="_blank"
+                       href="{{ season.page_facebook }}"
+                       title="перейти на Facebook сторінку"
+                    >
+                        <img src="/static/img/techical_image/social_media/icon_fb.png" alt="logo"/>
+                    </a>
+                  {% endif %}
+
+                  {% if season.page_youtube %}
+                    <a target="_blank"
+                       href="{{ season.page_youtube }}"
+                       title="перейти на Youtube канал"
+                    >
+                        <img src="/static/img/techical_image/social_media/icon_youtube.png" alt="logo"/>
+                    </a>
+                  {% endif %}
+
+                  {% if season.page_instagram %}
+                    <a target="_blank"
+                       href="{{ season.page_instagram }}"
+                       title="перейти на Instagram  сторінку"
+                    >
+                        <img src="/static/img/techical_image/social_media/icon_instagram.png" alt="logo"/>
+                    </a>
+                  {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--there are buttons -->
+    <div class="nav-buttons">
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/main">Огляд</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/results">Результати</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/upcoming">Матчі</a>
+
+        {% if season.standing %}
+            <a href="/region/{{ region.slug }}/{{ season.season_slug }}/standings">Таблиця</a>
+        {% endif %}
+
+        <a href="/region/{{ region.slug }}/{{ season.season_id }}/{{ season.tournament_slug }}/archive">Архів</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}">Більше...</a>
+<!--        <a href="#">Відео</a>-->
+    </div >
+
+    <!--there are buttons for admin-->
+    {% if user_session %}
+    <div class="nav-buttons btn-admin">
+        <a href="/tournaments/{{ season.tournament_slug }}/new_season">Створити новий розіграш</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/clubs">Команди</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/schedule">Календар матчів</a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{{ url_for('static', path='js/regions/js-region-navblock.js') }}"></script>

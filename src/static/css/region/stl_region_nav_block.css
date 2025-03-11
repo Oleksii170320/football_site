@@ -1,0 +1,222 @@
+.navigation {
+    display: flex;
+    align-items: center;
+    background-color: #fdfdfe;
+    border-radius: 5px 5px 0px 0px;
+    padding: 3px 3px 1px 3px;
+    border-bottom: 1px solid #ececec;
+}
+
+.navigation p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 2px 0px 0px 10px;
+    margin: 0px;
+    text-transform: uppercase;
+    color: #505160;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #505160;
+}
+
+.navigation a:hover {
+    text-decoration: underline;
+    color: #001e28;
+}
+
+.navigation img {
+    height: 1.2em;
+    vertical-align: middle;
+}
+
+.region-header,
+.season-header {
+    align-items: flex-start;
+    margin: 5px 5px 0px 5px;
+}
+
+.region-main-info,
+.season-main-info {
+    display: flex; /* Розташовуємо логотип і головний блок в один рядок */
+    /*align-items: center; !* Центруємо по вертикалі *!*/
+    align-items: flex-start; /* Вирівнює контент по лівому краю */
+    justify-content: flex-start;
+    gap: 10px;
+    min-width: 0;
+    border-radius: 2px;
+    padding-bottom: 1px;
+    margin: 0px;
+}
+
+.region-main-info {
+    padding: 5px;
+}
+
+.region-logo,
+.season-logo {
+    display: flex;
+    justify-content: center; /* Центруємо по горизонталі */
+    align-items: center;
+    padding: 3px;
+    border: 1px solid #d5d4d4;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+}
+
+.region-logo {
+    width: 80px; /* Фіксована ширина */
+    height: 80px; /* Фіксована висота */
+    overflow: hidden; /* Запобігає виходу з контейнера */
+}
+
+.region-logo img {
+    max-height: 80px; /* Щоб зберегти пропорції, але не виходити за межі */
+    max-width: 95%; /* Запобігає виходу за ширину */
+    object-fit: contain; /* Зберігає пропорції, без обрізання */
+    padding: 5px;
+}
+
+.season-logo {
+    width: 100px; /* Фіксований розмір (можеш змінити) */
+    height: 100px; /* Висота дорівнює ширині — квадрат */
+    overflow: hidden; /* Обрізає зайві частини */
+}
+
+.season-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Обрізає, якщо не влазить */
+}
+
+.season-main-info
+.region-main-info,
+.region-header {
+/*    background-color: #79c5f8;*/
+}
+
+.season-name-info { padding: 10px; }
+
+.season-header a { text-decoration: none; }
+
+.region-name,
+.season-name {
+    display: flex;
+    flex-direction: column; /* Розміщує дочірні елементи вертикально */
+    justify-content: center; /* Центрує елементи по вертикалі */
+    min-height: auto; /* Задає мінімальну висоту блоку (можна коригувати) */
+    padding: 10px; /* Додає відступи */
+    color: #00141e;
+}
+
+.season-social-media {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.season-social-media span {
+    flex-grow: 1;  /* Дозволяє займати весь доступний простір */
+}
+
+.social-icons {
+    display: flex;
+    gap: 10px; /* Відстань між іконками */
+    padding: 1px 5px 4px 5px;
+    margin: 0px;
+    border: 1px solid #cecdcd;
+    border-radius: 50px;
+}
+
+.season-social-media img {
+    width: 1.4em;
+    padding: 0px;
+}
+
+.season-social-media span,
+.season-name span {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #74797a;
+}
+
+.region-name h5 {
+    font-size: 1.4em;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #2b2f44;
+}
+
+.region-name p {
+    font-size: 0.8em;
+    color: #a1a1a1;
+}
+
+.nav-buttons {
+    display: flex; /* Робимо контейнер гнучким */
+    justify-content: flex-start;
+    gap: 15px;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    /*padding: 5px;*/
+}
+
+.nav-buttons a {
+    text-decoration: none; /* Забирає підкреслення */
+    text-transform: uppercase; /* Текст у верхньому регістрі */
+    font-weight: 600; /* Жирний шрифт */
+    font-size: 0.8rem; /* Змінює розмір шрифту */
+    color: #74797a; /* Колір тексту */
+    margin: 0px 0px 0px 10px;
+    padding: 3px 1px 3px 1px;
+    border: 1px solid #fdfdfe;
+    background-color: #fdfdfe;
+}
+
+.nav-buttons a:hover {
+    color: #2b2f44; /* Робить текст контрастним */
+    border-bottom: 2px solid #74797a !important;
+}
+
+.nav-buttons a.nav-block-active {
+    font-weight: 700;
+    color: #2b2f44;
+    border-bottom: 2px solid #ff0000 !important;
+}
+
+/*.nav-buttons a.nav-block-active:hover {*/
+/*    background-color: #5d5c5c;*/
+/*    color: white; !* Робить текст контрастним *!*/
+/*}*/
+
+/* Адмін-кнопки завжди внизу */
+.btn-admin {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: auto; /* Гарантує, що цей блок буде внизу */
+    width: 100%; /* Щоб рівномірно розтягнувся */
+    border-radius: 3px;
+}
+
+.btn-admin a {
+    color: #ab5660;
+}
+
+.btn-admin a:hover {
+    background-color: #5d5c5c;
+    color: white;
+    border-radius: 3px;
+}
+
+.admin-info {
+    color: white;
+    background-color: #6f42c1;
+}
+

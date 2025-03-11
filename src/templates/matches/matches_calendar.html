@@ -1,0 +1,73 @@
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_season.css">
+<link rel="stylesheet" href="/static/css/matches/stl_matches_calendar.css">
+
+<div class="block-info">
+
+  <div class="match-calendar-buttons">
+    <button>Створити етап розіграшу</button>
+    <button>Створити групу</button>
+    <button>Створити тур / тур плей-оф</button>
+  </div>
+
+
+  <!--Унікальні стадії-->
+  {% set unique_stages = [] %}
+  {% for stage in matches_all
+     if stage.stage_name not in unique_stages
+  %}
+  {% set _ = unique_stages.append(stage.stage_name) %}
+
+    <div class="match-calendar-cards">
+
+      <h6 class="match-calendar-stage">
+        <div class="links">
+               {{ stage.stage_name }}
+        </div>
+      </h6>
+
+      <!--Унікальні групи-->
+      {% set unique_groups = [] %}
+      {% for group in matches_all
+         if group.group_name not in unique_groups
+         and group.stage_name == stage.stage_name
+      %}
+      {% set _ = unique_groups.append(group.group_name) %}
+
+        <div class="match-calendar-groups">
+          <h6>{{ group.group_name }}</h6>
+
+          <!--Унікальні ТУРИ-->
+          {% set unique_rounds = [] %}
+          {% for round in matches_all
+             if round.round_name not in unique_rounds
+             and round.stage_name == stage.stage_name
+             and round.group_name == group.group_name
+          %}
+          {% set _ = unique_rounds.append(round.round_name) %}
+
+            <div class="match-calendar-rounds">
+
+                <div class="edit-round">
+                  <h6 class="edit-round-name">{{ round.round_name }}</h6>
+
+                  <img src="/static/img/techical_image/crud/icon_edit.jpg" width="20px">
+                </div>
+
+                {% for match in matches_all
+                   if match.stage_name == stage.stage_name
+                   and match.group_name == group.group_name
+                   and match.round_name == round.round_name
+                %}
+                  <div class="matches-edit">
+
+                    {% include "matches/includes/matches_by_round_edit.html" %}
+
+                  </div>
+                {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

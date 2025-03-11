@@ -1,0 +1,22 @@
+.main-contacts {
+    margin: 3px;
+    padding: 0px;
+}
+
+.main-contacts div {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 5px;
+}
+
+.main-contacts p span {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/*.main-contacts span {*/
+/*    font-size: 1em;*/
+/*    font-weight: normal;*/
+/*}*/

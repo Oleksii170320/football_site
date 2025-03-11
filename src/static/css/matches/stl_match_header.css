@@ -1,0 +1,156 @@
+.navigation {
+    display: flex;
+    align-items: center;
+    background-color: #fdfdfe;
+    border-radius: 5px 5px 0px 0px;
+    padding: 5px 3px 5px 3px;
+    border-bottom: 1px solid #ececec;
+}
+
+.navigation p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 2px 0px 0px 10px;
+    margin: 0px;
+    text-transform: uppercase;
+    color: #505160;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #505160;
+}
+
+.navigation a:hover {
+    text-decoration: underline;
+    color: #001e28;
+}
+
+.navigation img {
+    height: 1.2em;
+    vertical-align: middle;
+}
+
+.match-header-main {
+    padding: 3px;
+}
+
+.match-header-stadium {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 1.1em;
+}
+
+.match-header-stadium a {
+    font-weight: 500;
+    text-decoration: none;
+    color: #001e28;
+}
+
+.match-header-stadium a:hover {
+    text-decoration: underline;
+}
+
+.match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 3px;
+    width: 100%;
+}
+
+
+.match-header a {
+    text-decoration: none;
+    color: #001e28;
+}
+
+
+.match-header-logo-guest { width: 15%; }
+.match-team-home { width: 25%; }
+.match-result { width: 20%; }
+.match-team-guest { width: 25%; }
+.match-header-logo-home { width: 15%; }
+
+
+.match-header-logo-guest,
+.match-header-logo-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cbc9c9;
+    border-radius: 5px;
+    height: 120px;
+    width: 120px;
+    padding: 5px;
+}
+
+.match-header-logo-guest img,
+.match-header-logo-home img {
+    max-width: 110px;
+    max-height: 110px;
+}
+
+.match-team-home {
+    display: flex;
+    justify-content: right;
+    font-size: 1.2em;
+}
+
+.match-team-guest {
+    display: flex;
+    justify-content: left;
+    font-size: 1.2em;
+}
+
+.match-team-home a:hover,
+.match-team-guest a:hover {
+    text-decoration: underline;
+}
+
+.match-result div {
+    display: flex;
+    justify-content: center;
+}
+
+.match-event {
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #505160;
+}
+
+.match-goals {
+    font-size: 3em;
+    font-weight: 500;
+    color: white;
+    background-color: #2b4e5b;
+    border-radius: 5px;
+    padding: 0px;
+    margin: 0px;
+    font-weight: 500;
+}
+
+
+.match-penalty {
+    font-size: 1em;
+    font-weight: 500;
+    color: white;
+    background-color: #2b4e5b;
+    border-radius: 5px;
+    padding: 0px;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.match-status {
+    font-size: 1em;
+    font-weight: 600;
+    color: #001e28;
+}

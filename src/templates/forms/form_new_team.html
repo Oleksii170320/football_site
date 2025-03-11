@@ -1,54 +1,72 @@
-<link rel="stylesheet" href="/static/css/stl_content.css">
-<link rel="stylesheet" href="/static/css/season/stl_archive.css">
-<link rel="stylesheet" href="/static/css/teams/styles_teams_from.css">
+<link rel="stylesheet" href="/static/css/teams/styles_from_create_new_team.css">
 
-<div class="block-info">
+<form id="teamCreateForm"
+      class="block-info-add rows-team-create"
+      method="post"
+      action="/teams/new_team"
+      enctype="multipart/form-data">
 
-    <!-- Повідомлення про успіх -->
-    <div id="successMessage"
-         style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
-        Команда успішно створена!
+    <input type="hidden" name="season_id" value="{{ season.season_id }}">
+    <input type="hidden" name="region_slug" id="regionSlugPage" value="{{ region.slug }}">
+    <input type="hidden" name="season_slug" id="seasonSlugPage" value="{{ season.season_slug }}">
+    <!-- <input type="hidden" class="" id="full-name-input" name="full_name" readonly> -->
+    <input type="hidden" class="" id="team_slug" name="slug" readonly required>
+
+
+
+    <div class="t-team-add-num"></div>
+    <div class="t-team-add-logo">
+            <img src="/static/img/techical_image/icon_team.PNG">
+        </div>
+    <div class="t-team-add-name">
+        <input type="text" class="form-input create-name"
+               id="teamName"
+               name="name"
+               placeholder="Назва команди"
+               required>
+    </div>
+    <div class="t-team-add_city">
+        <input type="text" class="form-input create-city"
+               id="cityName"
+               name="city"
+               placeholder="Населений пункт"
+               required>
+    </div>
+    <div class="t-team-add_region">
+
+        <select class="form-input input-region"
+                id="regionName"
+                name="region_id"
+                required>
+
+          <option selected disabled>Оберіть область</option>
+          {% for region in regions_list %}
+            <option value="{{ region.id }}" data-slug="{{ region.slug }}">
+                {{ region.name }}
+            </option>
+          {% endfor %}
+        </select>
+
     </div>
 
-    <form id="teamForm"  method="post" action="/teams/new_team" enctype="multipart/form-data">
+    <button class="btn-create-new_team"
+            type="submit"
+            onclick="uploadFormModal.showModal()"
+    >
+        Створити нову команду
+    </button>
 
-        <h6 class="header_page">СТВОРИТИ НОВУ КОМАНДУ</h6>
+    <input id="full-name-input" name="full_name" readonly>
+</form>
 
-        <input type="hidden" name="season_id" value="{{ season.season_id }}">
-        <input type="hidden" name="region_slug" id="regionSlugPage" value="{{ region.slug }}">
-        <input type="hidden" name="season_slug" id="seasonSlugPage" value="{{ season.season_slug }}">
 
-        <!-- Назва команди -->
-        <div class="mb-3">
-            <label for="teamName" class="form-label">Коротка назва команди</label>
-            <input type="text"
-                   class="form-create-team"
-                   id="teamName"
-                   name="name"
-                   placeholder="Коротка назва" required>
-        </div>
+<!-- Повідомлення про успіх -->
+<div id="successMessage"  style="display: none; background-color: #28a745; color: white; padding: 10px; margin-top: 10px;">
+    Команда успішно створена!
+</div>
 
-        <!-- Населений пункт -->
-        <div class="mb-3">
-            <label for="cityName" class="form-label">Назву населеного пункту</label>
-            <input type="text" class="form-create-team" id="cityName" name="city" placeholder="Назва міста" required>
-        </div>
 
-        <!-- Область -->
-        <div class="mb-3">
-            <label for="regionName" class="form-label">Виберіть область</label>
-            <select class="form-select form-select-lg mb-3 form-create-team" id="regionName" name="region_id" required onchange="updateRegionSlug()">
-                <option selected disabled>Оберіть область</option>
-                {% for region in regions_list %}
-                    <option value="{{ region.id }}" data-slug="{{ region.slug }}">{{ region.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Створити нову команду</button>
-    </form>
-
-    <!-- Модальне вікно для запиту про завантаження логотипу -->
+<!-- Модальне вікно для запиту про завантаження логотипу -->
     <div id="uploadLogoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -63,28 +81,29 @@
                 <button id="addLogo" class="btn btn-primary">Додати</button>
             </div>
         </div>
-    </div>
+</div>
 
-    <!-- Модальне вікно для форми завантаження логотипу -->
-    <div id="uploadFormModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Завантажити логотип</h4>
-                <span class="close" id="closeUploadFormModal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="logoForm" method="post" enctype="multipart/form-data">
-                    <input type="file" name="logo" id="logoInput" required>
-                    <!-- Приховані поля для передачі region_slug та team_slug -->
-                    <input type="hidden" name="region_slug" id="regionSlugInput" value="{{ region.slug }}">
-                    <input type="hidden" name="team_slug" id="teamSlugInput" value="{{ slug }}">
-                    <button type="submit" class="btn btn-primary">Завантажити</button>
-                </form>
-            </div>
+
+<!-- Модальне вікно для форми завантаження логотипу -->
+<div id="uploadFormModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h4>Завантажити логотип</h4>
+            <span class="close" id="closeUploadFormModal">&times;</span>
+        </div>
+
+        <div class="modal-body">
+            <form id="logoForm" method="post" enctype="multipart/form-data">
+                <input type="file" name="logo" id="logoInput" required>
+                <!-- Приховані поля для передачі region_slug та team_slug -->
+                <input type="hidden" name="region_slug" id="regionSlugInput" value="{{ region.slug }}">
+                <input type="hidden" name="team_slug" id="teamSlugInput" value="{{ slug }}">
+                <button type="submit" class="btn btn-primary">Завантажити</button>
+            </form>
         </div>
     </div>
 </div>
-
 
 <script src="/static/js/forms/form_create_new_team.js"></script>
 

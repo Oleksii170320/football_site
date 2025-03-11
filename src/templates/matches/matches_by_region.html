@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="/static//css/stl_content.css">
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_season.css">
+
+<h6 class="header_page">НАЙБЛИЖЧІ МАТЧІ (+/- 7 ДНІВ)</h6>
+
+
+{% if not matches %}
+    <div id="no-matches-found">
+        <img src="/static/img/techical_image/image_big_ball.png" alt="image_big_ball">
+        <p>Матч не знайдено.</p>
+    </div>
+{% else %}
+
+    <div class="block-info">
+
+      {% set unique_season = [] %}
+
+      {% for season in matches if season.season_full_name not in unique_season %}
+      {% set _ = unique_season.append(season.season_full_name) %}
+
+        <div class="matches-cards">
+
+          <h6 class="title-stage">
+            <div class="links">
+              <span>{{ season.football_type.value }}:</span>
+              <div class="region-title">
+                {% if season.season_logo %}
+                  <img src="{{ url_for('static', path='/img/seasons/' ~ season.season_logo) }}"
+                       alt="{{ season.tournament_logo }} logo">
+                {% elif season.tournament_logo %}
+                  <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo) }}"
+                       alt="{{ season.tournament_logo }} logo">
+                {% endif %}
+
+                <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}/main">
+                  {{ season.season_full_name }} {{ season.season_year }}
+                </a>
+              </div>
+
+<!--              {% if season.stage_name %}-->
+<!--                 - {{ season.stage_name }}-->
+<!--              {% endif %}-->
+            </div>
+
+             <span class="match-standing">
+                <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}/standings">
+                    Таблиця
+                </a>
+             </span>
+
+          </h6>
+
+          <div class="round-card">
+            {% set unique_events = [] %}
+
+            {% for event in matches  if event.event not in unique_events
+              and event.season_full_name == season.season_full_name %}
+            {% set _ = unique_events.append(event.event) %}
+
+              <h6 style="font-weight: normal;">{{ event.event }}</h6>
+
+              <div class="matches">
+                {% for match in matches
+                  if match.season_full_name == season.season_full_name
+                  and match.event == event.event %}
+
+                      {% include "matches/includes/matches_by_round.html" %}
+
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+
+
+      </div>
+      {% endfor %}
+    </div>
+
+{% endif %}

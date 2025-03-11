@@ -20,12 +20,12 @@ $(document).ready(function () {
         });
     });
 
-    // Пошук команди (або створення її) для заявлення в розіграш
+    // Пошук команди заявлення в розіграш
     function fetchTeamsAddToSeason() {
         let teamName = $('#team-name-input').val().trim();
         let cityName = $('#team-city-input').val().trim();
         let regionName = $('#regionName').val().trim();
-        let regionId = $("#regionId").val();
+
 
         // Якщо всі поля порожні - очищуємо список та не виконуємо запит
         if (teamName === '' && cityName === '' && regionName === '') {
@@ -79,9 +79,7 @@ $(document).ready(function () {
             error: function () {
                 $('.team-results')
                     .html('<div class="archive-rows add-team-error">' +
-                        '<div class="">За вказаною назвою команду не знайдено </div> ' +
-                        '<div id="btn_create_new_team_in_season">Створити нову команду  ' +
-                        '<div class="t-team-add-logo"><img src="/static/img/techical_image/icon_add_team.png"></div></div>' +
+                        '<div class="">За вказаною назвою команду не знайдено... </div> ' +
                         '</div>');
             }
         });
@@ -108,8 +106,7 @@ $(document).ready(function () {
             data: {
                 team_id: teamId,
                 season_id: $('input[name="season_id"]').val(),
-                region_slug: $('input[name="region_slug"]').val(),
-                season_slug: $('input[name="season_slug"]').val(),
+
             },
             success: function () {
                 $('#successMessage_add_team').fadeIn().delay(5000).fadeOut();
@@ -141,11 +138,17 @@ $(document).ready(function () {
         }
     });
 
-    // Відкрити форму створення нової команди
-    $(document).on('click', '.rows-team-list .create-team', function () {
-        let createTeam = $('#teamForm');
+    // Відкрити кнопку для створення нової команди
+    $(document).on('click', '.static-entry', function () {
+        let createTeam = $('.rows-team-create');
 
         createTeam.show();
+    });
+
+
+    // Відкрити кнопку для створення нової команди
+    $(document).on('click', '#btn-season-create-new-team', function () {
+        alert('Hi')
     });
 
 });

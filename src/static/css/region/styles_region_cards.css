@@ -1,0 +1,59 @@
+.person-card,
+.teams-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрує вміст картки по горизонталі */
+    text-align: center;
+    padding: 3px;
+    border: 2px solid #d7d5d5;
+    border-radius: 5px;
+    background-color: #ececec;
+}
+
+.person-card:hover,
+.teams-card:hover {
+    background-color: #dcdcdc;
+}
+
+.person-card a,
+.teams-card a {
+    text-decoration: none;
+}
+
+.team-logo-container,
+.person-logo-container {
+    display: flex;
+    align-items: center; /* Центрує зображення по вертикалі */
+    justify-content: center; /* Центрує зображення по горизонталі */
+    overflow: hidden; /* Запобігає виходу зображення за межі */
+    background-color: #fdfdfe;
+    border: 1px solid #d7d5d5;
+    border-radius: 3px;
+    padding: 3px;
+}
+
+.team-logo-container {
+    width: 150px; /* Фіксована ширина */
+    height: 150px; /* Фіксована висота */
+}
+
+.person-logo-container {
+    width: 120px; /* Фіксована ширина */
+    height: 160px; /* Фіксована висота */
+    background-color: #ebebeb;
+}
+
+.person-logo-container img,
+.team-logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Зберігає пропорції та масштабує */
+}
+
+.card-body {
+    color: #2b2f44;
+}
+
+.card-body:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/teams/styles_team_players.css">
+
+
+<h6 class="header_page">Досягнення команди</h6>
+
+<div class="block-info">
+    {% for season in achievement %}
+      <div class="person-rows">
+        <div class="achievement-name">Переможець</div>
+        <div class="history-season-logo">
+          {% if season.season_logo %}
+            <img src="{{ url_for('static', path='/img/seasons/' ~ season.season_logo ) }}"alt="{{ season.season_name }} logo">
+          {% else %}
+            <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo ) }}" alt="{{ season.season_name }} logo">
+          {% endif %}
+        </div>
+        <div class="achievement-tournament">
+          <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
+            {{ season.season_full_name }} - {{ season.season_year }}
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+</div>

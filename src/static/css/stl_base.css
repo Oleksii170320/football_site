@@ -1,0 +1,239 @@
+/* --- Main --- */
+body {
+    background-color: #ededed;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --- Nav block --- */
+nav {
+    display: flex;
+    flex-direction: column;
+    background-color: #001e28;
+}
+
+.border-bottom-only {
+    border-bottom: 2px dotted #3b3b3b; /* Товщина, стиль і колір бордера */
+}
+
+.border-bottom-menu {
+    border-bottom: 2px solid #3b3b3b;
+}
+
+.navTitle >div {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Центруємо по вертикалі контейнер */
+    /*border: 2px solid #4a4a4a; !* Легкий бордер для контрасту *!*/
+    margin-bottom: 8px;
+}
+
+.navTitle p {
+    color: white;
+    margin: 0;
+}
+
+body > nav > div.container.navTitle {
+    justify-content: center; /* Центруємо по горизонталі контейнер */
+    font-weight: bold; /* Жирний шрифт */
+    font-size: 1.3em;
+}
+
+.social-media a {
+    margin: 0 2px 0 2px;
+    text-decoration: none;
+    color: #aba0a0;
+    font-weight: normal; /* Жирний шрифт */
+}
+
+.navButton {
+    margin: 1px;
+}
+
+#navbarNav {
+    justify-content: space-around;
+    text-transform: uppercase;
+}
+
+.logIn-logout {
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+
+/* --- Left block menu --- */
+.left-menu {
+    background-color: #ececec;
+    border-radius: 3px;
+    padding: 3px;
+
+}
+
+.left-menu-organisations {
+    background-color: #ececec;
+    margin: 0px;
+    padding: 1px;
+}
+
+.leftMenu_button {
+    color: #212020;
+    font-weight: 500;
+}
+
+.left-menu-organisations a {
+    text-decoration: none;
+    color: #212020;
+    display: block; /* Робить посилання блоковим елементом */
+    padding: 4px;
+    border: 2px solid #ececec;
+    border-radius: 3px;
+    transition: background-color 0.3s ease, color 0.3s ease, font-weight 0.3s ease;/* Плавна анімація */
+}
+
+.left-menu-organisations a:hover {
+    background-color: #fdfdfe;
+    color:#212020;
+    /*font-weight: bold; !* Робить текст жирним *!*/
+    border-radius: 3px;
+    border: 2px solid #b7b6b6;
+}
+
+
+.hr-border-between {
+    border-width: 1px;   /* Задає товщину лінії */
+    border-color: black; /* Колір лінії */
+    border-style: solid; /* Стиль лінії */
+    width: 100%;         /* Ширина лінії */
+    margin: 5px 0px;    /* Відступи з усіх боків */
+    padding: 0;          /* Прибирає внутрішні відступи */
+}
+
+.tournament-season {
+    background-color: #ececec;
+    margin: 3px 3px 3px 3px;
+    /*border: 1px solid #b7b6b6;*/
+    border-radius: 5px;
+}
+
+.tournament-season a:hover {
+    background-color: #9bbcef;
+    color:#212020;
+    /*font-weight: bold; !* Робить текст жирним *!*/
+    border-radius: 5px;
+    /*border: 1px solid #b7b6b6;*/
+}
+
+
+/* Вибраний регіон і його турнри */
+.selected-reg {
+    background-color: #ffffff;
+    margin: 0px 3px 3px 3px;
+    border: 1px solid #b7b6b6;
+    border-radius: 5px;
+}
+
+.selected-reg a {
+    text-decoration: none;
+    color: #212020;
+    transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.selected-name {
+    padding: 0px 0px 0px 10px;
+    display: flex;
+    align-items: center; /* Вирівнює елементи по вертикалі */
+    gap: 2px; /* Додає відступ між зображенням та текстом */
+}
+
+.selected-reg-tournament >a,
+.selected-reg-tournament >p {
+    padding: 0px;
+    margin: 0px;
+    padding-left: 5px;
+    font-size: 0.8rem;
+
+}
+
+.span-name {
+    font-weight: bold;  /* Жирний шрифт */
+    color: black;       /* Колір тексту (можна змінити на потрібний) */
+    /*text-decoration: underline; !* Нижнє підкреслення *!*/
+    text-transform: uppercase;
+
+}
+
+.region-season {
+    margin: 3px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.region-season a {
+    text-decoration: none; /* Видаляє підкреслення */
+    color: #212020;
+    display: block; /* Розтягує посилання на всю ширину */
+}
+
+.tournament {
+    margin: 1px;
+    padding: 0px 0px 0px 5px;
+    border-radius: 3px;
+    border: 2px solid #fdfdfe;
+}
+
+.region-season a:hover .tournament {
+    background-color: #ececec;
+    border-radius: 3px;
+    border: 2px solid #b7b6b6;
+    transition: background-color 0.5s ease, border 0.5s ease; /* Плавний ефект */
+    color: #001e28; /* Робимо текст контрастним */
+
+}
+
+.hidden-region {
+    display: none;
+}
+
+.show-more-btn {
+    margin-top: 10px;
+    color: #333232;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.show-more-btn:hover {
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+
+.region-season a .tournament-active {
+    margin: 1px;
+    padding: 0px 0px 0px 5px;
+    border-radius: 3px;
+    /*border: 2px solid #fdfdfe;*/
+    border-bottom: 2px solid #a80a0a;;
+}
+
+.tournament-active {
+    background-color: #ececec;
+    border: 1px solid #a4a4a4;
+    border-bottom: 2px solid #a80a0a;;
+    border-radius: 5px;
+}
+
+/* Блок контент */
+.block-content {
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 0px;
+}
+
+
+
+
+
+

@@ -1,0 +1,140 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/region/stl_region_nav_block.css">
+<link rel="stylesheet" href="/static/css/matches/stl_match_header.css">
+
+
+<div class="navigation">
+    <p>
+        {% if match.football_type.value == 'Футбол' or match.football_type.value == 'Вуличний футбол' %}
+            <img src="/static/img/techical_image/football_type/icon_football.PNG"
+                 alt="{{ match.tournament_name }} logo">
+        {% elif match.football_type.value == 'Футзал' or match.football_type.value == 'Міні-футбол' %}
+            <img src="/static/img/techical_image/football_type/icon_futsal.PNG"
+                 alt="{{ match.tournament_name }} logo">
+        {% else %}
+            <img src="/static/img/techical_image/icon_beach_socer.PNG.PNG"
+                 alt="{{ match.tournament_name }} logo">
+        {% endif %}
+
+        {{ match.football_type.value }} >
+
+        <img src="{{ url_for('static', path='/img/regions/' ~  match.region_logo ) }}"
+             alt="{{ match.region_name }} gerb">
+
+        <a href="/region/{{ match.region_slug }}"
+           title="Перейти до головної сторінки: {{ match.region_name }} область">
+            {% if match.region_status == false %}
+                {{ match.region_name }} область
+            {% else %}
+                {{ match.region_name }}
+            {% endif %}
+        </a>
+        >
+        {% if match.tournament_level.value == 'районні' %}
+          <span>Районний турнір</span>
+        {% elif match.tournament_level.value == 'обласні' %}
+          <span>Обласний турнір</span>
+        {% elif match.tournament_level.value == 'республ.' %}
+          <span>Україна</span>
+        {% endif %}
+        >
+        <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
+             alt="{{ match.tournament_name }} logo">
+
+        <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}">
+            {{ match.season_name }} {{ match.season_year }}
+        </a>
+
+        {% if match.stage_name %}
+        - {{ match.stage_name }}
+        {% endif %}
+        {% if match.round_name %}
+        - {{ match.round_name }}
+        {% endif %}
+
+    </p>
+</div>
+
+<div class="match-header-main">
+    <div class="match-header-stadium">
+
+      {% if match.stadium_name %}
+        Місце проведення:
+          <a href="/stadiums/{{ match.stadium_id }}">
+              {% if match.stadium_name %}
+                {{ match.stadium_name }} {{ match.stadium_city }}{% else %} -
+              {% endif %}
+          </a>
+      {% endif %}
+    </div>
+
+    <div class="match-header">
+
+      <div class="match-header-logo-home">
+          <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}"
+               alt="{{ match.team1_name }} logo"
+               height="120px">
+      </div>
+
+      <div class="match-team-home">
+          <a href="/teams/{{ match.team1_slug }}/results">
+              <strong>{{ match.team1_name }}</strong> <span>({{ match.team1_city }})</span>
+          </a>
+      </div>
+
+      <div class="match-result">
+          <div class="match-event">
+            {% if match.event and match.event != "01.01.2100" and match.event is not none %}
+              {{ match.event }}
+            {% else %}
+              --.--.--
+            {% endif %}
+
+            {% if match.event_time and not ('00:00' <= match.event_time <= '04:00') %}
+               - {{ match.event_time }}
+            {% endif %}
+          </div>
+
+          <div class="match-goals">
+            {% if match.status == "Тех. поразка" %}
+              <strong style="color: red">{{ match.team1_goals }} - {{ match.team2_goals }}</strong>
+            {% elif match.team1_goals is not none and match.team2_goals is not none %}
+              <strong>{{ match.team1_goals }} - {{ match.team2_goals }}</strong>
+            {% else %}
+              <strong>- : -</strong>
+            {% endif %}
+          </div>
+          <div class="match-penalty">
+            {% if match.team1_penalty and match.team2_penalty %}
+            (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
+            {% endif %}
+          </div>
+          <div class="match-status">
+              {{ match.status.value }}
+              {% if match.extra_time %} - дод. час {% endif %}
+          </div>
+      </div>
+
+      <div class="match-team-guest">
+          <a href="/teams/{{ match.team2_slug }}/results">
+              <strong>{{ match.team2_name }}</strong> <span>({{ match.team2_city }})</span>
+          </a>
+      </div>
+
+      <div class="match-header-logo-guest">
+          <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}"
+               alt="{{ match.team2_name }} logo"
+               height="120px">
+      </div>
+
+    </div>
+
+        <!--there are buttons -->
+    <div class="nav-buttons">
+        <a href="/matches/{{ match.match_id }}/review">Огляд</a>
+        <a href="/matches/{{ match.match_id }}/lineups">Склади команд</a>
+<!--        <a href="#">Відео</a>-->
+    </div >
+</div>
+
+<script src="{{ url_for('static', path='js/regions/js-region-navblock.js') }}"></script>

@@ -1,0 +1,41 @@
+    .tournament-info {
+        background-color: #838888;
+        margin-top: 2px;
+        padding: 2px;
+    }
+
+    .tournament-name {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-transform: uppercase; /* Текст у верхньому регістрі */
+        padding: 0px;
+        margin: 0px;
+        border-bottom: 1px dotted #f8f8f8; /* Нижній бордер */
+    }
+
+    .tournament-attributes {
+        display: flex;
+        align-items: center; /* Вирівнює елементи по вертикалі */
+        gap: 10px; /* Відстань між елементами */
+        margin: 2px;
+        background-color: #0a58ca;
+    }
+
+    .tournament-logo {
+        width: 30%;
+        max-width: 300px;
+        min-width: 150px;
+        display: flex;
+        justify-content: center; /* Центрує зображення по горизонталі */
+        align-items: center; /* Центрує по вертикалі (якщо потрібно) */
+    }
+
+
+
+    .tournament-logo img {
+        max-width: 70%;  /* Щоб зображення не виходило за межі батьківського контейнера */
+        height: auto;  /* Зберігає пропорції */
+        display: block;  /* Уникає зайвих пробілів під зображенням */
+        object-fit: contain; /* Вміщає зображення всередину без обрізки */
+    }
