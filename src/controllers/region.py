@@ -56,7 +56,11 @@ async def read_region_by_slug(
     db: AsyncSession = Depends(get_db),
     current_user: str = Depends(get_current_user_for_button),
 ):
-    """виводить окремий регіон по SLUG"""
+    """
+    виводить окремий регіон по SLUG
+
+
+    """
 
     user_session, is_authenticated = current_user
     return render(

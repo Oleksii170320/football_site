@@ -28,8 +28,10 @@
             {% endif %}
         </a>
 
-        {% if season.organization_level.value == 'районні' %}
+        {% if season.organization_level == 'районні' %}
           > <span>Районний турнір</span>
+        {% elif season.organization_level == 'міські' %}
+          > <span>Міський турнір</span>
         {% elif season.organization_level == 'обласні' %}
           > <span>Обласний турнір</span>
         {% elif season.organization_level == 'республ.' %}
