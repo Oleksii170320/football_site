@@ -1,14 +1,13 @@
 $(document).ready(function () {
 
     // Встановлення обробників подій для вводу
-    $('#teamName, #cityName, #regionName').on('input change', updateFullNameAndSlug);
+    $('#teamName, #cityName, #regionNameSelect').on('input change', updateFullNameAndSlug);
 
     function updateFullNameAndSlug() {
-        let teamName = $('#teamName').val().trim();
-        let cityName = $('#cityName').val().trim();
-        let regionName = $('#regionName').find(':selected').text().trim();
-        let regionSlug = $('#regionName').find(':selected').attr('data-slug');
-
+        const teamName = $('#teamName').val().trim();
+        const cityName = $('#cityName').val().trim();
+        const regionName = $('#regionNameSelect').find(':selected').text().trim();
+        const regionSlug = $('#regionName').find(':selected').attr('data-slug');
 
         if (!teamName || !cityName || regionName === "Оберіть область") {
             $('#full-name-input').val('');

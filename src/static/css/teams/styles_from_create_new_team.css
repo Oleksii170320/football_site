@@ -1,0 +1,35 @@
+.rows-team-create {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розподіляє рівномірно */
+    gap: 2px;
+    background-color: #f3f3f3;
+    border-bottom: 1px solid #a4a4a4;
+    border-top: 1px solid #a4a4a4;
+}
+
+.btn-create-new_team {
+    border: none;
+    color: green;
+    font-size: 0.7em;
+    font-weight: 500;
+}
+
+.btn-create-new_team:hover {
+    color: red;
+    text-decoration: underline;
+}
+
+
+.modal{
+    position:fixed;
+    top:40%;
+    left:40%;
+    display:none;
+    width:35%;
+    height:100%;
+    overflow-x:hidden;
+    overflow-y:auto;
+    outline:0
+}
+
