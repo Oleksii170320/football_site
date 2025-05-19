@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="/static//css/stl_content.css">
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_season.css">
+
+{% if main %}
+    <h6 class="header_page">НАЙБЛИЖЧІ МАТЧІ (+/- 7 ДНІВ)</h6>
+{% elif results %}
+    <h6 class="header_page">Зіграні матчі розіграшу</h6>
+{% elif upcoming %}
+    {% if matches %}
+        <h6 class="header_page">Майбутні матчі розіграшу</h6>
+    {% else %}
+        <h6 class="header_page">Майбутні матчі розіграшу</h6>
+    {% endif %}
+{% endif %}
+
+{% if not matches %}
+    <div id="no-matches-found">
+        <img src="/static/img/techical_image/image_big_ball.png" alt="image_big_ball">
+        <p>Матч не знайдено.</p>
+    </div>
+{% else %}
+
+    <div class="block-info">
+
+      {% set unique_seasons = [] %}
+      {% for season in matches | sort(attribute='stage_id', reverse=True)
+         if season.stage_name not in unique_seasons
+      %}
+      {% set _ = unique_seasons.append(season.stage_name) %}
+
+        <div class="matches-cards">
+
+          <h6 class="title-stage">
+            <div class="links">
+              <span>{{ season.football_type.value }}</span>>
+
+              <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}/main">
+                {{ season.season_full_name }} {{ season.season_year }}
+              </a>
+
+              {% if season.stage_name %}
+                 - {{ season.stage_name }}
+              {% endif %}
+            </div>
+          </h6>
+
+            {% set unique_dates = [] %}
+            {% for date in matches | sort(attribute='match_datatime', reverse=True)
+               if date.event not in unique_dates
+               and date.stage_name == season.stage_name
+            %}
+            {% set _ = unique_dates.append(date.event) %}
+
+              {% set unique_rounds = [] %}
+              {% for round in matches
+                 if round.round_name not in unique_rounds
+                 and round.stage_id == season.stage_id
+                 and round.event == date.event
+              %}
+              {% set _ = unique_rounds.append(round.round_name) %}
+
+                      <div class="round-card">
+
+                        <h6>{{ round.round_name }}</h6>
+
+                        <div class="matches">
+                          {% for match in matches
+                             if match.stage_id == season.stage_id
+                             and match.event == date.event
+                             and match.round_name == round.round_name
+                          %}
+
+                            {% include "matches/includes/matches_by_round.html" %}
+                          {% endfor %}
+                        </div>
+                      </div>
+              {% endfor %}
+            {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+{% endif %}
+
+
+
+<!--{% if upcoming %}-->
+<!--    <h6 class="header_page">Календар матчів</h6>-->
+
+<!--    {% include "matches/matches_calendar.html" %}-->
+
+<!--{% endif %}-->
+

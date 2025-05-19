@@ -12,10 +12,14 @@ class TeamBaseSchemas(BaseModel):
     region_id: int
     full_name: Optional[str]
     slug: str
-    foundation_year: Optional[str]
-    logo: Optional[str]
-    description: Optional[str]
-    clubs_site: Optional[str]
+    foundation_year: Optional[str] = None
+    logo: Optional[str] = None
+    description: Optional[str] = None
+    clubs_site: Optional[str] = None
+    page_facebook: Optional[str] = None
+    page_youtube: Optional[str] = None
+    page_telegram: Optional[str] = None
+    page_instagram: Optional[str] = None
     stadium_id: Optional[int] = 0
     president_id: Optional[int] = 0
     coach_id: Optional[int] = 0
@@ -34,6 +38,7 @@ class TeamSchemas(TeamBaseSchemas):
 
     id: int
     seasons_won: List["SeasonSchemas"] = []
+    # seasons_won2: List["SeasonSchemas"] = []
     matches_1: List["MatchSchemas"] = []
     matches_2: List["MatchSchemas"] = []
     persons: List["PersonSchemas"] = []

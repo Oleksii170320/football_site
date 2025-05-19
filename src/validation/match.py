@@ -7,7 +7,7 @@ from models.match import MatchStatus
 
 
 class MatchBaseSchemas(BaseModel):
-    event: Optional[int | None] = None
+    event: int = 4102437600
     season_id: int
     group_id: Optional[int | None] = None
     stage_id: Optional[int | None] = None
@@ -17,10 +17,13 @@ class MatchBaseSchemas(BaseModel):
     team1_goals: Optional[int | None] = None
     team2_goals: Optional[int | None] = None
     team2_id: int
+    standing: bool = 1
     team1_penalty: Optional[int | None] = None
     team2_penalty: Optional[int | None] = None
     status: MatchStatus
     standing: bool = 1
+    match_info: str = None
+    match_video: str = None
 
 
 class MatchCreateSchemas(MatchBaseSchemas):

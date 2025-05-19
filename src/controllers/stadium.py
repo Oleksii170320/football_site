@@ -1,16 +1,13 @@
-import enum
-
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from typing import List
 
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
-from models import Stadium
+from helpers.authentications import get_current_user_for_button
 from services import stadium as crud_stadium
-from services.region import get_regions_list
-from services.stadium import get_stadium_teams, get_search_stadiums
+from services.regions.region import get_regions_list
+from services.stadium import get_stadium_teams
 from validation import stadium as schemas
 
 router = APIRouter()
@@ -25,7 +22,7 @@ async def search_stadiums_endpoint(query: str, db: AsyncSession = Depends(get_db
 
 @router.get("/test", response_model=List[schemas.StadiumSchemas])
 async def read_stadiums_test(
-    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
+    skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db),
 ):
     stadiums = await crud_stadium.get_stadiums(db, skip=skip, limit=limit)
     return stadiums
@@ -37,6 +34,7 @@ async def read_stadiums(
     skip: int = 0,
     limit: int = 100,
     db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
     stadiums = await crud_stadium.get_stadiums(db, skip=skip, limit=limit)
     return render(
@@ -44,13 +42,16 @@ async def read_stadiums(
         request,
         {
             "stadiums": stadiums,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
 @router.get("/{stadium_id}", response_model=schemas.StadiumSchemas)
 async def read_stadium(
-    request: Request, stadium_id: int, db: AsyncSession = Depends(get_db)
+    request: Request, stadium_id: int, db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
 
     return render(
@@ -60,6 +61,8 @@ async def read_stadium(
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "taems": await get_stadium_teams(db, stadium_id=stadium_id),
             "stadium": await crud_stadium.get_stadium(db, stadium_id=stadium_id),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 

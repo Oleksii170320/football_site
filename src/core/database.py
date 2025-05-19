@@ -6,12 +6,8 @@ from sqlalchemy.orm import sessionmaker
 
 from config import SQLALCHEMY_DATABASE_URL
 
-# Додайте префікс "sqlite+aiosqlite://" до URL бази даних
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test3.db"
 
-# SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
-#     "sqlite:///", "sqlite+aiosqlite:///"
-# )
 
 # Асинхронний двигун SQLAlchemy для SQLite
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=False)

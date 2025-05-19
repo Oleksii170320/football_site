@@ -1,0 +1,138 @@
+.team-header {
+    padding: 3px;
+}
+
+.team-main-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px;
+    margin: 0px;
+}
+
+.team-logo {
+    display: flex;
+    justify-content: center; /* Центруємо по горизонталі */
+    align-items: center;
+    padding: 3px;
+    border: 1px solid #d5d4d4;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    max-width: 140px;
+    width: auto; /* Фіксований розмір (можеш змінити) */
+    height: 140px; /* Висота дорівнює ширині — квадрат */
+}
+
+.team-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover; /* Обрізає, якщо не влазить */
+}
+
+.team-info {
+    padding: 3px; /* Додає відступи */
+}
+
+.team-name-title {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #001e28;
+    margin: 0px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 5px; /* Відстань між іконками */
+    padding: 1px 3px 3px 3px;
+    margin: 0px;
+    border-radius: 50px;
+}
+
+.social-icons img {
+    width: 1.2em;
+    padding: 0px;
+}
+
+.social-icons span {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #74797a;
+}
+
+.team-media,
+.team-name-info {
+    padding: 3px 3px 0px 5px;
+}
+
+.team-name-info h6 {
+    color: #414349;
+    font-size: 0.8em;
+    font-weight: 400;
+}
+
+.team-media h6 a,
+.team-name-info h6 a {
+    text-decoration: none;
+    color: #414349;
+    font-weight: 500;
+}
+
+.team-media h6 a:hover,
+.team-name-info h6 a:hover {
+    text-decoration: underline;
+    color: #2f3031;
+    font-weight: 500;
+}
+
+.team-media {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.team-media h6 {
+    color: #414349;
+    font-size: 0.8em;
+    font-weight: 400;
+    margin: 0px;
+}
+
+.nav-buttons {
+    display: flex; /* Робимо контейнер гнучким */
+    justify-content: flex-start;
+    gap: 15px;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    /*padding: 5px;*/
+}
+
+.nav-buttons a {
+    text-decoration: none; /* Забирає підкреслення */
+    text-transform: uppercase; /* Текст у верхньому регістрі */
+    font-weight: 600; /* Жирний шрифт */
+    font-size: 0.8rem; /* Змінює розмір шрифту */
+    color: #74797a; /* Колір тексту */
+    margin: 0px 0px 0px 10px;
+    padding: 3px 1px 3px 1px;
+    border: 1px solid #fdfdfe;
+    background-color: #fdfdfe;
+}
+
+.nav-buttons a:hover {
+    color: #2b2f44; /* Робить текст контрастним */
+    border-bottom: 2px solid #74797a !important;
+}
+
+.nav-buttons a.nav-block-active {
+    font-weight: 700;
+    color: #2b2f44;
+    border-bottom: 2px solid #ff0000 !important;
+}
+
+
+

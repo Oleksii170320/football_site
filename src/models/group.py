@@ -1,7 +1,6 @@
 # src/models/group.py
-from enum import Enum
 from typing import TYPE_CHECKING
-from sqlalchemy import String, ForeignKey, Column
+from sqlalchemy import String
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.ext.declarative import declared_attr
 from slugify import slugify
@@ -9,7 +8,6 @@ from core.database import Base
 from models.annonated import intpk
 
 if TYPE_CHECKING:
-    from models.season import Season
     from models.match import Match
 
 

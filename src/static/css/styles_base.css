@@ -273,3 +273,7 @@ footer {
     margin-top: 1em;
 }
 
+.custom-font {
+    font-size: 24px; /* Встановіть потрібний розмір шрифту */
+    font-weight: bold; /* За потреби можна підсилити текст */
+}

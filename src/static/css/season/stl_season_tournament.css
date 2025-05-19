@@ -1,0 +1,51 @@
+.season-titles {
+    background-color: #ededed;
+    border-bottom: 1px solid #ececec;
+    border-radius: 3px;
+    color: #323232;
+    padding: 5px 10px;
+    margin: 0px;
+    font-size: 0.8rem;
+}
+
+.season-block-info {
+    margin-bottom: 5px;
+}
+
+.season-block-info div {
+    display: flex;
+    align-items: center; /* Вирівнює зображення та текст по вертикалі */
+    gap: 10px; /* Відступ між зображенням і текстом */
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1px 15px 1px 15px ; /* Додає трохи простору зверху та знизу */
+    font-weight: 400;
+}
+
+.season-block-info div:hover {
+    background-color: #eee5e5;
+}
+
+.season-block-info div img,
+.season-block-info div img {
+    width: 1.2em; /* Фіксована ширина */
+    height: 1.2em; /* Фіксована висота */
+    object-fit: contain; /* Масштабує зображення без обрізання */
+    display: block; /* Запобігає появі зайвих відступів */
+}
+
+.season-block-info div a {
+    font-weight: 700;
+    color: #2b2f44;
+    text-decoration: none;
+}
+
+.season-block-info div a:hover {
+    text-decoration: underline;
+}
+
+.season-block-info div span {
+    font-size: 1em;
+    white-space: nowrap; /* Запобігає переносу тексту */
+    font-weight: 500;
+    color: #424649;
+}

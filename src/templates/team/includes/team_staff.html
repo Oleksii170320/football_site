@@ -1,6 +1,13 @@
-<h2>Керівництво та дійові особи</h2>
-{% for staff in leadership %}
-{% if staff.position_id != 9 %}
-{% include "team/includes/staffs_card_with_photo.html" %}
-{% endif %}
-{% endfor %}
+<link rel="stylesheet" href="/static/css/stl_content.css">
+
+
+<h6 class="header_page">Керівництво та дійові особи</h6>
+
+<div class="block-info">
+    {% for staff in leadership %}
+    {% if staff.position_id != 9 %}
+    {% include "team/includes/staffs_card_with_photo.html" %}
+    {% endif %}
+    {% endfor %}
+
+</div>

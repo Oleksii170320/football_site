@@ -43,7 +43,12 @@ async def get_group_in_season(
     """Отримати групи для певного сезону."""
 
     stmt = (
-        select(Group.id, Group.name, Match.stage_id, Stage.name.label("stage_name"))
+        select(
+            Group.id,
+            Group.name,
+            Match.stage_id,
+            Stage.name.label("stage_name")
+        )
         .join(Group, Group.id == Match.group_id)
         .join(Season, Season.id == Match.season_id)
         .join(Stage, Stage.id == Match.stage_id)

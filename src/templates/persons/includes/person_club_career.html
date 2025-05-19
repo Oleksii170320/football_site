@@ -1,0 +1,95 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_standing.css">
+
+
+<h6 class="header_page">Клубна кар'єра</h6>
+
+{% if not club_career %}
+    <div id="no-matches-found">
+        <img src="/static/img/techical_image/image_big_ball.png" alt="image_big_ball">
+        <p>Інформацію не знайдено.</p>
+    </div>
+{% else %}
+
+
+  <div class="block-info">
+    <div class="standing-rows standing-header">
+        <div class="career-num">№</div>
+        <div class="career-logo"></div>
+        <div class="career-team">Команда</div>
+        <div class="career-role">Посада</div>
+        <div class="career-period">Період</div>
+        <div class="career-matches">М</div>
+        <div class="career-goals">Г</div>
+        <div class="career-yellow-card">ЖК</div>
+        <div class="career-red-card">ЧК</div>
+    </div>
+
+    {% for career in club_career %}
+      <div class="standing-rows">
+        <div class="career-num">
+            {% if career.player_number %}
+                {{ career.player_number }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="career-logo">
+            {% if career.team_logo %}
+                <img src="{{ url_for('static', path='/img/teams/' ~ career.team_logo) }}"
+                     alt="{{ career.team_name }} logo">
+            {% else %}
+                <img src="/static/img/techical_image/icon_team.PNG"
+                     alt="{{ career.team_name }} logo">
+            {% endif %}
+        </div>
+        <div class="career-team">
+            <a class="nav-link" href="/teams/{{ career.team_slug }}/results">
+                {{ career.team_name}} ({{ career.team_city }})
+            </a>
+        </div>
+        <div class="career-role">{% if career.position %}{{ career.position }}{% endif %}</div>
+        <div class="career-period">
+            {% if career.startdate == career.enddate %}
+                {{ career.startdate }}
+            {% else %}
+                {{ career.startdate }}
+                {% if career.enddate == career.current_year %}
+                    - н/д
+                {% else %}
+                    - {{ career.enddate }}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="career-matches">
+            {% if career.matches_count %}
+                {{ career.matches_count }}
+            {% else %}
+                -
+            {% endif %}</div>
+        <div class="career-goals">
+            {% if career.goals %}
+                {{ career.goals }}
+                {% if career.penalty_goals %}
+                    ({{ career.penalty_goals }})
+                {% endif %}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="career-yellow-card">
+            {% if career.yellow_cards %}
+                {{ career.yellow_cards }}
+            {% else %}
+                -
+            {% endif %}</div>
+        <div class="career-red-card">
+            {% if career.red_cards %}
+                {{ career.red_cards }}
+            {% else %}
+                -
+            {% endif %}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

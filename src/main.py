@@ -1,14 +1,12 @@
-from typing import List
-
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 from core.database import get_db
 from core.templating import templates
+from helpers.authentications import get_current_user_for_button
 from services.news_list import get_news_list
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from controllers import (
     region,
     organization,
@@ -21,10 +19,13 @@ from controllers import (
     person,
     news,
     session,
-    api,
 )
-from services.team import get_teams_in_season
-from validation.team import TeamSchemas
+from controllers.api import (
+    seasons_api,
+    regions_api,
+    matches_api,
+    teams_api,
+)
 
 app = FastAPI(title="Football")
 
@@ -33,7 +34,12 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/", tags=["Home"])
-async def home(request: Request, db: AsyncSession = Depends(get_db)):
+async def home(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
+):
+    user_session, is_authenticated = current_user
 
     return templates.TemplateResponse(
         "home.html",
@@ -41,6 +47,8 @@ async def home(request: Request, db: AsyncSession = Depends(get_db)):
             "request": request,
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони)
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -55,8 +63,8 @@ app.include_router(match.router, prefix="/matches", tags=["Matches"])
 app.include_router(standings.router, prefix="/standings", tags=["Standings"])
 app.include_router(person.router, prefix="/persons", tags=["Persons"])
 app.include_router(news.router, prefix="/news", tags=["News"])
-app.include_router(api.router, prefix="/api", tags=["API"])
+app.include_router(seasons_api.router, prefix="/api/seasons", tags=["API"])
+app.include_router(matches_api.router, prefix="/api/matches", tags=["API"])
+app.include_router(regions_api.router, prefix="/api/regions", tags=["API"])
+app.include_router(teams_api.router, prefix="/api/teams", tags=["API"])
 app.include_router(session.router, prefix="/sign-in", tags=["Auth"])
-
-
-# app.include_router(person.router, prefix="/persons", tags=["Persons"])

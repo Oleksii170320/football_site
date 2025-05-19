@@ -17,7 +17,7 @@ async function getMatches() {
             <tr class="row-default">
                 <td style="width: 15%;"><strong>${content[key].event}</strong></td>
                 <td style="width: 30%;">
-                    <a href="/teams/${content[key].team1_slug}/application">
+                    <a href="/teams/${content[key].team1_slug}/results">
                         <h5><strong>${content[key].team1_name}</strong> (${content[key].team1_city})</h5>
                     </a>
                 </td>
@@ -41,7 +41,7 @@ async function getMatches() {
                          alt="${content[key].team2_name} logo" style="height: 60px">
                 </td>
                 <td style="width: 30%;">
-                    <a href="/teams/${content[key].team2_slug}/application">
+                    <a href="/teams/${content[key].team2_slug}/results">
                         <h5><strong>${content[key].team2_name}</strong> (${content[key].team2_city})</h5>
                     </a>
                 </td>

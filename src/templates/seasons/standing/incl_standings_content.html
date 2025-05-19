@@ -1,0 +1,30 @@
+<!--Standing => header by tables -->
+
+
+<div class="table-logo">
+  {% if team.logo %}
+    <img src="{{ url_for('static', path='/img/teams/' ~ team.logo) }}" alt="{{ team.team_name }} logo">
+  {% else %}
+    <img src="/static/img/techical_image/icon_team.PNG" alt="{{ team.team_name }} logo">
+  {% endif %}
+</div>
+<div class="table-team">
+  <a class="nav-link" href="/teams/{{ team.team_slug }}/results">
+    <strong>{{ team.team_name }}</strong> ({{ team.team_city }})
+  </a>
+</div>
+<div class="table-games">{{ team.played }}</div>
+<div class="table-win">{{ team.won }}</div>
+<div class="table-draw">{{ team.drawn }}</div>
+<div class="table-defeat">{{ team.lost }}</div>
+<div class="table-goals">{{ team.goals_for }} - {{ team.goals_against }}</div>
+<div class="table-goal-dif">{{ team.goal_difference }}</div>
+<div class="table-points"><strong>{{ team.points }}</strong></div>
+<div class="table-form">
+  <img src="/static/img/techical_image/icon_future_match.png">
+  <img src="/static/img/techical_image/icon_victory.png">
+  <img src="/static/img/techical_image/icon_defeat.png">
+  <img src="/static/img/techical_image/icon_draw.png">
+  <img src="/static/img/techical_image/icon_victory.png">
+  <img src="/static/img/techical_image/icon_victory.png">
+</div>

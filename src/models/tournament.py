@@ -1,5 +1,6 @@
+from enum import Enum
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Text, Integer, ForeignKey, Column
+from sqlalchemy import String, Text, ForeignKey, Enum as SQLAlchemyEnum, Column
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from slugify import slugify
 
@@ -9,7 +10,15 @@ from models.annonated import intpk
 if TYPE_CHECKING:
     from models.organization import Organization
     from models.season import Season
-    from models.news import News
+    from models.football_type import FootbalType
+
+
+class FootballType(str, Enum):
+    football = "Футбол"
+    futsal = "Футзал"
+    mini_football = "Міні-футбол"
+    beach_soccer = "Пляжний футбол"
+    street_football = "Вуличний футбол"
 
 
 class Tournament(Base):
@@ -23,11 +32,18 @@ class Tournament(Base):
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     slug: Mapped[str] = mapped_column(String(256), nullable=False, unique=True)
     logo: Mapped[str | None] = mapped_column(String(256))
-    description: Mapped[str] = mapped_column(
-        Text, default="", server_default="", nullable=True
+    description: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
+    football_type = Column(
+        SQLAlchemyEnum(FootballType),
+        default=FootballType.football,
+        server_default=FootballType.football.value,
+        nullable=False,
     )
-    football_type: Mapped[str | None] = mapped_column(String(25))
     website: Mapped[str | None] = mapped_column(String)
+    page_facebook: Mapped[str | None] = mapped_column(String)
+    page_youtube: Mapped[str | None] = mapped_column(String)
+    page_telegram: Mapped[str | None] = mapped_column(String)
+    page_instagram: Mapped[str | None] = mapped_column(String)
     level_int: Mapped[int | None]
     level: Mapped[str | None]
     level_up: Mapped[str | None]
@@ -38,6 +54,9 @@ class Tournament(Base):
     organization_id: Mapped[int | None] = mapped_column(
         ForeignKey("organizations.id", onupdate="SET NULL", ondelete="SET NULL"),
     )
+    football_type_id: Mapped[int] = mapped_column(
+        ForeignKey("football_types.id", onupdate="SET NULL", ondelete="SET NULL"),
+    )
 
     # зв'язки з таблицями
     organization: Mapped["Organization"] = relationship(
@@ -46,7 +65,9 @@ class Tournament(Base):
     seasons: Mapped[list["Season"]] = relationship(
         back_populates="tournament",
     )
-
+    football_types: Mapped["FootbalType"] = relationship(
+        back_populates="tournaments",
+    )
     # newstables: Mapped[list["News"]] = relationship(
     #     back_populates="tournament",
     # )

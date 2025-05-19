@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block style %}
-<link rel="stylesheet" href="/static/css/styles_region.css">
-<link rel="stylesheet" href="/static/css/styles_matches_season.css">
-<link rel="stylesheet" href="/static/css/styles_team.css">
+<link rel="stylesheet" href="/css/region/styles_region.css">
+<link rel="stylesheet" href="/css/matches/styles_matches_season.css">
+<link rel="stylesheet" href="/css/teams/styles_team.css">
 {% endblock %}
 
 
@@ -14,13 +14,15 @@
 {% block content %}
 
 
-{% include "tournament/includes/tournament_info.html" %}
+{% include "tournament/tournament_header.html" %}
 
-<div class="card mb-3" style="width: 99%;">
+<div class="card mb-3">
+
     <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
         <strong>ОПИС</strong><br>
     </div>
-    <p style="padding: 10px;">{{ tournaments.description }}</p>
+    <p>{{ tournaments.description }}</p>
+
 </div>
 
 {% if form %}
@@ -28,17 +30,14 @@
     <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
         <strong>СТВОРЕННЯ НОВОГО РОЗІГРАШУ</strong><br>
     </div>
-    <div style="padding: 10px; background-color: #afadad">
+    <div>
         {% include "forms/form_new_season.html" %}
     </div>
 </div>
 {% endif %}
 
 
-<div class="card mb-3" style="width: 99%;">
-    <div style="padding: 5px; background-color: #636363; text-align: center; color: #ffffff;">
-        <strong>ІСТОРІЯ РОЗІГРАШІВ</strong><br>
-    </div>
+<div class="card mb-3">
     {% include "seasons/season_archive.html" %}
 </div>
 

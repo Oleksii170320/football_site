@@ -1,0 +1,88 @@
+<link rel="stylesheet" href="/static/css/person/styles_person_nav_block.css">
+
+
+<div class="person-header">
+
+    <div class="person-block-logo">
+        <div class="person-logo">
+          {% if person.photo %}
+          <img src="{{ url_for('static', path='/img/person/' ~ person.photo) }}"
+               alt="{{ person.name }} logo" width="200px">
+          {% else %}
+          <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
+               alt="{{ person.name }} logo" width="200px">
+          {% endif %}
+        </div>
+    </div>
+
+    <div class="person-info">
+
+        <div class="person-name-title">
+          <span>{{ person.lastname }} {{ person.name }} {{ person.surname }}</span>
+        </div>
+
+        <div class="person-main-info">
+          <h6>
+              Дата народження:
+              {% if person.birthday or person.age %}
+              <span>{{ person.birthday }} ({{ person.age }} р.)</span>
+              {% else %}
+              -
+              {% endif %}
+          </h6>
+
+          <h6>
+              Регіон:
+              <a href="/region/{{ person.region_slug }}">
+                {% if 1< person.region_id < 26 %}
+                  {{ person.region_name }} область
+                {% else %}
+                  {{ person.region_name }}
+                {% endif %}
+
+              </a>
+          </h6>
+
+        </div>
+
+        <div class="person-team-info">
+
+          <div class="person-team-header">
+            <span class="person-team-logo"></span>
+            <span class="person-teams">Нинішні команди</span>
+            <span class="person-roles">Амплуа</span>
+            <span class="person-positions">Позиція</span>
+          </div>
+
+          {% for team in positions_role %}
+             <div class="person-team-content">
+                 <span class="person-team-logo">
+                   {% if team.team_logo %}
+                     <img src="{{ url_for('static', path='/img/teams/' ~ team.team_logo) }}" alt="{{ team.team_name }} logo">
+                   {% else %}
+                      <img src="/static/img/techical_image/icon_team.PNG" alt="{{ team.team_name }} logo">
+                   {% endif %}
+                 </span>
+               </img>
+               <span class="person-teams">
+                 <a href="/teams/{{ team.team_slug }}/results">
+                     {{ team.team_name }} ({{ team.team_city }})
+                 </a>
+               </span>
+               <span class="person-roles">{{ team.position }}</span>
+               <span class="person-positions">{% if team.player_role_id %}{{ team.full_name }}{% else %}-{% endif %}</span>
+             </div>
+          {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+<div class="nav-buttons">
+    <a href="/persons/{{ person.id }}/matches">Матчі</a>
+    <a href="/persons/{{ person.id }}/club_career">Клубна кар'єра</a>
+    <a href="/persons/{{ person.id }}/tournaments">Турніри</a>
+</div >
+
+<script src="{{ url_for('static', path='js/regions/js-region-navblock.js') }}"></script>
+

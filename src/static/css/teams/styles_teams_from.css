@@ -1,0 +1,44 @@
+#teamForm {
+    background-color: #aeacac;
+    border: 1px solid dimgrey;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 80%;
+}
+
+#teamForm div {
+    display: flex;
+    align-items: center; /* Центрує по вертикалі */
+    justify-content: center; /* Центрує по горизонталі */
+    gap: 10px;
+    border: 1px solid #c40303;
+    padding: 1px;
+    margin: 1px;
+    text-align: center;
+}
+
+#teamForm div label {
+    display: flex;
+    align-items: center; /* Центрує по вертикалі */
+    justify-content: right; /* Центрує по горизонталі */
+    width: 50%;
+}
+
+#teamForm div input { width: 50%; }
+
+#regionName { width: 50%; }
+
+.form-create-team {
+    width: 50%;
+    border: 1px solid #ececec;
+    padding: 3px 0px 3px 0px;
+    border: 1px solid #777676;
+    border-radius: 5px;
+}
+
+.form-create-team:not(:placeholder-shown) { padding-left: 10px }
+
+.form-create-team::placeholder{
+    color: #808283;
+    padding-left: 10px;
+}

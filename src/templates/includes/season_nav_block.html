@@ -1,58 +1,38 @@
-<style>
-    li:hover {
-        background-color: #575656; /* Зміна фону при наведенні мишкою */
-        border-color: #6e6e6e; /* Зміна кольору рамки при наведенні мишкою */
-    }
+<link rel="stylesheet" href="/css/region/stl_region_nav_block.css">
 
-    li a {
-        text-decoration: none; /* Забрати підкреслення для посилання */
-        color: inherit; /* Зберегти колір тексту */
-    }
-
-    /*li:hover a {*/
-    /*    color: #333; !* Зміна кольору тексту посилання при наведенні мишкою *!*/
-    /*}*/
-</style>
-
-
-<div class="nav-block" style="padding: 20px;">
-
+<div class="nav-block">
+    {% if season %}
     <div class="region-info">
-        <a href="/region/{{ region.slug }}">
-            <img src="{{ url_for('static', path='/img/regions/' ~ region.emblem) }}" alt="logo {{ region.name }}"
-                 width="50"></a>
-        <a href="/region/{{ region.slug }}">
-            <h4>{{ region.name }}</h4></a>
-
-        <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo ) }}"
-             alt="logo {{ season.season_name }}" width="50">
-        {% if season %}
         <a href="/tournaments/{{ season.tournament_slug }}">
-            <h4>
-                {{ season.season_name }} {{ season.season_year }}
-            </h4>
+            <img class="logo_redion_in_season"
+              src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo ) }}"
+              alt="logo {{ season.season_name }}" width="50"
+              width="30">
+            <h4>{{ season.season_name }} {{ season.season_year }}</h4>
         </a>
-
-        {% endif %}
     </div>
+    {% endif %}
 
+    <div class="nav-links">
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/main">Головна</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/results">Результати</a>
+        <a href="/region/{{ region.slug }}/{{ season.season_slug }}/upcoming">Матчі</a>
 
-    <ul class="nav-links" style="padding: 15px 0px 0px 0px;">
-        <li><a href="/region/{{ region.slug }}/{{ season.season_slug }}/main">Головна</a></li>
-        <li><a href="/region/{{ region.slug }}/{{ season.season_slug }}/results">Результати</a></li>
-        <li><a href="/region/{{ region.slug }}/{{ season.season_slug }}/upcoming">Матчі</a></li>
         {% if season.standing %}
-        <li><a href="/region/{{ region.slug }}/{{ season.season_slug }}/standings">Таблиця</a></li>
+            <a href="/region/{{ region.slug }}/{{ season.season_slug }}/standings">Таблиця</a>
         {% endif %}
-        <li><a href="/region/{{ region.slug }}/{{ season.season_id }}/{{ season.tournament_slug }}/archive">Архів</a></li>
-        <li style="border: 1px solid #8e8c8c; padding: 3px;">
-            <a href="/tournaments/{{ season.tournament_slug }}/new_season">Створити новий розіграш</a>
-        </li>
-        <li style="border: 1px solid #8e8c8c; padding: 3px;">
-            <a href="/region/{{ region.slug }}/{{ season.season_slug }}/clubs">Команди</a>
-        </li>
-        <li style="border: 1px solid #8e8c8c; padding: 3px;">
-            <a href="/region/{{ region.slug }}/{{ season.season_slug }}/schedule">Календар матчів</a>
-        </li>
-    </ul>
+
+        <a href="/region/{{ region.slug }}/{{ season.season_id }}/{{ season.tournament_slug }}/archive">Архів</a>
+    </div >
 </div>
+
+<!--there are buttons for admin-->
+{% if is_authenticated %}
+<div class="btn-admin">
+    <div class="nav-links">
+      <a href="/tournaments/{{ season.tournament_slug }}/new_season">Створити новий розіграш</a>
+      <a href="/region/{{ region.slug }}/{{ season.season_slug }}/clubs">Команди</a>
+      <a href="/region/{{ region.slug }}/{{ season.season_slug }}/schedule">Календар матчів</a>
+    </div >
+</div>
+{% endif %}

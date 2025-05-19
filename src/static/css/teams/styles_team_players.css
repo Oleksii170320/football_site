@@ -1,0 +1,76 @@
+.person-rows {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розподіляє рівномірно */
+    gap: 2px;
+    color: #323232;
+    padding: 5px 10px; /* Зроблено трохи більше для кращого вигляду */
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+/* Встановлення однакових розмірів для колонок */
+.person-num { width: 3%;}
+.person-name { width: 45%; }
+.person-born { width: 15%;}
+.person-age { width: 5%; }
+.person-role { width: 14%; }
+.person-game { width: 6%; }
+.person-goals { width: 6%; }
+.person-yellow_card { width: 3%; }
+.person-red_card { width: 3%; }
+
+.person-born, .person-age, .person-game, .person-goals,.person-yellow_card,
+.person-red_card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.standing-header .person-role {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.achievement-name { width: 30%; }
+.achievement-tournament { width: 70%; }
+
+.history-season-logo {width: 4%; }
+.history-season-name {width: 65%; }
+.history-season-year {width: 10%; }
+.history-association-name {width: 10%;}
+.history-federation-name {width: 10%;}
+
+.history-season-name a,
+.achievement-tournament a,
+.person-name a {
+    text-decoration: none;
+    color: #2b2f44;
+}
+
+.history-season-name a:hover,
+.achievement-tournament a:hover,
+.person-name a:hover {
+    text-decoration: underline;
+    color: #192fa4;
+}
+
+.standing-rows .person-name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Вирівнює вміст по лівому краю */
+    text-align: left; /* Текст теж вирівнюється вліво */
+    padding-left: 2px; /* Додає трохи відступу для кращого вигляду */
+}
+
+.standing-header .person-name {
+    text-align: right;
+}
+
+.history-season-logo img {
+    max-height: 20px;
+    max-width: 20px;
+}

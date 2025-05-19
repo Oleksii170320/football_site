@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/matches/stl_match_statistic.css">
+
+<h6 class="header_page">ОГЛЯД МАТЧУ</h6>
+
+
+<div class="block-info">
+
+    <div class="match-statistic-headers">
+        <div class="match-statistic-headers-team1">{{ match.team1_name }}</div>
+        <div class="match-statistic-headers-team2">{{ match.team2_name }}</div>
+    </div>
+
+    <div class="match-statistic-content">
+        {% for event in events %}
+          {% if match.team1_id == event.team_id %}
+            <div class="match-statistic-content-team1">
+              <div class="match-statistic-minute">
+                  {{ event.minute }}'
+              </div>
+              <div class="match-statistic-img">
+                <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}"
+                     alt="-">
+              </div>
+              <div class="match-statistic-name">
+                <a href="/persons/{{ event.person_id }}">
+                  <strong>{{ event.lastname }} {{ event.name }}</strong>
+                </a>
+
+                {% if event.replacement_lastname %}
+                  <a href="/persons/{{ event.replacement_person_id }}">
+                    ({{ event.replacement_lastname }} {{ event.replacement_name }})
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% elif match.team2_id == event.team_id %}
+            <div class="match-statistic-content-team2">
+              <div class="match-statistic-name match-player-name">
+                <a href="/persons/{{ event.person_id }}">
+                  <strong>{{ event.lastname }} {{ event.name }}</strong>
+                </a>
+
+                {% if event.replacement_lastname %}
+                  <a href="/persons/{{ event.replacement_person_id }}">
+                    ({{ event.replacement_lastname }} {{ event.replacement_name }})
+                  </a>
+                {% endif %}
+              </div>
+              <div class="match-statistic-img">
+                <img src="{{ url_for('static', path='img/techical_image/' ~ event.event_image) }}"
+                     alt="-">
+              </div>
+              <div class="match-statistic-minute">
+                  {{ event.minute }}'
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+    </div>
+
+</div>

@@ -1,0 +1,103 @@
+<link rel="stylesheet" href="/static/css/matches/stl_matches_by_round.css">
+
+  <div class="match-content">
+      <div class="match-date-icon" id="match-date-icon">
+        <img src="/static/img/techical_image/icon_calendar.png" alt="icon_calendar">
+      </div>
+      <div class="match-date">
+        {% if match.event and match.event != "01.01.2100" and match.event is not none %}
+          <span>{{ match.event }}</span>
+        {% else %}
+          <span>--.--.--</span>
+        {% endif %}
+      </div>
+      <div class="match-time-icon" id="match-time-icon">
+        <img src="/static/img/techical_image/icon_clock.png" alt="icon_clock">
+      </div>
+      <div class="match-time">
+        {% if match.event_time and not ('00:00' <= match.event_time <= '04:00') %}
+          {{ match.event_time }}
+        {% else %}
+          <span>--:--</span>
+        {% endif %}
+      </div>
+      <div class="match-team-name team-name1">
+        <a href="/teams/{{ match.team1_slug }}/results"
+           id="match-team1"
+           title="Відкрити інформація про команду"
+        >
+          <strong>{{ match.team1_name }}</strong> ({{ match.team1_city}})
+        </a>
+      </div>
+      <div class="match-team-logo">
+        {% if match.team1_logo %}
+          <img src="{{ url_for('static', path='/img/teams/' ~ match.team1_logo) }}" alt="{{ match.team1_name }} logo">
+        {% else %}
+          <img src="/static/img/techical_image/icon_team.PNG" alt="{{ match.team1_name }} logo">
+        {% endif %}
+      </div>
+      <div class="match-result">
+        <a href="/matches/{{ match.match_id }}/review" target="_blank">
+
+          {% if match.status == "Тех. поразка" %}
+            <strong style="color: red; text-align: center;" title="Технічна поразка">
+                {{ match.team1_goals }} : {{ match.team2_goals }}
+            </strong><br>
+
+          {% elif match.extra_time %}
+               д.ч. <strong title="Подробиці матчу!">{{ match.team1_goals }} : {{ match.team2_goals }}
+              </strong><br>
+
+          {% elif match.team1_goals is not none and match.team2_goals is not none %}
+            <strong id="match-result-info" title="Подробиці матчу!">
+              {{ match.team1_goals }} : {{ match.team2_goals }}
+            </strong><br>
+
+          {% else %}
+             <strong>- : -</strong><br>
+          {% endif %}
+
+          {% if match.team1_penalty or match.team2_penalty %}
+              <span title="Післяматчеві пенальті">
+                  (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+              </span>
+          {% endif %}
+        </a>
+      </div>
+      <div class="match-team-logo">
+        {% if match.team2_logo %}
+          <img src="{{ url_for('static', path='/img/teams/' ~ match.team2_logo) }}" alt="{{ match.team2_name }} logo">
+        {% else %}
+          <img src="/static/img/techical_image/icon_team.PNG" alt="{{ match.team2_name }} logo">
+        {% endif %}
+      </div>
+      <div class="match-team-name team-name2">
+        <a href="/teams/{{ match.team2_slug }}/results"
+           id="match-team2"
+           title="Відкрити інформація про команду"
+        >
+          <strong>{{ match.team2_name }}</strong> ({{ match.team2_city}})
+        </a>
+      </div>
+      <div class="match-info" title="Подробиці матчу">
+        {% if match.match_info %}
+          <a href="#">
+            <img src="/static/img/techical_image/icon_info_50.png"
+                 alt="icon_info_50"
+                 title="{{ match.match_info }}">
+            </a>
+        {% endif %}
+
+        {% if match.match_video %}
+          <a href="{{ match.match_video }}" target="_blank">
+            <img src="/static/img/techical_image/social_media/icon_youtube_2.png"
+                 alt="icon-youtube"
+                 title="Переглянути відео матчу">
+          </a>
+        {% endif %}
+      </div>
+  </div>
+
+
+
+

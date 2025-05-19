@@ -9,7 +9,7 @@ from core.templating import render
 from core.database import get_db
 from services import person as crud
 from services.position_role import get_persons_position_team
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from validation import person as schemas
 
 

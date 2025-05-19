@@ -1,0 +1,28 @@
+/*.card {*/
+/*  width: 100%; !* Картка заповнює 100% ширини контейнера *!*/
+/*  max-width: 600px; !* Максимальна ширина картки *!*/
+/*  margin: 0 auto; !* Центруйте картки *!*/
+/*  border-radius: 10px;*/
+/*  overflow: hidden;*/
+/*  transition: transform 0.2s;*/
+/*}*/
+
+.card-news:hover {
+  background-color: #ececec;
+}
+
+.news-photo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5px;
+  /*width: 150px; !* Фіксована ширина *!*/
+  height: 200px; /* Фіксована висота */
+}
+
+.news-photo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Зберігає пропорції та масштабує */
+}

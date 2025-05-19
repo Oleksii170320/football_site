@@ -1,0 +1,106 @@
+
+.matches-cards {
+    overflow: auto;
+    transition: box-shadow 0.3s ease-in-out;
+    background-color: #ffffff;
+    margin: 0px;
+    padding: 0px;
+}
+
+.title-stage {
+    background-color: #edf6fe;
+    color: #2b2f44;
+    margin: 1px;
+    padding: 3px 0px 3px 20px;
+    border: 1px solid #d2d1d1;
+    border-radius: 2px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розміщення по краях */
+}
+
+
+
+.title-stage >div >a >span {
+    text-transform: uppercase;
+}
+
+.title-stage >div >a:hover,
+.title-stage >div >a >span:hover {
+    text-decoration: underline;
+}
+
+.title-stage >a:hover {
+    text-decoration: underline;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 3px; /* Відстань між лінками */
+}
+
+.links >span { text-transform: uppercase; }
+
+.title-stage >div >a {
+    text-decoration: none;
+    color: #2b2f44;
+    margin-right: 1px; /* Додає відступ між лінками */
+}
+
+.region-title {
+    padding-left: 10px;
+}
+
+.region-title >img {
+     height: 1.5em;
+}
+
+
+.region-title-logo {
+     height: 1.2em;
+}
+
+.region-title >a {
+    text-decoration: none;
+    color: #2b2f44;
+    margin-right: 1px; /* Додає відступ між лінками */
+}
+
+.region-title >a:hover {text-decoration: underline;}
+
+.match-standing >a {
+    padding-right: 1em;
+    color: #505160;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.match-standing >a:hover {
+    text-decoration: underline;
+    color: #0a53be;
+}
+
+.round-card {
+    color: #555e61;
+    margin: 3px 5px 3px 5px;
+    padding: 0px 0px 0px 0px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.round-card >h6 {
+    color: #555e61;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #efefef;
+    padding: 1px 0px 3px 15px;
+    margin-bottom: 1px;
+    border-radius: 3px;
+}
+
+.round-card >.matches {
+    padding-bottom: 5px;
+}

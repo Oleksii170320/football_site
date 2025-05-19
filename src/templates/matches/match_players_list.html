@@ -1,0 +1,67 @@
+<div class="match-composition-content">
+  <div class="match-num">
+    {% if info.player_number %}
+      {{ info.player_number }}
+    {% else %}
+      -
+    {% endif %}</div>
+  <div class="match-position">{{ info.role_name }}</div>
+  <div class="match-player">
+    <a href="/persons/{{ info.player_id }}">
+      {{ info.player_lastname }} {{ info.player_name }}
+    </a>
+  </div>
+  <div class="match-minute">
+    {% if info.play_time == 0 %}
+      -
+    {% else %}
+      {{ info.play_time }}
+    {% endif %}
+  </div>
+  <div class="match-substitution">
+    {% if info.replacement %}
+        <img src="{{ url_for('static', path='img/techical_image/match_event/arrow_green-res.png') }}" alt="-" height="20px">
+    {% else %}
+      {% for player in replacements if player == info.id %}
+        {% if player %}
+          <img src="{{ url_for('static', path='img/techical_image/match_event/arrow_res-green.png') }}" alt="-" height="20px">
+        {% else %}
+          -
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+  <div class="match-goal">
+    {% if info.all_goals %}
+      <strong>{{ info.all_goals }}</strong>
+      {% if info.penalty %}
+        ({{ info.penalty }})
+      {% endif %}
+    {% else %}
+      -
+    {% endif %}
+  </div>
+  <div class="match-autogoal">
+    {% if info.own_goal %}
+      {{ info.own_goal }}
+    {% else %}
+      -
+    {% endif %}
+  </div>
+  <div class="match-yellow-card">
+    {% if info.yellow_card == 1 %}
+      <img src="{{ url_for('static', path='img/techical_image/match_event/card_yellow.png') }}" alt="-" height="20px">
+    {% else %}
+      -
+    {% endif %}
+  </div>
+  <div class="match-red-card">
+    {% if info.second_yellow_card %}
+      <img src="{{ url_for('static', path='img/techical_image/match_event/card_second_yellow.png') }}" alt="-" height="20px">
+    {% elif info.red_card %}
+      <img src="{{ url_for('static', path='img/techical_image/match_event/card_red.png') }}" alt="-" height="20px">
+    {% else %}
+      -
+    {% endif %}
+  </div>
+</div>

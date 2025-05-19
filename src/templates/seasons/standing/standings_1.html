@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_standing.css">
+
+
+<h6 class="header_page">ТУРНІРНЕ СТАНОВИЩЕ</h6>
+
+<!--<div class="season-nav-buttons">-->
+<!--    {% for stage in stages %}-->
+<!--        <a href="#">-->
+<!--            {{ stage.name }}-->
+<!--        </a>-->
+<!--    {% endfor %}-->
+<!--</div>-->
+
+<div class="block-info">
+
+    {% if not groups %}
+
+      <div class="block-info_standing">
+
+        {% include "seasons/standing/incl_standings_header.html" %}
+
+          {% for team in standings %}
+            <div class="standing-rows">
+              <div class="table-num"><strong>{{ loop.index }}</strong></div>
+
+              {% include "seasons/standing/incl_standings_content.html" %}
+
+            </div>
+          {% endfor %}
+      </div>
+
+    {% else %}
+
+      <div class="block-info_standing">
+        {% for stage in stages %}
+          <h6>{{ stage.name }}</h6>
+          <div style="margin-bottom: 10px">
+
+            {% for group in groups if group.stage_id == stage.id %}
+
+              <h6 class="standing-group-name">{{ group.stage_name }} - {{ group.name }}</h6>
+
+             <div class="block-info_standing">
+
+              {% include "seasons/standing/incl_standings_header.html" %}
+
+              {% for team in standings if team.group_id == group.id %}
+                <div class="standing-rows">
+                  <div class="table-num">{{ loop.index }}</div>
+
+                  {% include "seasons/standing/incl_standings_content.html" %}
+
+                </div>
+              {% endfor %}
+              </div>
+            {% endfor %}
+
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+</div>

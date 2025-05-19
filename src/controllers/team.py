@@ -10,26 +10,33 @@ from typing import List, Optional
 from pathlib import Path
 
 from config import UPLOAD_DIR_FOR_LOGO
-from core.templating import templates, render
+from core.templating import render
 from core.database import get_db
-from services import team as crud
-from services.match import get_matches_team
+from helpers.authentications import get_current_user_for_button
+from services.teams import team as crud
+from services.matches.matches_for_team import get_matches_team_results, get_matches_team_upcoming
 from services.news_list import get_news_list
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 from services.season import (
     get_seasons_region,
     get_seasons_winner,
     get_seasons_teams_history,
 )
-from services.team import get_team_staff, get_team, get_teams_in_season
+from services.teams.team import get_team_staff, get_team
 from validation import team as schemas
 
 router = APIRouter()
 
 
 @router.get("/")
-async def read_teams_all(request: Request, db: AsyncSession = Depends(get_db)):
+async def read_teams_all(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
+):
     """Відкриває список всіх команд асинхронно"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/teams.html",
@@ -38,6 +45,8 @@ async def read_teams_all(request: Request, db: AsyncSession = Depends(get_db)):
             "news_list": await get_news_list(db),  # Стрічка новин (всі регіони),
             "regions_list": await get_regions_list(db),
             "teams": await crud.get_teams(db),  # Отримання команд,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -48,8 +57,11 @@ async def read_team_by_id(
     team_slug: str,
     db: AsyncSession = Depends(get_db),
     region_slug=None,
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває сторінку команди по ІД"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
@@ -58,37 +70,77 @@ async def read_team_by_id(
             "regions_list": await get_regions_list(db),
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "team": await get_team(db, team_slug=team_slug),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
-@router.get("/{team_id}/matches")
+@router.get("/{team_slug}/results")
 async def team_matches(
-    request: Request, team_id: int, db: Session = Depends(get_db), region_slug=None
+    request: Request,
+    team_slug: str,
+    region_slug: str = None,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
 ):
-    """Відкриває всі матчі даної комсанди"""
+    """Відкриває всі зіграні матчі даної комсанди"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(
-                db, region_slug=region_slug
-            ),  # Список цьогорічних турнірів
-            "team": await crud.get_team(
-                db, team_id=team_id
-            ),  # Загальна інформація команди
-            "matches": await get_matches_team(db, team_id=team_id),
+            "seasons": await get_seasons_region(db, region_slug=region_slug),  # Список цьогорічних турнірів
+            "team": await crud.get_team(db, team_slug=team_slug),  # Загальна інформація команди
+            "matches": await get_matches_team_results(db, team_slug=team_slug),
+            "results": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
+        },
+    )
+
+
+@router.get("/{team_slug}/upcoming")
+async def team_matches(
+    request: Request,
+    team_slug: str,
+    region_slug: str = None,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user_for_button),
+):
+    """Відкриває всі не зіграні матчі даної комсанди"""
+
+    user_session, is_authenticated = current_user
+
+    return render(
+        "team/team.html",
+        request,
+        {
+            "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
+            "seasons": await get_seasons_region(db, region_slug=region_slug),  # Список цьогорічних турнірів
+            "team": await crud.get_team(db, team_slug=team_slug),  # Загальна інформація команди
+            "matches": await get_matches_team_upcoming(db, team_slug=team_slug),
+            "upcoming": True,
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
 @router.get("/{team_slug}/application")
 async def team_application(
-    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
+    request: Request,
+    team_slug: str,
+    db: Session = Depends(get_db),
+    region_slug=None,
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває заявку гравців даної команди"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
@@ -98,15 +150,23 @@ async def team_application(
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "team": await crud.get_team(db, team_slug=team_slug),
             "application": await get_team_staff(db, team_slug=team_slug),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
 @router.get("/{team_slug}/leadership")
 async def team_leadership(
-    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
+    request: Request,
+    team_slug: str,
+    db: Session = Depends(get_db),
+    region_slug=None,
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Керівництво команди"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
@@ -116,15 +176,23 @@ async def team_leadership(
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "team": await crud.get_team(db, team_slug=team_slug),
             "leadership": await get_team_staff(db, team_slug=team_slug),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
 @router.get("/{team_slug}/achievement")
 async def team_achievement(
-    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
+    request: Request,
+    team_slug: str,
+    db: Session = Depends(get_db),
+    region_slug=None,
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Історія досягнення команди"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
@@ -134,15 +202,23 @@ async def team_achievement(
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "team": await crud.get_team(db, team_slug=team_slug),
             "achievement": await get_seasons_winner(db, team_slug=team_slug),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
 
 @router.get("/{team_slug}/history")
 async def read_team_history(
-    request: Request, team_slug: str, db: Session = Depends(get_db), region_slug=None
+    request: Request,
+    team_slug: str,
+    db: Session = Depends(get_db),
+    region_slug=None,
+    current_user: str = Depends(get_current_user_for_button),
 ):
     """Історія виступів команди в турнірах"""
+
+    user_session, is_authenticated = current_user
 
     return render(
         "team/team.html",
@@ -152,27 +228,8 @@ async def read_team_history(
             "seasons": await get_seasons_region(db, region_slug=region_slug),
             "team": await crud.get_team(db, team_slug=team_slug),
             "history": await get_seasons_teams_history(db, team_slug=team_slug),
-        },
-    )
-
-
-@router.get("/{team_id}/history")
-async def read_team_history(
-    request: Request,
-    team_id: int,
-    db: AsyncSession = Depends(get_db),
-    region_slug: Optional[str] = None,
-):
-    """Історія виступів команди в турнірах"""
-
-    return render(
-        "team/team.html",
-        request,
-        {
-            "regions_list": await get_regions_list(db),
-            "seasons": await get_seasons_region(db, region_slug=region_slug),
-            "team": await crud.get_team(db, team_id=team_id),
-            "history": await get_seasons_teams_history(db, team_id=team_id),
+            "is_authenticated": is_authenticated,  # Передаємо значення
+            "user_session": user_session,  # Ім'я користувача
         },
     )
 
@@ -185,6 +242,43 @@ async def create_team(
 
 
 @router.post("/new_team", response_model=schemas.TeamSchemas)
+async def create_team(
+    name: str = Form(...),
+    city: str = Form(...),
+    region_id: int = Form(...),
+    full_name: Optional[str] = Form(None),
+    slug: str = Form(...),
+    foundation_year: Optional[str] = Form(None),
+    clubs_site: Optional[str] = Form(None),
+    stadium_id: Optional[int] = Form(0),
+    president_id: Optional[int] = Form(0),
+    coach_id: Optional[int] = Form(0),
+    logo: Optional[str] = Form(None),
+    # logo: UploadFile = File(...),  # У разі додавання файлів
+    description: Optional[str] = Form(None),
+    db: AsyncSession = Depends(get_db),  # Використання асинхронної сесії
+):
+    # Створюємо об'єкт для команди на основі отриманих даних
+    db_team = schemas.TeamCreateSchemas(
+        name=name,
+        city=city,
+        region_id=region_id,
+        full_name=full_name,
+        slug=slug,
+        foundation_year=foundation_year,
+        clubs_site=clubs_site,
+        stadium_id=stadium_id,
+        president_id=president_id,
+        coach_id=coach_id,
+        logo=logo,
+        description=description,
+    )
+
+    # Викликаємо асинхронний CRUD для створення команди
+    return await crud.create_team(db=db, team=db_team)
+
+
+@router.post("/new_team_add_season", response_model=schemas.TeamSchemas)
 async def create_team(
     name: str = Form(...),
     city: str = Form(...),

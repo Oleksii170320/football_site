@@ -1,11 +1,9 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Index, UniqueConstraint
+from sqlalchemy import String
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from sqlalchemy.ext.declarative import declared_attr
 
 from core.database import Base
 from models.annonated import intpk
-from slugify import slugify
 
 if TYPE_CHECKING:
     from models.position_role import PositionRole

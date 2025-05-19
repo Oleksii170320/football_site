@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.templating import render
 from core.database import get_db
 from services.news_list import get_news_page
-from services.region import get_regions_list
+from services.regions.region import get_regions_list
 
 
 router = APIRouter()

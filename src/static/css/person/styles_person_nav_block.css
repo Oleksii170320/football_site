@@ -1,0 +1,155 @@
+.person-header {
+    display: flex;
+    margin: 3px;
+}
+
+.person-block-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px;
+    margin: 0px;
+}
+
+.person-logo {
+    display: flex;
+    justify-content: center; /* Центруємо по горизонталі */
+    align-items: center;
+    padding: 3px;
+    border: 1px solid #d5d4d4;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    max-width: 140px;
+    width: auto; /* Фіксований розмір (можеш змінити) */
+    height: 140px; /* Висота дорівнює ширині — квадрат */
+}
+
+.person-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover; /* Обрізає, якщо не влазить */
+}
+
+.person-info {
+    padding: 3px; /* Додає відступи */
+    width: 100%;
+}
+
+.person-name-title {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #001e28;
+    margin: 0px;
+    padding: 0px;
+}
+
+.person-main-info {
+    padding: 0px 0px 3px 0px;
+}
+
+.person-main-info h6 {
+    font-size: 0.8em;
+    font-weight: 400;
+}
+
+.person-main-info h6 span {
+    color: #414349;
+    font-weight: 500;
+}
+
+.person-team-info div h6,
+.person-main-info h6 a {
+    color: #414349;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.person-main-info h6 a:hover {
+    text-decoration: underline;
+    color: #313a5b;
+}
+
+.person-team-info {
+    border: 1px solid #dedede;
+    border-radius: 3px;
+}
+
+.person-team-header {
+    display: flex;
+    gap: 10px;
+    padding: 2px;
+    background-color: #dedede;
+}
+
+
+.person-team-header span {
+    color: #313a5b;
+    font-weight: 500;
+    font-size: 0.8em;
+}
+
+.person-team-content {
+    display: flex;
+    gap: 10px;
+    align-items: center; /* Вирівнює всі елементи по центру по вертикалі */
+    padding: 1px 3px 1px 3px;
+    border-bottom: 1px solid #bebdbd;
+}
+
+.person-team-content span img {
+    max-height: 1.4em; /* Трохи збільшений розмір */
+    width: auto;
+}
+
+.person-team-content span,
+.person-team-content span a {
+    color: #414349;
+    font-size: 0.9em;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+.person-team-content span a:hover {
+    text-decoration: underline;
+    color: #04315d;
+}
+
+.person-team-logo {width: 3%;}
+.person-teams {width: 57%;}
+.person-roles {width: 20%;}
+.person-positions {width: 20%;}
+
+
+.nav-buttons {
+    display: flex; /* Робимо контейнер гнучким */
+    justify-content: flex-start;
+    gap: 15px;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    /*padding: 5px;*/
+}
+
+.nav-buttons a {
+    text-decoration: none; /* Забирає підкреслення */
+    text-transform: uppercase; /* Текст у верхньому регістрі */
+    font-weight: 600; /* Жирний шрифт */
+    font-size: 0.8rem; /* Змінює розмір шрифту */
+    color: #74797a; /* Колір тексту */
+    margin: 0px 0px 0px 10px;
+    padding: 3px 1px 3px 1px;
+    border: 1px solid #fdfdfe;
+    background-color: #fdfdfe;
+}
+
+.nav-buttons a:hover {
+    color: #2b2f44; /* Робить текст контрастним */
+    border-bottom: 2px solid #74797a !important;
+}
+
+.nav-buttons a.nav-block-active {
+    font-weight: 700;
+    color: #2b2f44;
+    border-bottom: 2px solid #ff0000 !important;
+}

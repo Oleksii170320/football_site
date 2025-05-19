@@ -1,3 +1,5 @@
 .idea/
+.env
 data.json
 src/test.db
+src/config.py

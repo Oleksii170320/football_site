@@ -1,40 +1,45 @@
-<div class="container" style="width: 100%;">
-    <div class="card mb-3" style="width: 99%;">
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_archive.css">
 
-        <table class="table table-striped table-hover" style="width: 100%;">
-            <thead>
-            <tr class="row-header">
-                <th>Сезон</th>
-                <th></th>
-                <th>Переможець</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for season in seasons_archive %}
+<h6 class="header_page">ІСТОРІЯ РОЗІГРАШІВ</h6>
 
-            <tr class="row-default">
-                <td>
-                    <strong>
-                        <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
-                            {{ season.season_name }} - {{ season.season_year }}
-                        </a>
-                    </strong>
-                </td>
-                {% if season.team_winner_name %}
-                <td class=>
+<div class="block-info">
 
-                    <img src="{{ url_for('static', path='/img/teams/' ~ season.team_winner_logo) }}"
-                         alt="{{ season.team_winner_name }} logo">
-
-                </td>
-                <td>
-                    <a href="/teams/{{ season.team_winner_slug }}/application">
-                        <strong>{{ season.team_winner_name }}</strong> ({{ season.team_winner_city }})
-                    </a>
-                </td>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="archive-rows archive-header">
+      <div class="table-season">СЕЗОН</div>
+      <div class="table-logo"></div>
+      <div class="table-team">Переможець</div>
     </div>
+
+    {% for season in seasons_archive %}
+
+      <div class="archive-rows">
+        <div class="table-season">
+            <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
+                {% if season.season_full_name %}
+                  {{ season.season_full_name }}
+                {% else %}
+                  {{ season.season_name }}
+                {% endif %}
+                 - {{ season.season_year }}
+            </a>
+        </div>
+
+        {% if season.team_winner_name %}
+          <div class="table-logo">
+            {% if season.team_winner_logo %}
+              <img src="{{ url_for('static', path='/img/teams/' ~ season.team_winner_logo) }}"alt="{{ season.team_winner_name }} logo">
+            {% else %}
+              <img src="/static/img/techical_image/icon_team.PNG" alt="{{ season.team_winner_name }} logo">
+            {% endif %}
+          </div>
+
+          <div class="table-team">
+              <a href="/teams/{{ season.team_winner_slug }}/results">
+                  <strong>{{ season.team_winner_name }}</strong> ({{ season.team_winner_city }})
+              </a>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
 </div>

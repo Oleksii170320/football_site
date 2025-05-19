@@ -1,32 +1,37 @@
-<h2>Історія розіграшів</h2>
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_standing.css">
+<link rel="stylesheet" href="/static/css/teams/styles_team_players.css">
 
-<table class="table table-striped table-hover">
-    <thead>
-    <tr class="row-header">
-        <th scope="col">Назва турніру</th>
-        <th scope="col">Сезон</th>
-        <th scope="col">Асоціація</th>
-        <th scope="col">Федерація</th>
-    </tr>
-    </thead>
-    <tbody>
+
+<h6 class="header_page">Історія розіграшів</h6>
+
+
+<div class="block-info_standing">
+    <div class="person-rows standing-header">
+        <div class="history-season-name">Турнір</div>
+        <div class="history-season-year">Сезон</div>
+        <div class="history-association-name">Асоціація</div>
+        <div class="history-federation-name">Організація</div>
+    </div>
+
     {% for season in history %}
-    <tr class="row-default">
-        <td align="left">
-            <a href="/region/{{ season.region_slug }}/{{ season.season_slug}}">
-                {{ season.season_name }}
-            </a>
-        </td>
-        <td align="center">
-            {{ season.season_year }}
-        </td>
-        <td align="center">
-            {{ season.association_name }}
-        </td>
-        <td align="center">
-            {{ season.organization_name }}
-        </td>
-    </tr>
+        <div class="person-rows">
+            <div class="history-season-logo">
+              {% if season.season_logo %}
+                <img src="{{ url_for('static', path='/img/seasons/' ~ season.season_logo ) }}"alt="{{ season.season_name }} logo">
+              {% else %}
+                <img src="{{ url_for('static', path='/img/logo_tournaments/' ~ season.tournament_logo ) }}" alt="{{ season.season_name }} logo">
+              {% endif %}
+            </div>
+            <div class="history-season-name">
+              <a href="/region/{{ season.region_slug }}/{{ season.season_slug }}">
+                {{ season.season_full_name }}
+              </a>
+            </div>
+            <div class="history-season-year">{{ season.season_year }}</div>
+            <div class="history-association-name">{{ season.association_name }}</div>
+            <div class="history-federation-name">{{ season.organization_name }}</div>
+        </div>
     {% endfor %}
-    </tbody>
-</table>
+</div>
+

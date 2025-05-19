@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, Annotated
 from annotated_types import MinLen, MaxLen
 
+from models.person import PersonSex
 from validation.match_properties import MatchPropertiesSchemas
 
 
@@ -13,11 +14,12 @@ class PersonBaseSchemas(BaseModel):
     lastname: Annotated[str, MinLen(1), MaxLen(40)] = None
     photo: Annotated[str, MaxLen(256)] = None
     birthday: Optional[date | None] = None
+    sex: PersonSex
     region_id: Optional[int]
 
 
 class PersonCreateSchemas(PersonBaseSchemas):
-    pass
+    sex: PersonSex = PersonSex.man
 
 
 class PersonUpdateSchemas(PersonBaseSchemas):

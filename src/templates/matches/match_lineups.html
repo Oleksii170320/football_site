@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="/static/css/stl_content.css">
+
+<h6 class="header_page">СКЛАД команд</h6>
+
+
+<div class="block-info">
+
+  <div class="match-composition">
+      <div class="match-composition-team">
+          <div class="match-composition-team-name"><strong>{{ match.team1_name }}</strong> - стартові склади</div>
+          {% include "matches/includes/match_lineups_heder.html" %}
+
+          {% for info in lineups | sort(attribute='player_role_id') if info.team_id == match.team1_id and info.starting %}
+              {% include "matches/match_players_list.html" %}
+          {% endfor %}
+      </div>
+
+      <div class="match-composition-team">
+          <div class="match-composition-team-name"><strong>{{ match.team2_name }}</strong> - стартові склади</div>
+          {% include "matches/includes/match_lineups_heder.html" %}
+
+          {% for info in lineups | sort(attribute='player_role_id') if info.team_id == match.team2_id and info.starting %}
+            {% include "matches/match_players_list.html" %}
+          {% endfor %}
+      </div>
+  </div>
+
+  <div>
+      <div class="match-composition-team">
+          <div class="match-composition-team-name"><strong> {{ match.team1_name }}</strong> - запасні</div>
+          {% include "matches/includes/match_lineups_heder.html" %}
+
+          {% for info in lineups | sort(attribute='player_role_id')
+             if info.team_id == match.team1_id and info.protocol and not info.starting %}
+             {% include "matches/match_players_list.html" %}
+          {% endfor %}
+      </div>
+
+      <div class="match-composition-team">
+          <div class="match-composition-team-name"><strong>{{ match.team2_name }}</strong> - запасні</div>
+          {% include "matches/includes/match_lineups_heder.html" %}
+
+          {% for info in lineups | sort(attribute='player_role_id')
+          if info.team_id == match.team2_id and info.protocol and not info.starting %}
+              {% include "matches/match_players_list.html" %}
+          {% endfor %}
+      </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+.level {
+    margin: 0px 3px 5px 3px;
+}
+
+.level-type {
+    border-bottom: 1px solid #ececec;
+    margin-bottom: 15px;
+}
+
+.level-type h6 {
+    background-color: #ececec;
+    padding: 3px 10px 3px 10px;
+    border: 1px solid #ececec;
+    border-radius: 3px;
+    margin: 0px;
+}
+
+.region-tournament {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px; /* Збільшений відступ між зображенням та текстом */
+    padding: 3px 10px;
+    border-bottom: 1px solid #ececec;
+    border-radius: 3px;
+}
+
+.region-tournament:hover {
+    background-color: #f8eaea;
+}
+
+.region-tournament-logo {
+    width: 1.4em; /* Фіксована ширина */
+    height: 1.4em; /* Фіксована висота */
+    display: flex;
+    align-items: center; /* Центруємо зображення по вертикалі */
+    justify-content: center; /* Центруємо зображення по горизонталі */
+    overflow: hidden; /* Запобігаємо виходу контенту за межі блоку */
+}
+
+.region-tournament-logo img {
+    max-width: 100%; /* Зображення не виходитиме за межі блоку */
+    max-height: 100%; /* Зображення не виходитиме за межі блоку */
+    object-fit: contain; /* Масштабуємо зображення без обрізання */
+}
+
+
+.region-tournament-name {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1px; /* Збільшений відступ між зображенням та текстом */
+}
+
+.region-tournament-name a {
+    text-decoration: none;
+    color: #2d2d2d;
+    font-size: 0.8em;
+}
+
+.region-tournament-name a:hover {
+    text-decoration:underline;
+    color: #2d2d2d;
+}
+
+
+.region-tournament-name p {
+    margin: 0; /* Забираємо стандартний відступ */
+    display: flex;
+    align-items: center; /* Вирівнювання тексту по центру */
+}

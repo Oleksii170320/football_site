@@ -1,0 +1,129 @@
+<link rel="stylesheet" href="/static/css/teams/styles_team_nav_block.css">
+
+<div class="team-header">
+<!--  <div class="navigation">-->
+<!--    <span>Україна > Сумська область</span>-->
+<!--  </div>-->
+
+  <div class="team-main-info">
+
+    <div class="team-logo">
+        {% if team.team_logo %}
+          <img src="{{ url_for('static', path='/img/teams/' ~ team.team_logo) }}"
+               alt="{{ team.team_name }} logo">
+        {% else %}
+          <img src="/static/img/techical_image/icon_team.PNG"
+               alt="{{ team.name }} logo">
+        {% endif %}
+    </div>
+
+    <div class="team-info">
+
+        <div class="team-name-title">
+          <span>{{ team.team_full_name }}</span>
+        </div>
+
+        <div class="team-name-info">
+          <h6>
+              Президент:
+              {% if team.president_lastname or team.president_name %}
+                  <a href="/persons/{{ team.president_id }}/club_career">
+                    {{ team.president_lastname }} {{ team.president_name }} {{ team.president_surname }}
+                  </a>
+              {% else %}
+                  -
+              {% endif %}
+          </h6>
+
+          <h6>
+            Головний тренер:
+            {% if team.coach_lastname or team.coach_name %}
+                <a href="/persons/{{ team.coach_id }}/club_career">
+                    {{ team.coach_lastname }} {{ team.coach_name }} {{ team.coach_surname }}
+                </a>
+            {% else %}
+                -
+            {% endif %}
+          </h6>
+
+          <h6>
+            Стадіон:
+            {% if team.stadium_name or team.stadium_city %}
+                <a href="/stadiums/{{team.stadium_id}}">
+                    {{ team.stadium_name }}, {{ team.stadium_city }}
+                </a>
+                {% if team.stadium_capacity %}
+                    , вміщує: {{ team.stadium_capacity }}
+                {% endif %}
+            {% else %}
+                -
+            {% endif %}
+          </h6>
+
+          <h6>
+            Рік заснування: {% if team.foundation_year %}{{ team.foundation_year }}{% else %}-{% endif %}
+          </h6>
+
+          <div class="team-media">
+            <h6> Сайт клубу:
+                {% if team.clubs_site %}
+                    <a href="{{ team.clubs_site }}" target="_blank">
+                      {{ team.clubs_site }}
+                    </a>
+                {% else %}
+                    -
+                {% endif %}
+            </h6>
+
+            <div class="social-icons">
+
+              {% if team.page_telegram %}
+                <a target="_blank"
+                   href="{{ team.page_telegram }}"
+                   title="перейти в Telegram канал">
+                  <img src="/static/img/techical_image/social_media/icon_tg.png" alt="logo" />
+                </a>
+              {% endif %}
+
+              {% if team.page_facebook %}
+                <a target="_blank"
+                   href="{{ team.page_facebook }}"
+                   title="перейти на Facebook сторінку">
+                  <img src="/static/img/techical_image/social_media/icon_fb.png" alt="logo"/>
+                </a>
+              {% endif %}
+
+              {% if team.page_youtube %}
+                <a target="_blank"
+                   href="{{ team.page_youtube }}"
+                   title="перейти на Youtube канал">
+                  <img src="/static/img/techical_image/social_media/icon_youtube.png" alt="logo"/>
+                </a>
+              {% endif %}
+
+              {% if team.page_instagram %}
+                <a target="_blank"
+                   href="{{ team.page_instagram }}"
+                   title="перейти на Instagram  сторінку">
+                  <img src="/static/img/techical_image/social_media/icon_instagram.png" alt="logo"/>
+                </a>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+        <!--there are buttons -->
+    <div class="nav-buttons">
+        <a href="/teams/{{ team.team_slug }}/results">Результати</a>
+        <a href="/teams/{{ team.team_slug }}/upcoming">Матчі</a>
+        <a href="/teams/{{ team.team_slug }}/application">Склад команди</a>
+        <a href="/teams/{{ team.team_slug }}/leadership">Керівництво</a>
+        <a href="/teams/{{ team.team_slug }}/achievement">Досягнення</a>
+        <a href="/teams/{{ team.team_slug }}/history">Історія турнірів</a>
+    </div >
+
+<script src="{{ url_for('static', path='js/regions/js-region-navblock.js') }}"></script>

@@ -1,87 +1,91 @@
-<h2>Склад команди</h2>
-<table class="table table-striped table-hover">
-    <thead>
-    <tr class="row-header">
-        <th scope="col">№</th>
-        <th scope="col" class="name-column">ІМ'Я</th>
-        <th scope="col">Дата народження</th>
-        <th scope="col">ВІК</th>
-        <th scope="col">Амплуа</th>
-        <th scope="col">Матчів</th>
-        <th scope="col">Голів</th>
-        <th scope="col">ЖК</th>
-        <th scope="col">ЧК</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for staff in application | sort(attribute='player_role_id') %}
-    {% if staff.position_id in (9, 10) %}
-    <tr class="row-default">
-        <td align="center">
-            {% if staff.player_number is not none %}
-            {{ staff.player_number }}
-            {% else %}
-            -
-            {% endif %}
-        </td>
-        <td align="left">
-            <a href="/persons/{{ staff.id }}/matches">
-                {{ staff.lastname }}
-                {{ staff.name }}
-                {% if staff.surname %}
-                {{ staff.surname }}
-                {% endif%}
-            </a>
-        </td>
-        <td align="center">
-            {% if staff.birthday %}
-            {{ staff.birthday }}
-            {% else %}
-            -
-            {% endif%}
-        </td>
-        <td align="center">
-            {% if staff.age %}
-            {{ staff.age }}
-            {% else %}
-            -
-            {% endif%}
-        </td>
-        <td align="center">{{ staff.full_name }}</td>
-        <td align="center">
-            {% if staff.matches_count %}
-            {{ staff.matches_count }}
-            {% else %}
-            -
-            {% endif%}
-        </td>
-        <td align="center">
-            {% if staff.goals %}
-            {{ staff.goals }}
-            {% if staff.penalty_goals %}
-            ({{ staff.penalty_goals }})
-            {% endif %}
-            {% else %}
-            -
-            {% endif %}
-        </td>
-        <td align="center">
-            {% if staff.yellow_cards %}
-            {{ staff.yellow_cards }}
-            {% else %}
-            -
-            {% endif %}
-        </td>
-        <td align="center">
-            {% if staff.red_cards %}
-            {{ staff.red_cards }}
-            {% else %}
-            -
-            {% endif %}
-        </td>
-    </tr>
-    {% endif %}
-    {% endfor %}
+<link rel="stylesheet" href="/static/css/stl_content.css">
+<link rel="stylesheet" href="/static/css/season/stl_standing.css">
+<link rel="stylesheet" href="/static/css/teams/styles_team_players.css">
 
-    </tbody>
-</table>
+<h6 class="header_page">Склад команди</h6>
+
+
+    <div class="block-info_standing">
+
+        <div class="person-rows standing-header">
+            <div class="person-num">№</div>
+            <div class="person-name">Гравець</div>
+            <div class="person-born">Дата народження</div>
+            <div class="person-age">Вік</div>
+            <div class="person-role">Амплуа</div>
+            <div class="person-game">І</div>
+            <div class="person-goals">Г</div>
+            <div class="person-yellow_card">ЖК</div>
+            <div class="person-red_card">ЧК</div>
+        </div>
+
+        {% for staff in application | sort(attribute='player_role_id') if staff.position_id in (9, 10) %}
+            <div class="person-rows">
+              <div class="person-num">
+                {% if staff.player_number is not none %}
+                  {{ staff.player_number }}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
+              <div class="person-name">
+                <a href="/persons/{{ staff.id }}/matches">
+                    {{ staff.lastname }}
+                    {{ staff.name }}
+                    {% if staff.surname %}
+                    {{ staff.surname }}
+                    {% endif%}
+                </a>
+              </div>
+              <div class="person-born">
+                {% if staff.birthday %}
+                  {{ staff.birthday }}
+                {% else %}
+                  -
+                {% endif%}
+              </div>
+              <div class="person-age">
+                {% if staff.age %}
+                  {{ staff.age }}
+                {% else %}
+                  -
+                {% endif%}
+              </div>
+              <div class="person-role">
+                  {{ staff.full_name }}
+              </div>
+              <div class="person-game">
+                {% if staff.matches_count %}
+                  {{ staff.matches_count }}
+                {% else %}
+                  -
+                {% endif%}
+              </div>
+              <div class="person-goals">
+                {% if staff.goals %}
+                  {{ staff.goals }}
+                {% if staff.penalty_goals %}
+                  ({{ staff.penalty_goals }})
+                {% endif %}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
+              <div class="person-yellow_card">
+                {% if staff.yellow_cards %}
+                  {{ staff.yellow_cards }}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
+              <div class="person-red_card">
+                {% if staff.red_cards %}
+                  {{ staff.red_cards }}
+                {% else %}
+                  -
+                {% endif %}
+              </div>
+            </div>
+        {% endfor %}
+    </div>
+

@@ -1,0 +1,101 @@
+.match-calendar-buttons {
+    display: flex;
+    align-items: center;
+    gap: 3px; /* Відстань між лінками */
+}
+
+.match-calendar-cards {
+    overflow: auto;
+    transition: box-shadow 0.3s ease-in-out;
+    background-color: #ecf5fd;
+    margin: 10px 0px 1px 0px;
+    padding: 0px;
+    border: 1px solid  #949494;
+    border-radius: 5px;
+}
+
+.match-calendar-stage {
+    background-color: #949494;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 0px 10px 0px;
+    padding: 10px 0px 10px 0px;
+    border-radius: 5px 5px 0px 0px;
+    color: #2b2f44;
+    font-size: 1.2em;
+}
+
+.match-calendar-stage >div >a:hover {
+    text-decoration: underline;
+}
+
+.match-calendar-stage >div >a {
+    text-decoration: none;
+    color: #2b2f44;
+    margin-right: 1px; /* Додає відступ між лінками */
+}
+
+.match-calendar-groups {
+    color: #555e61;
+    font-size: 1em;
+    margin: 0px 10px 10px 10px;
+    padding: 0px 0px 10px 0px;
+    border: 2px solid #696969;
+    border-radius: 3px;
+    background-color: #fdfdfe;
+}
+
+.match-calendar-groups >h6 {
+    background-color: #2b2f44;
+    color: #fdfdfe;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0px 10px 0px;
+    margin: 0px;
+    border-radius: 3px 3px 0px 0px;
+}
+
+.match-calendar-rounds {
+    display: flex;
+    flex-direction: column; /* Елементи йдуть вертикально */
+    gap: 10px; /* Відступ між edit-round і matches-edit  */
+    background-color: #eeeeee;
+    border: 1px solid #939393;
+    margin: 0px 10px 10px 10px;
+    padding: 0px 0px 10px 0px;
+}
+
+.edit-round {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #8095f1;
+    border: 1px solid #939393;
+}
+
+.edit-round h6 {
+    flex: 0 0 95%; /* 80% ширини */
+    display: flex;
+    justify-content: center; /* Центрування тексту по горизонталі */
+    align-items: center; /* Центрування по вертикалі */
+    margin: 0;
+    color: #fdfdfe;
+    font-size: 1em;
+    text-align: center; /* Додаткове центрування тексту */
+}
+
+.edit-round img {
+    flex: 0 0 5%; /* 20% ширини */
+    max-width: 1.2em; /* Запобігає перевищенню ширини */
+    height: auto;
+    display: flex;
+    justify-content: right; /* Центрування */
+    align-items: center;
+}
+
+.matches-edit {
+    padding: 5px 5px 5px 5px;
+    font-size: 0.8em;
+}

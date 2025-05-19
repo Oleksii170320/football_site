@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="static/css/region/styles_region.css">
+<link rel="stylesheet" href="static/css/matches/styles_region_teams.css">
+
+<!--<link rel="stylesheet" href="{{ url_for('static', path='css/styles_region.css') }}">-->
+
+
+{% endblock %}
+
+
+{% block content %}
+
+  <!--Додано блок меню -->
+  {% include "region/region_header.html" %}
+
+
+  <!--Головна сторінка регіону -->
+  {% if  matches %}
+  {% include "matches/matches_by_region.html" %}
+  {% include "news/news_list.html" %}
+
+  <!--Стрічка новин по даній області -->
+  {% elif news_list %}
+  {% include "news/news_list.html" %}
+
+  <!--Турніри області -->
+  {% elif tournaments %}
+  {% include "region/region_tournaments.html" %}
+  <!--{% include "tournament/tournaments_list.html" %}-->
+
+  <!--Команди області -->
+  {% elif teams %}
+  {% include "region/region_teams.html" %}
+
+  <!--Дійові особи / гравці по даній області -->
+  {% elif persons %}
+  {% include "region/region_persons.html" %}
+
+  <!--Контакти обласної асоціації -->
+  {% elif contact %}
+  {% include "region/region_contacts.html" %}
+
+  {% endif %}
+
+
+{% endblock %}
+

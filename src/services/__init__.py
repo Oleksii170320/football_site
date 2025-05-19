@@ -2,8 +2,7 @@ from fastapi import Request
 
 from core.database import get_db
 from core.sessions import get_session
-from .match import get_season_matches_weeks
-from .region import get_regions, get_region, get_region_seasons, get_regions_list
+from services.regions.region import get_regions, get_region, get_region_seasons, get_regions_list
 from .season import get_seasons_region, get_season_by_id_or_slug
 from .tournament import get_tournament_for_season
 
@@ -14,7 +13,6 @@ FUNCTIONS = {
     "region": get_regions,
     "season": get_season_by_id_or_slug,
     "tournaments": get_tournament_for_season,
-    "matches": get_season_matches_weeks,
 }
 
 

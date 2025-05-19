@@ -7,12 +7,12 @@
                         <img src="{{ url_for('static', path='/img/person/' ~ staff.photo) }}"
                              class="img-fluid rounded-circle"
                              alt="{{ staff.photo }}"
-                             style="width: 150px; height: 150px; object-fit: cover;">
+                             style="width: 150px; height: 150px; object-fit: cover; margin: 3px">
                     {% else %}
                         <img src="{{ url_for('static', path='img/person/tamplate.png') }}"
                              class="img-fluid rounded-circle"
                              alt="{{ staff.photo }}"
-                             style="width: 150px; height: 150px; object-fit: cover;">
+                             style="width: 150px; height: 150px; object-fit: cover; margin: 3px">
                     {% endif %}
                 </div>
                 <div class="col-md-8">

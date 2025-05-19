@@ -1,0 +1,157 @@
+.standing-rows {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Розподіляє рівномірно */
+    gap: 2px;
+    color: #323232;
+    padding: 5px 10px; /* Зроблено трохи більше для кращого вигляду */
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.standing-header div, .standing-rows div {
+    /*flex: 1; !* Робить ширину кожного елемента однаковою *!*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1em;
+}
+
+.standing-header {
+    background-color: #ededed;
+    font-weight: bold;
+}
+
+.standing-header:hover {
+    background-color: #ececec;
+}
+
+
+.standing-header div {
+    text-transform: uppercase;
+    font-size: 0.7em;
+}
+
+
+.standing-rows:hover {
+    background-color: #f6f1f1;
+}
+
+/* Центруємо логотип */
+.career-logo,
+.table-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-logo img {
+    max-height: 1.8em;
+    max-width: 1.8em;
+    width: auto;
+}
+
+.career-logo img {
+    max-height: 1.5em;
+    max-width: 1.5em;
+    width: auto;
+}
+
+.table-form img {
+    max-height: 1.2em;
+    width: auto;
+}
+
+
+/* Встановлення однакових розмірів для колонок */
+.table-num { width: 2%; }
+.table-logo { width: 5%; }
+.table-team { width: 35%;}
+.table-games { width: 5%; }
+.table-win { width: 5%; }
+.table-draw { width: 5%; }
+.table-defeat{ width: 5%; }
+.table-goals { width: 8%; }
+.table-goal-dif { width: 5%; }
+.table-points { width: 5%; }
+.table-form { width: 20%; gap: 2px}
+
+.career-num { width: 3%; }
+.career-logo { width: 3%; }
+.career-team { width: 30%;}
+.career-role { width: 15%; }
+.career-period { width: 17%; }
+.career-matches { width: 5%; }
+.career-goals { width: 5%; }
+.career-yellow-card { width: 5%; }
+.career-red-card { width: 5%; }
+
+.career-association { width: 10%; }
+.career-federation { width: 20%; }
+.career-season { width: 5%; }
+.career-tournament { width: 25%; }
+
+
+.table-team:hover {
+    text-decoration: underline;
+}
+
+.standing-rows .career-tournament,
+.standing-rows .career-team,
+.standing-rows .table-team {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Вирівнює вміст по лівому краю */
+    text-align: left; /* Текст теж вирівнюється вліво */
+    padding-left: 2px; /* Додає трохи відступу для кращого вигляду */
+    font-weight: 500;
+    color: #575759;
+}
+
+.standing-rows .career-association ,
+.standing-rows .career-federation,
+.standing-rows .career-season {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.standing-rows .career-tournament a:hover,
+.standing-rows .career-team a:hover {
+    text-decoration: underline;
+}
+
+.standing-header .table-team {
+    text-align: right;
+}
+
+/* Додаємо стиль для заголовків груп */
+.standing-group-name {
+    color: #485052;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: left;
+    background-color: #d3d2d2;
+    padding: 3px 15px;
+    margin-bottom: 0px;
+    border-radius: 3px 3px 0px 0px;
+}
+
+.block-info_standing {
+    margin-bottom: 10px;
+    padding: 0px;
+    border-bottom: 1px solid #ececec;
+    border-radius: 3px;
+}
+
+.block-info_standing >h6 {
+    /*display: flex;*/
+    /*align-items: center;*/
+    text-align: center;
+    background-color: #ecf5fd;
+    text-transform: uppercase;
+    border: 1px solid #d2d1d1;
+    margin: 5px 0px 0px 0px;
+    padding: 3px 0px 3px 0px;
+}

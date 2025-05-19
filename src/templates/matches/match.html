@@ -1,41 +1,7 @@
 {% extends "base.html" %}
 
 {% block style %}
-<link rel="stylesheet" href="/static/css/styles_matches_season.css">
-<style>
-
-
-    #main, #main_1, #main_2 {
-        display: flex;
-        flex-direction: column;
-        /*border: 1px solid grey;*/
-
-    }
-
-    .teams-container {
-        display: flex;
-        justify-content: space-between; /* Розміщує елементи на однаковій відстані по горизонталі */
-    }
-
-    .team {
-        flex: 1; /* Це забезпечує рівномірний розподіл простору між командами */
-        margin: 0 10px; /* Відстань між командами */
-        border: 1px solid grey;
-    }
-
-    .region-info {
-        color: white;
-    }
-
-    .header_page {
-        margin: 0px;
-        padding: 10px;
-        background-color: #353535;
-        text-align: center;
-        color: white;
-    }
-</style>
-
+<link rel="stylesheet" href="/static/css/stl_content.css">
 {% endblock %}
 
 
@@ -44,89 +10,16 @@
 
 {% block content %}
 
-<div class="nav-block">
-    <div class="region-info">
-        <img src="{{ url_for('static', path='/img/logo_tournaments/' ~  match.tournament_logo ) }}"
-             alt="{{ match.tournament_name }} logo" height="90px">
-        <h2>
-            <a href="/region/{{ match.region_slug }}/{{ match.season_slug }}">
-                {{ match.season_name }} {{ match.season_year }}
-                {% if match.stage_name %}
-                - {{ match.stage_name }}
-                {% endif %}
-                {% if match.round_name %}
-                - {{ match.round_name }}
-                {% endif %}
-            </a>
-        </h2>
-    </div>
-</div>
 
-<table class="table table-striped">
-    <tbody>
-    <tr>
-        <td style="width: 15%;" align="center">
-            <img src="{{ url_for('static', path='/img/teams/' ~  match.team1_logo) }}" alt="{{ match.team1_name }} logo"
-                 height="120px">
-        </td>
-        <td style="width: 20%;" align="right">
-            <a href="/teams/{{ match.team1_slug }}/application">
-                <h4>{{ match.team1_name }} ({{ match.team1_city }})</h4>
-            </a>
-        </td>
-        <td align="center" style="text-align: center; vertical-align: middle; width: 30%;">
-            <h5>Дата: {{ match.event }}<br>
-                Стадіон: <a href="/stadiums/{{ match.stadium_id }}">{% if match.stadium_name %} {{ match.stadium_name }} {{ match.stadium_city }}{% else %} - {%
-                    endif %}</a><br>
-                Статус: {{ match.status.value }}<br></h5><br>
-            <h1>{{ match.team1_goals }} - {{ match.team2_goals }}</h1><br>
-            {% if match.team1_penalty and match.team2_penalty %}
-            (пен. {{ match.team1_goals }} - {{ match.team2_goals }})
-            {% endif %}<br>
-        </td>
-        <td style="width: 20%;" align="left">
-            <a href="/teams/{{ match.team2_slug }}/application">
-                <h4>{{ match.team2_name }} ({{ match.team2_city }})</h4>
-            </a>
-        </td>
-        <td style="width: 15%;" align="center">
-            <img src="{{ url_for('static', path='/img/teams/' ~  match.team2_logo) }}" alt="{{ match.team2_name }} logo"
-                 height="120px">
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<hr style="border: 2px solid;">
-
-<div class="card text-center">
-    <div class="card-header">
-        <ul class="nav justify-content-center">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/matches/{{ match.match_id }}/review">
-                    <button type="button" class="btn btn-outline-dark">Огляд</button>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/matches/{{ match.match_id }}/lineups">
-                    <button type="button" class="btn btn-outline-dark">Склади команд</button>
-                </a>
-            </li>
-            <!--            <li class="nav-item">-->
-            <!--                <a class="nav-link" href="/matches/{{ match.match_id }}/form">-->
-            <!--                    <button type="button" class="btn btn-outline-dark">Редагувати</button>-->
-            <!--                </a>-->
-            <!--            </li>-->
-        </ul>
-    </div>
-</div>
+<!--Додано блок меню -->
+{% include "matches/match_header.html" %}
 
 {% if events %}
-{% include "matches/includes/match_review.html" %}
+{% include "matches/match_review.html" %}
 {% endif %}
 
 {% if lineups %}
-{% include "matches/includes/match_lineups.html" %}
+{% include "matches/match_lineups.html" %}
 {% endif %}
 
 {% if statistics %}
@@ -137,7 +30,9 @@
 <!--{% include "forms/form_match.html" %}-->
 <!--{% endif %}-->
 
-{% include "matches/includes/infographics.html" %}
+{% include "matches/match_infographics.html" %}
+
+
 
 {% endblock %}
 

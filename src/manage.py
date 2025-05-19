@@ -4,9 +4,8 @@ import time
 from datetime import date, datetime
 
 import click
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from core.database import Base, engine, AsyncSessionLocal
+from core.database import AsyncSessionLocal
 from models import MODELS
 
 
@@ -62,7 +61,6 @@ def reset():
 
     async def async_reset():
         from core.database import Base, engine
-        from models import MODELS
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)

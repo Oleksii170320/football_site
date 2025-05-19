@@ -1,6 +1,5 @@
-from sqlalchemy import desc, select
+from sqlalchemy import desc, select, asc, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session, joinedload
 from models import Tournament, Region, Organization, Season, Team
 from validation import tournament as schemas
 
@@ -12,6 +11,7 @@ async def get_tournament(db: AsyncSession, tournament_id: int):
 
 async def get_tournament_slug(db: AsyncSession, tournament_slug: str):
     """Отримує деталі турніру за slug"""
+
     stmt = (
         select(
             Tournament.id,
@@ -39,10 +39,9 @@ async def get_tournament_slug(db: AsyncSession, tournament_slug: str):
     return result.mappings().first()
 
 
-async def get_tournament_for_season(
-    db: AsyncSession, season_id: int = None, season_slug: str = None, **kwargs
-):
+async def get_tournament_for_season(db: AsyncSession, season_id: int = None, season_slug: str = None, **kwargs):
     """Отримує турнір для сезону за ідентифікатором або slug (асинхронно)"""
+
     stmt = (
         select(
             Tournament.logo,
@@ -53,6 +52,7 @@ async def get_tournament_for_season(
             Tournament.level_up,
             Tournament.level_down,
             Tournament.website,
+            Tournament.description,
             Organization.tournament_level,
             Season.id,
             Season.slug,
@@ -74,10 +74,12 @@ async def get_tournament_for_season(
 
 async def get_tournament_archive(db: AsyncSession, tournament_slug: str):
     """Отримує архів сезонів для турніру за slug"""
+
     stmt = (
         select(
             Season.slug.label("season_slug"),
             Season.name.label("season_name"),
+            Season.full_name.label("season_full_name"),
             Season.year.label("season_year"),
             Region.slug.label("region_slug"),
             Team.slug.label("team_winner_slug"),
@@ -88,9 +90,7 @@ async def get_tournament_archive(db: AsyncSession, tournament_slug: str):
         .join(Tournament, Tournament.id == Season.tournament_id)
         .join(Organization, Organization.id == Tournament.organization_id)
         .join(Region, Region.id == Organization.region_id)
-        .join(
-            Team, Team.id == Season.team_winner_id, isouter=True
-        )  # Використовувати outer join для можливих відсутніх команд
+        .join(Team, Team.id == Season.team_winner_id, isouter=True)
         .filter(Tournament.slug == tournament_slug)
         .order_by(Season.year.desc())
     )
@@ -104,25 +104,43 @@ async def get_tournaments(db: AsyncSession, skip: int = 0, limit: int = 100):
     return result.scalars().all()
 
 
-async def get_region_tournaments(db: AsyncSession, region_slug: str):
-    # Створюємо асинхронний запит
+async def get_region_tournaments(db: AsyncSession, region_id: int = None, region_slug: str = None, ** kwargs):
+    """Вибірка всіх турнірів відповідного регіону"""
+
     stmt = (
         select(
-            Tournament.slug,
-            Tournament.full_name,
-            Tournament.organization_id,
+            Season.slug.label("season_slug"),
+            Tournament.slug.label('tournament_slug'),
+            Tournament.name.label("tournament_name"),
+            Tournament.full_name.label("tournament_full_name"),
+            Tournament.logo.label("tournament_logo"),
+            Tournament.football_type.label("football_type"),
+            Organization.id.label("organization_id"),
+            Organization.name.label("organization_name"),
+            Organization.full_name.label("organization_full_name"),
+            Organization.tournament_level.label("organization_level"),
+            Organization.slug.label("organization_slug"),
+            Region.slug.label("region_slug"),
         )
+        .join(Tournament, Tournament.id == Season.tournament_id)
         .join(Organization, Organization.id == Tournament.organization_id)
         .join(Region, Region.id == Organization.region_id)
-        .filter(Region.slug == region_slug)
+        .group_by(Tournament.full_name)  # Групування по турніру
+        .order_by(asc(Tournament.id), desc(func.max(Season.end_date)))  # Сортування за ID турніру
     )
+
+    if region_id is not None:
+        stmt = stmt.filter(Region.id == region_id)
+    elif region_slug is not None:
+        stmt = stmt.filter(Region.slug == region_slug)
+    else:
+        return None  # або викликати виключення, якщо обидва параметри None
+
     result = await db.execute(stmt)
     return result.all()
 
 
-async def create_tournament(
-    db: AsyncSession, tournament: schemas.TournamentCreateSchemas
-):
+async def create_tournament(db: AsyncSession, tournament: schemas.TournamentCreateSchemas):
     db_tournament = Tournament(**tournament.dict())
     async with db.begin():
         db.add(db_tournament)
@@ -131,9 +149,7 @@ async def create_tournament(
     return db_tournament
 
 
-async def update_tournament(
-    db: AsyncSession, tournament_id: int, tournament: schemas.TournamentUpdateSchemas
-):
+async def update_tournament(db: AsyncSession, tournament_id: int, tournament: schemas.TournamentUpdateSchemas):
     async with db.begin():  # Асинхронний контекст для транзакції
         result = await db.execute(
             select(Tournament).filter(Tournament.id == tournament_id)

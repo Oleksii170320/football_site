@@ -20,9 +20,9 @@ from .match_properties import MatchProperties
 from .match_event import MatchEvent
 from .player_role import PlayerRole
 from .contacts import Contact
-
-# from .users import User
-
+from .users import User
+from .district import District
+from .football_type import FootbalType
 
 MODELS = [
     Region,
@@ -47,5 +47,7 @@ MODELS = [
     RefEvent,
     MatchEvent,
     Contact,
-    # User,
+    User,
+    District,
+    FootbalType,
 ]

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import String, Index, UniqueConstraint
+from sqlalchemy import String,  UniqueConstraint
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -25,6 +25,7 @@ class Region(Base):
     name: Mapped[str] = mapped_column(String(30), nullable=False)
     emblem: Mapped[str | None] = mapped_column(String(256))
     slug: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    status: Mapped[bool] = mapped_column(default=0, server_default="0", nullable=False)
 
     # зв'язки з таблицями
     organizations: Mapped[list["Organization"]] = relationship(
