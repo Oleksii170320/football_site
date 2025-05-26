@@ -38,6 +38,8 @@ class Season(Base):
     matches: Mapped["Match"] = relationship(back_populates="season",)
     # groups: Mapped[Optional[list["Group"]]] = relationship(back_populates="season", lazy="selectin")
 
+
+
     # many-to-many relationship to Team, bypassing the TeamSeason class
     teams_associations: Mapped[list["Team"]] = relationship(secondary="team_seasons_association", back_populates="seasons_associations",)
 

@@ -9,9 +9,11 @@ from validation.season import SeasonSchemas
 class TeamBaseSchemas(BaseModel):
     name: str
     city: str
+    slug: str
+    district: Optional[str] = None
+    community: Optional[str] = None
     region_id: int
     full_name: Optional[str]
-    slug: str
     foundation_year: Optional[str] = None
     logo: Optional[str] = None
     description: Optional[str] = None

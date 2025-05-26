@@ -24,8 +24,10 @@ class Team(RegionRelationMixin, Base):
     id: Mapped[intpk]
     name: Mapped[str] = mapped_column(String(70), nullable=False)
     slug: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
-    full_name: Mapped[str | None] = mapped_column(String(120))
     city: Mapped[str | None] = mapped_column(String(50))
+    district: Mapped[str | None] = mapped_column(String(100), default="", server_default="", nullable=True)
+    community: Mapped[str | None] = mapped_column(String(100), default="", server_default="", nullable=True)
+    full_name: Mapped[str | None] = mapped_column(String(120))
     foundation_year: Mapped[str | None] = mapped_column(String(20))
     logo: Mapped[str | None] = mapped_column(String(512))
     description: Mapped[str] = mapped_column(Text, default="", server_default="", nullable=True)
