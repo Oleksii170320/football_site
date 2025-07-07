@@ -38,9 +38,16 @@
       <div class="match-result">
         <a href="/matches/{{ match.match_id }}/review" target="_blank">
 
-          {% if match.status == "Тех. поразка" %}
-            <strong style="color: red; text-align: center;" title="Технічна поразка">
-                {{ match.team1_goals }} : {{ match.team2_goals }}
+          {% if match.status == "Тех. поразка" %}  <!-- Якщо тех. поразка  -->
+            <strong style="color: red; text-align: center; font-size: 15px;" title="Технічна поразка">
+                {% if match.team1_goals == 3 %} + {% elif match.team1_goals == 0 %} - {% endif %}
+                 :
+                {% if match.team2_goals == 3 %} + {% elif match.team2_goals == 0 %} - {% endif %}
+            </strong><br>
+
+          {% elif match.status == "Не відбудеться" %}  <!-- Якщо матч не відбудеться  -->
+            <strong style="color: red; text-align: center; font-size: 15px;" title="Не відбудеться">
+                - : -
             </strong><br>
 
           {% elif match.extra_time %}

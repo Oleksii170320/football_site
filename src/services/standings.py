@@ -4,12 +4,7 @@ from sqlalchemy import or_, select
 from models import Match, Group, Team, Season, Stage
 
 
-async def get_calculate_standings_1(
-    db: AsyncSession,
-    season_id: int = None,
-    season_slug: str = None,
-    group_id: int = None,
-):
+async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, season_slug: str = None, group_id: int = None,):
     standings = {}
 
     # Створюємо запит
@@ -30,13 +25,13 @@ async def get_calculate_standings_1(
         stmt = stmt.filter(
             Match.season_id == season_id,
             Match.standing.is_(True),
-            or_(Match.status == "played", Match.status == "technical_defeat"),
+            or_(Match.status == "played", Match.status == "technical_defeat", Match.status == "canceled"),
         )
     elif season_slug is not None:
         stmt = stmt.filter(
             Season.slug == season_slug,
             Match.standing.is_(True),
-            or_(Match.status == "played", Match.status == "technical_defeat"),
+            or_(Match.status == "played", Match.status == "technical_defeat", Match.status == "canceled"),
         )
     else:
         return None  # або підняти виключення, якщо обидва параметри None
@@ -92,30 +87,38 @@ async def get_calculate_standings_1(
         standings[match.stage_id][match.group_id][match.team1_id]["played"] += 1
         standings[match.stage_id][match.group_id][match.team2_id]["played"] += 1
 
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += int(
-            match.team1_goals
-        )
-        standings[match.stage_id][match.group_id][match.team1_id][
-            "goals_against"
-        ] += int(match.team2_goals)
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += int(
-            match.team2_goals
-        )
-        standings[match.stage_id][match.group_id][match.team2_id][
-            "goals_against"
-        ] += int(match.team1_goals)
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
 
         standings[match.stage_id][match.group_id][match.team1_id]["goal_difference"] = (
             standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
             - standings[match.stage_id][match.group_id][match.team1_id]["goals_against"]
         )
+
         standings[match.stage_id][match.group_id][match.team2_id]["goal_difference"] = (
             standings[match.stage_id][match.group_id][match.team2_id]["goals_for"]
             - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
         )
 
+        # Матч не відбудется, "тех. поразка" обам командам
+        if match.status == "canceled":
+            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
+            continue
+        # Перемога команди "Гомподарь"
+        elif match.team1_goals > match.team2_goals:
+            standings[match.stage_id][match.group_id][match.team1_id]["won"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team1_id]["points"] += 3
+        # Перемога команди "В гостях"
+        elif match.team1_goals < match.team2_goals:
+            standings[match.stage_id][match.group_id][match.team2_id]["won"] += 1
+            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
         # Якщо матч завершився нічиєю
-        if match.team1_goals == match.team2_goals:
+        elif match.team1_goals == match.team2_goals:
             standings[match.stage_id][match.group_id][match.team1_id]["drawn"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["drawn"] += 1
 
@@ -139,14 +142,8 @@ async def get_calculate_standings_1(
                 standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
                 standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
 
-        elif match.team1_goals > match.team2_goals:
-            standings[match.stage_id][match.group_id][match.team1_id]["won"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
-            standings[match.stage_id][match.group_id][match.team1_id]["points"] += 3
-        else:
-            standings[match.stage_id][match.group_id][match.team2_id]["won"] += 1
-            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
+
+
 
     standings_list = []
     for stage_id, groups in standings.items():
@@ -215,13 +212,13 @@ async def get_calculate_standings(
         stmt = stmt.filter(
             Match.season_id == season_id,
             Match.standing.is_(True),
-            or_(Match.status == "played", Match.status == "technical_defeat"),
+            or_(Match.status == "played", Match.status == "technical_defeat", Match.status == "canceled"),
         )
     elif season_slug is not None:
         stmt = stmt.filter(
             Season.slug == season_slug,
             Match.standing.is_(True),
-            or_(Match.status == "played", Match.status == "technical_defeat"),
+            or_(Match.status == "played", Match.status == "technical_defeat", Match.status == "canceled"),
         )
     else:
         return None  # або підняти виключення, якщо обидва параметри None
@@ -277,18 +274,10 @@ async def get_calculate_standings(
         standings[match.stage_id][match.group_id][match.team1_id]["played"] += 1
         standings[match.stage_id][match.group_id][match.team2_id]["played"] += 1
 
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += int(
-            match.team1_goals
-        )
-        standings[match.stage_id][match.group_id][match.team1_id][
-            "goals_against"
-        ] += int(match.team2_goals)
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += int(
-            match.team2_goals
-        )
-        standings[match.stage_id][match.group_id][match.team2_id][
-            "goals_against"
-        ] += int(match.team1_goals)
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
 
         standings[match.stage_id][match.group_id][match.team1_id]["goal_difference"] = (
             standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
@@ -299,8 +288,23 @@ async def get_calculate_standings(
             - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
         )
 
+        # Матч не відбудется, "тех. поразка" обам командам
+        if match.status == "canceled":
+            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
+            continue
+        # Перемога команди "Гомподарь"
+        elif match.team1_goals > match.team2_goals:
+            standings[match.stage_id][match.group_id][match.team1_id]["won"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team1_id]["points"] += 3
+        # Перемога команди "В гостях"
+        elif match.team1_goals < match.team2_goals:
+            standings[match.stage_id][match.group_id][match.team2_id]["won"] += 1
+            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
+            standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
         # Якщо матч завершився нічиєю
-        if match.team1_goals == match.team2_goals:
+        elif match.team1_goals == match.team2_goals and isinstance(match.team1_goals, int) and isinstance(match.team2_goals, int):
             standings[match.stage_id][match.group_id][match.team1_id]["drawn"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["drawn"] += 1
 
@@ -324,14 +328,8 @@ async def get_calculate_standings(
                 standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
                 standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
 
-        elif match.team1_goals > match.team2_goals:
-            standings[match.stage_id][match.group_id][match.team1_id]["won"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["lost"] += 1
-            standings[match.stage_id][match.group_id][match.team1_id]["points"] += 3
-        else:
-            standings[match.stage_id][match.group_id][match.team2_id]["won"] += 1
-            standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
-            standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
+
+
 
     standings_list = []
     for stage_id, groups in standings.items():

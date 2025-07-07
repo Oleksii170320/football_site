@@ -39,7 +39,7 @@ async def get_season_matches_results(db: AsyncSession, season_id: int = None, se
     if stmt is None:
         return []
 
-    stmt = stmt.filter(Match.status.in_(["played", "technical_defeat"]))
+    stmt = stmt.filter(Match.status.in_(["played", "technical_defeat", "canceled"]))
     stmt = stmt.order_by(desc(Match.round_id), asc(Match.event))
 
     result = await db.execute(stmt)
@@ -54,7 +54,7 @@ async def get_season_matches_upcoming(db: AsyncSession, season_id: int = None, s
     if stmt is None:
         return []
 
-    stmt = stmt.filter(Match.status.in_(["not_played", "postponed", "canceled"]))
+    stmt = stmt.filter(Match.status.in_(["not_played", "postponed"]))
     stmt = stmt.order_by(
         asc(Round.id),
         asc(Match.event),
