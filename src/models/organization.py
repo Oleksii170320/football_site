@@ -25,10 +25,10 @@ metadata = MetaData()
 
 
 class TournamentLevel(str, Enum):
-    repablic = "республ."
-    region = "обласні"
-    district = "районні"
-    urban = "міські"
+    a_repablic = "республ."
+    b_region = "обласні"
+    c_district = "районні"
+    d_urban = "міські"
     not_specified = "не вказано"
 
 

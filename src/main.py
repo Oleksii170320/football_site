@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from core.templating import templates
 from helpers.authentications import get_current_user_for_button
+from services.matches.matches_for_region import get_matches_week
 from services.news_list import get_news_list
 from services.regions.region import get_regions_list
 from controllers import (
@@ -19,6 +20,7 @@ from controllers import (
     person,
     news,
     session,
+    main_button,
 )
 from controllers.api import (
     seasons_api,
@@ -53,6 +55,7 @@ async def home(
     )
 
 
+app.include_router(main_button.router, prefix="", tags=["Main Buttons"])
 app.include_router(region.router, prefix="/region", tags=["Regions"])
 app.include_router(organization.router, prefix="/organizations", tags=["Organizations"])
 app.include_router(tournament.router, prefix="/tournaments", tags=["Tournaments"])

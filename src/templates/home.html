@@ -12,7 +12,17 @@
 
 
 {% block content %}
-{% include "news/news_list.html" %}
+  {% if news_list %}
+    {% include "news/news_list.html" %}
+  {% elif matches %}
+    {% include "matches/weekly_match_list.html" %}
+  {% elif news_list %}
+    {% include "news/news_list.html" %}
+  {% elif about %}
+    {% include "about.html" %}
+  {% elif contacts %}
+    {% include "main_contacts.html" %}
+  {% endif %}
 {% endblock %}
 
 

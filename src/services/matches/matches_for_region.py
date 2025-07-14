@@ -7,14 +7,17 @@ from models import Match
 from services.matches.match import get_region_matches
 
 
-async def get_region_matches_week(db: AsyncSession, region_id: int = None, region_slug: str = None):
+async def get_matches_week(db: AsyncSession, region_id: int = None, region_slug: str = None):
     """Перелік зіграних матчів поточного розіграшу (+/- 7 днів)"""
 
-    today = datetime.utcnow() # Отримуємо поточний timestamp
+    today = datetime.utcnow()              # Отримуємо поточний timestamp
     start_date = today - timedelta(days=7) # Обчислюємо межі діапазону
     end_date = today + timedelta(days=7)
 
-    stmt = await get_region_matches(db, region_id=region_id, region_slug=region_slug)
+    if region_id is not None or region_slug is not None:
+        stmt = await get_region_matches(db, region_id=region_id, region_slug=region_slug)
+    else:
+        stmt = await get_region_matches(db)
 
     if stmt is None:
         return []

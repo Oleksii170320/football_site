@@ -81,12 +81,8 @@ async def get_tournament_by_slug(
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "tournaments": await get_tournament_slug(
-                db, tournament_slug=tournament_slug
-            ),
-            "seasons_archive": await get_tournament_archive(
-                db, tournament_slug=tournament_slug
-            ),
+            "tournaments": await get_tournament_slug(db, tournament_slug=tournament_slug),
+            "seasons_archive": await get_tournament_archive(db, tournament_slug=tournament_slug),
             "form": True,
             "is_authenticated": is_authenticated,  # Передаємо значення
             "user_session": user_session,  # Ім'я користувача

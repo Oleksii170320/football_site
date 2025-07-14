@@ -1,25 +1,17 @@
 <link rel="stylesheet" href="/static/css/matches/stl_matches_by_round.css">
 
   <div class="match-content">
-      <div class="match-date-icon" id="match-date-icon">
-        <img src="/static/img/techical_image/icon_calendar.png" alt="icon_calendar">
-      </div>
-      <div class="match-date">
-        {% if match.event and match.event != "01.01.2100" and match.event is not none %}
-          <span>{{ match.event }}</span>
-        {% else %}
-          <span>--.--.--</span>
-        {% endif %}
-      </div>
+
       <div class="match-time-icon" id="match-time-icon">
-        <img src="/static/img/techical_image/icon_clock.png" alt="icon_clock">
-      </div>
+          <img src="/static/img/techical_image/icon_clock.png" alt="icon_clock">
+        </div>
+
       <div class="match-time">
-        {% if match.event_time and not ('00:00' <= match.event_time <= '04:00') %}
-          {{ match.event_time }}
-        {% else %}
-          <span>--:--</span>
-        {% endif %}
+          {% if match.event_time and not ('00:00' <= match.event_time <= '04:00') %}
+            {{ match.event_time }}
+          {% else %}
+             <span>--:--</span>
+          {% endif %}
       </div>
       <div class="match-team-name team-name1">
         <a href="/teams/{{ match.team1_slug }}/results"
@@ -36,39 +28,44 @@
         {% endif %}
       </div>
       <div class="match-result">
-          <a href="/matches/{{ match.match_id }}/review" target="_blank">
+        <a href="/matches/{{ match.match_id }}/review" target="_blank">
 
-            {%- if match.status == "Тех. поразка" -%}
-              <strong style="color: red;" title="Технічна поразка">
-                {% if match.team1_goals is not none and match.team1_goals in (3, 5) %} +
-                {% elif match.team1_goals is not none and match.team1_goals == 0 %} -
-                {% else %} - {% endif %}
-                :
-                {% if match.team2_goals is not none and match.team2_goals in (3, 5) %} +
-                {% elif match.team2_goals is not none and match.team2_goals == 0 %} -
-                {% else %} - {% endif %}
-              </strong><br>
-            {%- elif match.status == "Не дограно" -%}
-              <strong style="color: #dc5710;" title="Не дограно">
+          {% if match.status == "Тех. поразка" %}  <!-- Якщо тех. поразка  -->
+            <strong style="color: red; text-align: center; font-size: 15px;" title="Технічна поразка">
+                {% if match.team1_goals in (3, 5) %} + {% elif match.team1_goals == 0 %} - {% endif %}
+                 :
+                {% if match.team2_goals in (3, 5) %} + {% elif match.team2_goals == 0 %} - {% endif %}
+            </strong>
+
+          {% elif match.status == "Не дограно" %}  <!-- Якщо Не дограно  -->
+            <strong style="color: #963d3d; text-align: center; font-size: 15px;" title="Не дограно">
                 {{ match.team1_goals }} : {{ match.team2_goals }}
+            </strong>
+
+          {% elif match.status == "Не відбудеться" %}  <!-- Якщо матч не відбудеться  -->
+            <strong style="color: red; text-align: center; font-size: 15px;" title="Не відбудеться">
+                - : -
+            </strong><br>
+
+          {% elif match.extra_time %}
+               д.ч. <strong title="Подробиці матчу!">{{ match.team1_goals }} : {{ match.team2_goals }}
               </strong><br>
-            {%- elif match.status == "Не відбудеться" -%}
-              <strong style="color: red;" title="Не відбудеться">- : -</strong><br>
-            {%- elif match.extra_time -%}
-              д.ч. <strong title="Подробиці матчу!">{{ match.team1_goals }} : {{ match.team2_goals }}</strong><br>
-            {%- elif match.team1_goals is not none and match.team2_goals is not none -%}
-              <strong id="match-result-info" title="Подробиці матчу!">
-                {{ match.team1_goals }} : {{ match.team2_goals }}
-              </strong><br>
-            {%- else -%}
-              <strong>- : -</strong><br>
-            {%- endif -%}
-            {%- if match.team1_penalty or match.team2_penalty -%}
+
+          {% elif match.team1_goals is not none and match.team2_goals is not none %}
+            <strong id="match-result-info" title="Подробиці матчу!">
+              {{ match.team1_goals }} : {{ match.team2_goals }}
+            </strong><br>
+
+          {% else %}
+             <strong>- : -</strong><br>
+          {% endif %}
+
+          {% if match.team1_penalty or match.team2_penalty %}
               <span title="Післяматчеві пенальті">
-                (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
+                  (п. {{ match.team1_penalty }} : {{ match.team2_penalty }})
               </span>
-            {%- endif -%}
-          </a>
+          {% endif %}
+        </a>
       </div>
       <div class="match-team-logo">
         {% if match.team2_logo %}

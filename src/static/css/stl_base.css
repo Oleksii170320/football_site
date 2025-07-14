@@ -168,10 +168,21 @@ body > nav > div.container.navTitle {
     border-radius: 5px;
 }
 
+.all:hover {
+    text-decoration: none;
+    font-weight: bolder;
+}
+
 .region-season a {
     text-decoration: none; /* Видаляє підкреслення */
     color: #212020;
     display: block; /* Розтягує посилання на всю ширину */
+}
+
+.region-season a:hover {
+    background-color: #ececec;
+    border-color: #150404;
+    border-radius: 3px;
 }
 
 .tournament {

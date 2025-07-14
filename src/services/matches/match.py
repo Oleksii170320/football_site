@@ -431,6 +431,7 @@ async def get_region_matches(
             Region.name.label("region_name"),
             Tournament.football_type.label("football_type"),
             Tournament.logo.label("tournament_logo"),
+            Organization.tournament_level
         )
         .join(Season, Season.id == Match.season_id)
         # .join(Person, Person.id == TeamPerson.person_id)
@@ -464,9 +465,9 @@ async def get_region_matches(
     elif team_slug is not None:
         stmt = stmt.filter((Team1.slug == team_slug) | (Team2.slug == team_slug))
     else:
-        return stmt  # або підняти виключення, якщо обидва параметри None
+        stmt  # або підняти виключення, якщо обидва параметри None
 
-    return stmt
+    return stmt.order_by(Tournament.football_type, Organization.tournament_level)
 
 
 

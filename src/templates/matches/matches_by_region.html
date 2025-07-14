@@ -64,7 +64,8 @@
                   if match.season_full_name == season.season_full_name
                   and match.event == event.event %}
 
-                      {% include "matches/includes/matches_by_round.html" %}
+<!--                      {% include "matches/includes/matches_by_round.html" %}-->
+                  {% include "matches/includes/matches_by_round_for_weekly.html" %}
 
                 {% endfor %}
               </div>

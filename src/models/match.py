@@ -22,6 +22,7 @@ class MatchStatus(str, Enum):
     played = "Зіграно"
     technical_defeat = "Тех. поразка"
     postponed = "Перенесено"
+    not_finished = "Не дограно"
     canceled = "Не відбудеться"
 
 

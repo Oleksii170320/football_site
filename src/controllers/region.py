@@ -8,7 +8,7 @@ from services.regions import region as crud
 from services.contact import get_contact
 from services.group import get_group_in_season, get_groups
 from services.matches.match import *
-from services.matches.matches_for_region import get_region_matches_week
+from services.matches.matches_for_region import get_matches_week
 from services.matches.matches_for_season import (
     get_season_matches_week,
     get_season_matches_results,
@@ -65,7 +65,7 @@ async def read_region_by_slug(
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
             "seasons": await get_seasons_region(db, region_slug=region_slug), # Список поточних розіграшів в регіоні
             "region": await get_region(db, region_slug=region_slug),
-            "matches": await get_region_matches_week(db, region_slug=region_slug),
+            "matches": await get_matches_week(db, region_slug=region_slug),
             "news_list": await get_news_list_region(db, region_slug=region_slug),
             "is_authenticated": is_authenticated,  # Передаємо значення
             "user_session": user_session,  # Ім'я користувача
