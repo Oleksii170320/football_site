@@ -257,9 +257,12 @@ async def link_season_team(db: AsyncSession, season_id: int, team_id: int):
     return team_schema
 
 
+
 async def get_seasons_region(db: AsyncSession, region_slug: str, season_slug: str = None, **kwargs):
+    """виводить перелік проточних розіграшів/турнірів"""
 
     current_year = datetime.now().year
+    current_month = datetime.now().month
 
     stmt = (
         select(
@@ -280,14 +283,11 @@ async def get_seasons_region(db: AsyncSession, region_slug: str, season_slug: st
         .join(Region, Region.id == Organization.region_id)
         .filter(
             Region.slug == region_slug,
-            func.strftime(
-                "%Y", func.date(func.datetime(Season.start_date, "unixepoch"))
+            func.strftime("%Y", func.date(func.datetime(Season.start_date, "unixepoch"))) <= str(current_year),
+            func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch"))) >= str(current_year),
+            func.strftime("%m", func.date(func.datetime(Season.end_date, "unixepoch"), "+2 months")) >= f"{current_month:02}",
             )
-            <= str(current_year),
-            func.strftime("%Y", func.date(func.datetime(Season.end_date, "unixepoch")))
-            >= str(current_year),
-        )
-        .order_by(Tournament.level_int, desc(Season.end_date))
+        .order_by(Tournament.football_type, Tournament.level_int, desc(Season.end_date))
     )
 
     result = await db.execute(stmt)

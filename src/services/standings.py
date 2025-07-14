@@ -4,7 +4,8 @@ from sqlalchemy import or_, select
 from models import Match, Group, Team, Season, Stage
 
 
-async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, season_slug: str = None, group_id: int = None,):
+async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, season_slug: str = None,
+                                    group_id: int = None, ):
     standings = {}
 
     # Створюємо запит
@@ -83,23 +84,27 @@ async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, sea
                 "points": 0,
             }
 
-        # Оновлюємо статистику команд
+        # Оновлюємо статистику команд (всі зі всіма)
         standings[match.stage_id][match.group_id][match.team1_id]["played"] += 1
         standings[match.stage_id][match.group_id][match.team2_id]["played"] += 1
 
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(
+            match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(
+            match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(
+            match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(
+            match.team1_goals, int) else 0
 
         standings[match.stage_id][match.group_id][match.team1_id]["goal_difference"] = (
-            standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
-            - standings[match.stage_id][match.group_id][match.team1_id]["goals_against"]
+                standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
+                - standings[match.stage_id][match.group_id][match.team1_id]["goals_against"]
         )
 
         standings[match.stage_id][match.group_id][match.team2_id]["goal_difference"] = (
-            standings[match.stage_id][match.group_id][match.team2_id]["goals_for"]
-            - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
+                standings[match.stage_id][match.group_id][match.team2_id]["goals_for"]
+                - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
         )
 
         # Матч не відбудется, "тех. поразка" обам командам
@@ -141,9 +146,6 @@ async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, sea
             else:
                 standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
                 standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
-
-
-
 
     standings_list = []
     for stage_id, groups in standings.items():
@@ -194,10 +196,10 @@ async def get_calculate_standings_1(db: AsyncSession, season_id: int = None, sea
 
 
 async def get_calculate_standings(
-    db: AsyncSession,
-    season_id: int = None,
-    season_slug: str = None,
-    group_id: int = None,
+        db: AsyncSession,
+        season_id: int = None,
+        season_slug: str = None,
+        group_id: int = None,
 ):
     standings = {}
 
@@ -270,22 +272,26 @@ async def get_calculate_standings(
                 "points": 0,
             }
 
-        # Оновлюємо статистику команд
+        # Оновлюємо статистику команд (групові стадії...)
         standings[match.stage_id][match.group_id][match.team1_id]["played"] += 1
         standings[match.stage_id][match.group_id][match.team2_id]["played"] += 1
 
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(match.team2_goals, int) else 0
-        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_for"] += match.team1_goals if isinstance(
+            match.team1_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team1_id]["goals_against"] += match.team2_goals if isinstance(
+            match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_for"] += match.team2_goals if isinstance(
+            match.team2_goals, int) else 0
+        standings[match.stage_id][match.group_id][match.team2_id]["goals_against"] += match.team1_goals if isinstance(
+            match.team1_goals, int) else 0
 
         standings[match.stage_id][match.group_id][match.team1_id]["goal_difference"] = (
-            standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
-            - standings[match.stage_id][match.group_id][match.team1_id]["goals_against"]
+                standings[match.stage_id][match.group_id][match.team1_id]["goals_for"]
+                - standings[match.stage_id][match.group_id][match.team1_id]["goals_against"]
         )
         standings[match.stage_id][match.group_id][match.team2_id]["goal_difference"] = (
-            standings[match.stage_id][match.group_id][match.team2_id]["goals_for"]
-            - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
+                standings[match.stage_id][match.group_id][match.team2_id]["goals_for"]
+                - standings[match.stage_id][match.group_id][match.team2_id]["goals_against"]
         )
 
         # Матч не відбудется, "тех. поразка" обам командам
@@ -304,32 +310,22 @@ async def get_calculate_standings(
             standings[match.stage_id][match.group_id][match.team1_id]["lost"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["points"] += 3
         # Якщо матч завершився нічиєю
-        elif match.team1_goals == match.team2_goals and isinstance(match.team1_goals, int) and isinstance(match.team2_goals, int):
+        elif match.team1_goals == match.team2_goals and isinstance(match.team1_goals, int) and isinstance(
+                match.team2_goals, int):
             standings[match.stage_id][match.group_id][match.team1_id]["drawn"] += 1
             standings[match.stage_id][match.group_id][match.team2_id]["drawn"] += 1
 
             # Перевіряємо наявність післяматчевих пенальті
             if match.team1_penalty is not None and match.team2_penalty is not None:
                 if match.team1_penalty > match.team2_penalty:
-                    standings[match.stage_id][match.group_id][match.team1_id][
-                        "points"
-                    ] += 2
-                    standings[match.stage_id][match.group_id][match.team2_id][
-                        "points"
-                    ] += 1
+                    standings[match.stage_id][match.group_id][match.team1_id]["points"] += 2
+                    standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
                 else:
-                    standings[match.stage_id][match.group_id][match.team1_id][
-                        "points"
-                    ] += 1
-                    standings[match.stage_id][match.group_id][match.team2_id][
-                        "points"
-                    ] += 2
+                    standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
+                    standings[match.stage_id][match.group_id][match.team2_id]["points"] += 2
             else:
                 standings[match.stage_id][match.group_id][match.team1_id]["points"] += 1
                 standings[match.stage_id][match.group_id][match.team2_id]["points"] += 1
-
-
-
 
     standings_list = []
     for stage_id, groups in standings.items():

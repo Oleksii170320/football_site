@@ -40,9 +40,9 @@
 
           {% if match.status == "Тех. поразка" %}  <!-- Якщо тех. поразка  -->
             <strong style="color: red; text-align: center; font-size: 15px;" title="Технічна поразка">
-                {% if match.team1_goals == 3 %} + {% elif match.team1_goals == 0 %} - {% endif %}
+                {% if match.team1_goals in (3, 5) %} + {% elif match.team1_goals == 0 %} - {% endif %}
                  :
-                {% if match.team2_goals == 3 %} + {% elif match.team2_goals == 0 %} - {% endif %}
+                {% if match.team2_goals in (3, 5) %} + {% elif match.team2_goals == 0 %} - {% endif %}
             </strong><br>
 
           {% elif match.status == "Не відбудеться" %}  <!-- Якщо матч не відбудеться  -->

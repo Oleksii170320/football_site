@@ -36,7 +36,6 @@ router = APIRouter()
 
 @router.get("/")
 async def read_regions(request: Request, db: AsyncSession = Depends(get_db)):
-
     """Сторінка зі списком регіонів"""
 
     return render(
@@ -51,10 +50,10 @@ async def read_regions(request: Request, db: AsyncSession = Depends(get_db)):
 
 @router.get("/{region_slug}")
 async def read_region_by_slug(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """виводить окремий регіон по SLUG"""
 
@@ -64,7 +63,7 @@ async def read_region_by_slug(
         request,
         {
             "regions_list": await get_regions_list(db),  # Список регіонів (бокове меню)
-            "seasons": await get_seasons_region(db, region_slug=region_slug),
+            "seasons": await get_seasons_region(db, region_slug=region_slug), # Список поточних розіграшів в регіоні
             "region": await get_region(db, region_slug=region_slug),
             "matches": await get_region_matches_week(db, region_slug=region_slug),
             "news_list": await get_news_list_region(db, region_slug=region_slug),
@@ -76,10 +75,10 @@ async def read_region_by_slug(
 
 @router.get("/{region_slug}/news")
 async def read_region_by_slug(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """виводить новини регіону"""
 
@@ -100,10 +99,10 @@ async def read_region_by_slug(
 
 @router.get("/{region_slug}/tournaments")
 async def region_tournaments(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Виводить всі футбольні та футзальні турніри даної області"""
 
@@ -124,10 +123,10 @@ async def region_tournaments(
 
 @router.get("/{region_slug}/teams")
 async def region_teams(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Виводить команди даної області"""
 
@@ -149,10 +148,10 @@ async def region_teams(
 
 @router.get("/{region_slug}/persons")
 async def region_persons(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Виводить всі дійові персони даної області"""
 
@@ -174,10 +173,10 @@ async def region_persons(
 
 @router.get("/{region_slug}/contacts")
 async def region_contacts(
-    request: Request,
-    region_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Виводить контактні дані обласної організації"""
 
@@ -199,11 +198,11 @@ async def region_contacts(
 
 @router.get("/{region_slug}/{season_slug}")
 async def region_season(
-    season_slug: str,
-    region_slug: str,
-    request: Request,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        season_slug: str,
+        region_slug: str,
+        request: Request,
+        db: Session = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває головну сторінку певного розіграшу/сезону"""
 
@@ -227,11 +226,11 @@ async def region_season(
 
 @router.get("/{region_slug}/{season_slug}/main")
 async def region_season_main(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває головну сторінку певного роїіграшу/сезону по кнопці ГОЛОВНА"""
 
@@ -255,11 +254,11 @@ async def region_season_main(
 
 @router.get("/{region_slug}/{season_slug}/results")
 async def season_matches_results(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: Session = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває сторінку з зіграними матчами розіграшу"""
 
@@ -283,11 +282,11 @@ async def season_matches_results(
 
 @router.get("/{region_slug}/{season_slug}/upcoming")
 async def season_matches_upcoming(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває сторінку зі ще не зіграними матчами розіграшу"""
 
@@ -312,13 +311,19 @@ async def season_matches_upcoming(
 
 @router.get("/{region_slug}/{season_slug}/standings")
 async def season_standings(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
-    """Відкриває турніру таблицю розіграшу"""
+    """
+    Відкриває турніру таблицю розіграшу
+
+    Args:
+        region_slug (str): slug Регіону.
+        season_slug (str): slug вибраного розуграшу.
+    """
 
     user_session, is_authenticated = current_user
 
@@ -341,12 +346,12 @@ async def season_standings(
 
 @router.get("/{region_slug}/{season_id}/{tournament_slug}/archive")
 async def tournament_archive(
-    request: Request,
-    region_slug: str,
-    season_id: int,
-    tournament_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_id: int,
+        tournament_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває історію розіграшів турніру"""
 
@@ -369,11 +374,11 @@ async def tournament_archive(
 
 @router.get("/{region_slug}/{season_slug}/clubs")
 async def tournament_archive(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває історію розіграшів турніру"""
 
@@ -398,11 +403,11 @@ async def tournament_archive(
 
 @router.get("/{region_slug}/{season_slug}/schedule")
 async def tournament_archive(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває історію розіграшів турніру"""
 
@@ -431,11 +436,11 @@ async def tournament_archive(
 
 @router.get("/{region_slug}/{season_slug}/schedule/teas")
 async def tournament_archive(
-    request: Request,
-    region_slug: str,
-    season_slug: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user_for_button),
+        request: Request,
+        region_slug: str,
+        season_slug: str,
+        db: AsyncSession = Depends(get_db),
+        current_user: str = Depends(get_current_user_for_button),
 ):
     """Відкриває історію розіграшів турніру"""
 
@@ -466,7 +471,7 @@ async def tournament_archive(
 # Спеціальні запити CRUD
 @router.post("/", response_model=schemas_region.RegionSchemas)
 async def create_region(
-    region: schemas_region.RegionCreateSchemas, db: AsyncSession = Depends(get_db)
+        region: schemas_region.RegionCreateSchemas, db: AsyncSession = Depends(get_db)
 ):
     """Додає новий регіон/область"""
     return await crud.create_region(db=db, region=region)
@@ -474,9 +479,9 @@ async def create_region(
 
 @router.put("/{region_id}", response_model=schemas_region.RegionSchemas)
 async def update_region(
-    region_id: int,
-    region: schemas_region.RegionUpdateSchemas,
-    db: AsyncSession = Depends(get_db),
+        region_id: int,
+        region: schemas_region.RegionUpdateSchemas,
+        db: AsyncSession = Depends(get_db),
 ):
     db_region = await crud.update_region(db=db, region_id=region_id, region=region)
     if db_region is None:
@@ -495,7 +500,6 @@ async def delete_region(region_id: int, db: AsyncSession = Depends(get_db)):
 # API for JS
 @router.get("/api/region_list")
 async def get_region_list(db: AsyncSession = Depends(get_db)):
-
     """Повертає список регіонів у  форматі JSON"""
     regions = await get_regions_list(db)
     return regions
@@ -503,7 +507,6 @@ async def get_region_list(db: AsyncSession = Depends(get_db)):
 
 @router.get("/api/{region_slug}/teams_list")
 async def region_teams(region_slug: str, db: AsyncSession = Depends(get_db)):
-
     """Повертає список команд області у форматі JSON"""
     teams = await get_regions_team_list(db, region_slug=region_slug)
     return teams
